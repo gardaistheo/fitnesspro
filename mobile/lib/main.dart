@@ -11,7 +11,10 @@ import 'screens/exercises/exercises_screen.dart';
 import 'screens/food_scanner/food_scanner_screen.dart';
 import 'screens/landing/landing_screen.dart';
 import 'screens/main/main_screen.dart';
+import 'screens/onboarding/onboarding_slides_screen.dart';
 import 'screens/planning/planning_screen.dart';
+import 'screens/quiz/quiz_screen.dart';
+import 'screens/signup/signup_screen.dart';
 import 'screens/workouts/workouts_screen.dart';
 import 'services/api_service.dart';
 import 'services/storage_service.dart';
@@ -74,6 +77,20 @@ class FitnessProApp extends StatelessWidget {
             initialRoute: '/',
             routes: {
               '/': (context) => const LandingScreen(),
+              '/signup': (context) => const SignupScreen(),
+              '/quiz': (context) => QuizScreen(
+                    onDone: (quizData) {
+                      final navigator = Navigator.of(context);
+                      navigator.pushReplacement(
+                        MaterialPageRoute(
+                          builder: (_) => OnboardingSlidesScreen(
+                            quizData: quizData,
+                            onDone: () => navigator.pushReplacementNamed('/dashboard'),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
               '/dashboard': (context) => const MainScreen(),
               '/food-scanner': (context) => const FoodScannerScreen(),
               '/exercises': (context) => const ExercisesScreen(),

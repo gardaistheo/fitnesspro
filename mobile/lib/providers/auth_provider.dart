@@ -21,14 +21,14 @@ class AuthProvider extends ChangeNotifier {
   bool get isAuthenticated => _user != null;
 
   // Register
-  Future<bool> register(String firstName, String lastName, String email, String password) async {
+  Future<bool> register(String name, String email, String password) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
       final response = await apiService.post('/auth/register', {
-        'name': '$firstName $lastName',
+        'name': name,
         'email': email,
         'password': password,
         'password_confirmation': password,
