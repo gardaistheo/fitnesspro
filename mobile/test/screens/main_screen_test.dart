@@ -58,6 +58,10 @@ void main() {
     await tester.pumpWidget(buildTestable());
     await tester.pumpAndSettle();
 
+    await tester.tap(find.text('Coach IA'));
+    await tester.pumpAndSettle();
+    expect(find.text('Bientôt disponible'), findsOneWidget);
+
     await tester.tap(find.text('Scanner'));
     await tester.pumpAndSettle();
     expect(find.text('Powered by Passio AI'), findsOneWidget);

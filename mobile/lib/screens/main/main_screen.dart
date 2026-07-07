@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/colors.dart';
+import '../coach/coach_screen.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../exercises/exercises_screen.dart';
 import '../food_scanner/food_scanner_screen.dart';
@@ -17,6 +18,7 @@ class _MainScreenState extends State<MainScreen> {
 
   static const _tabs = [
     DashboardScreen(),
+    CoachScreen(),
     FoodScannerScreen(),
     ExercisesScreen(),
     WorkoutsScreen(),
@@ -41,6 +43,7 @@ class _MainScreenState extends State<MainScreen> {
         unselectedItemColor: colors.muted2,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Dashboard'),
+          BottomNavigationBarItem(icon: Icon(Icons.smart_toy_outlined), label: 'Coach IA'),
           BottomNavigationBarItem(icon: Icon(Icons.camera_alt), label: 'Scanner'),
           BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: 'Exercices'),
           BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Séances'),
