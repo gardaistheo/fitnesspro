@@ -6,10 +6,12 @@ import 'providers/exercise_provider.dart';
 import 'providers/meal_provider.dart';
 import 'providers/program_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/workout_session_provider.dart';
 import 'screens/dashboard/dashboard_screen.dart';
 import 'screens/exercises/exercises_screen.dart';
 import 'screens/food_scanner/food_scanner_screen.dart';
 import 'screens/landing/landing_screen.dart';
+import 'screens/planning/planning_screen.dart';
 import 'screens/workouts/workouts_screen.dart';
 import 'services/api_service.dart';
 import 'services/storage_service.dart';
@@ -59,6 +61,7 @@ class FitnessProApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MealProvider(apiService: apiService)),
         ChangeNotifierProvider(create: (_) => ExerciseProvider(apiService: apiService)),
         ChangeNotifierProvider(create: (_) => ProgramProvider(apiService: apiService)),
+        ChangeNotifierProvider(create: (_) => WorkoutSessionProvider(apiService: apiService)),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, theme, _) {
@@ -89,6 +92,7 @@ class FitnessProApp extends StatelessWidget {
               '/food-scanner': (context) => const FoodScannerScreen(),
               '/exercises': (context) => const ExercisesScreen(),
               '/workouts': (context) => const WorkoutsScreen(),
+              '/planning': (context) => const PlanningScreen(),
             },
           );
         },
