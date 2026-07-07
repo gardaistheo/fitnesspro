@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExerciseController;
+use App\Http\Controllers\MealController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\WorkoutSessionController;
 use Illuminate\Support\Facades\Route;
@@ -31,4 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('workout-sessions', [WorkoutSessionController::class, 'store']);
     Route::put('workout-sessions/{workoutSession}', [WorkoutSessionController::class, 'update']);
     Route::delete('workout-sessions/{workoutSession}', [WorkoutSessionController::class, 'destroy']);
+
+    Route::get('meals', [MealController::class, 'index']);
+    Route::post('meals', [MealController::class, 'store']);
 });
