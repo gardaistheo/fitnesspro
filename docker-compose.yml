@@ -1,13 +1,11 @@
-version: '3.9'
-
 services:
   postgres:
     image: postgres:15-alpine
     container_name: fitnesspro_postgres
     environment:
-      POSTGRES_USER: fitnesspro_user
-      POSTGRES_PASSWORD: fitnesspro_password
-      POSTGRES_DB: fitnesspro_dev
+      POSTGRES_USER: fitnesspro
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: fitnesspro
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -15,7 +13,7 @@ services:
     networks:
       - fitnesspro
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U fitnesspro_user -d fitnesspro_dev']
+      test: ['CMD-SHELL', 'pg_isready -U fitnesspro -d fitnesspro']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,28 +26,15 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    environment:
-      APP_ENV: local
-      APP_DEBUG: 'true'
-      APP_URL: http://localhost:8000
-      DB_CONNECTION: pgsql
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_DATABASE: fitnesspro_dev
-      DB_USERNAME: fitnesspro_user
-      DB_PASSWORD: fitnesspro_password
+    env_file:
+      - ./backend/.env
     volumes:
-      - ./backend:/app
-      - /app/vendor
-      - /app/node_modules
+      - ./backend:/var/www/html
+    working_dir: /var/www/html
     ports:
       - '8000:8000'
     networks:
       - fitnesspro
-    command: >
-      sh -c "composer install &&
-             php artisan migrate:fresh --seed &&
-             php -S 0.0.0.0:8000 -t public"
 
 volumes:
   postgres_data:
