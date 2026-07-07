@@ -26,7 +26,7 @@ mobile/ios/Flutter/Flutter.framework
 mobile/ios/Flutter/Flutter.podspec
 
 # Dependencies & packages
-*.lock
+mobile/*.lock
 *.log
 .env.local
 
