@@ -22,10 +22,10 @@ class _PlanningScreenState extends State<PlanningScreen> {
     });
   }
 
-  Color _chipColor(String label) {
-    if (label == "Aujourd'hui") return FPColors.accent;
-    if (label == 'Passé') return FPColors.muted;
-    return FPColors.blue;
+  Color _chipColor(FPColorScheme colors, String label) {
+    if (label == "Aujourd'hui") return colors.accent;
+    if (label == 'Passé') return colors.muted;
+    return colors.blue;
   }
 
   Future<void> _deleteSession(WorkoutSession session) async {
@@ -39,10 +39,11 @@ class _PlanningScreenState extends State<PlanningScreen> {
       await programProvider.loadPrograms();
     }
     if (!mounted) return;
+    final colors = FPColorScheme.of(context);
 
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: FPColors.surface,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -54,8 +55,8 @@ class _PlanningScreenState extends State<PlanningScreen> {
             itemBuilder: (context, index) {
               final Program program = programProvider.programs[index];
               return ListTile(
-                title: Text(program.name, style: TextStyle(color: FPColors.text)),
-                subtitle: Text(program.muscles.join(', '), style: TextStyle(color: FPColors.muted2)),
+                title: Text(program.name, style: TextStyle(color: colors.text)),
+                subtitle: Text(program.muscles.join(', '), style: TextStyle(color: colors.muted2)),
                 onTap: () async {
                   Navigator.of(context).pop();
                   final tomorrow = DateTime.now().add(const Duration(days: 1));
@@ -78,11 +79,12 @@ class _PlanningScreenState extends State<PlanningScreen> {
   @override
   Widget build(BuildContext context) {
     final sessionProvider = Provider.of<WorkoutSessionProvider>(context);
+    final colors = FPColorScheme.of(context);
     final grouped = sessionProvider.sessionsByDate;
     final sortedDates = grouped.keys.toList()..sort();
 
     return Scaffold(
-      backgroundColor: FPColors.bg,
+      backgroundColor: colors.bg,
       body: SafeArea(
         child: Column(
           children: [
@@ -94,29 +96,29 @@ class _PlanningScreenState extends State<PlanningScreen> {
                   Row(
                     children: [
                       IconButton(
-                        icon: Icon(Icons.chevron_left, color: FPColors.text),
+                        icon: Icon(Icons.chevron_left, color: colors.text),
                         onPressed: () => Navigator.of(context).maybePop(),
                       ),
                       Text(
                         'Planning',
-                        style: TextStyle(color: FPColors.text, fontSize: 18, fontWeight: FontWeight.w800),
+                        style: TextStyle(color: colors.text, fontSize: 18, fontWeight: FontWeight.w800),
                       ),
                     ],
                   ),
                   ElevatedButton(
                     onPressed: _showAddModal,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: FPColors.accent,
+                      backgroundColor: colors.accent,
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     ),
-                    child: Text('+ Ajouter', style: TextStyle(color: FPColors.bg, fontSize: 13, fontWeight: FontWeight.w700)),
+                    child: Text('+ Ajouter', style: TextStyle(color: colors.bg, fontSize: 13, fontWeight: FontWeight.w700)),
                   ),
                 ],
               ),
             ),
             Expanded(
               child: sessionProvider.isLoading
-                  ? Center(child: CircularProgressIndicator(color: FPColors.accent))
+                  ? Center(child: CircularProgressIndicator(color: colors.accent))
                   : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: sortedDates.length,
@@ -124,6 +126,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                         final date = sortedDates[dateIndex];
                         final sessionsForDate = grouped[date]!;
                         final label = sessionProvider.dateLabel(date);
+                        final chipColor = _chipColor(colors, label);
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,23 +138,23 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                   Text(
                                     '${date.day}/${date.month}/${date.year}'.toUpperCase(),
                                     style: TextStyle(
-                                      color: FPColors.muted2,
+                                      color: colors.muted2,
                                       fontSize: 11,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  Expanded(child: Divider(color: FPColors.border)),
+                                  Expanded(child: Divider(color: colors.border)),
                                   const SizedBox(width: 8),
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                     decoration: BoxDecoration(
-                                      color: _chipColor(label).withValues(alpha: 0.18),
+                                      color: chipColor.withValues(alpha: 0.18),
                                       borderRadius: BorderRadius.circular(999),
                                     ),
                                     child: Text(
                                       label,
-                                      style: TextStyle(color: _chipColor(label), fontSize: 11, fontWeight: FontWeight.w700),
+                                      style: TextStyle(color: chipColor, fontSize: 11, fontWeight: FontWeight.w700),
                                     ),
                                   ),
                                 ],
@@ -162,9 +165,9 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                 margin: const EdgeInsets.only(bottom: 8),
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: FPColors.surface,
+                                  color: colors.surface,
                                   borderRadius: BorderRadius.circular(11),
-                                  border: Border.all(color: FPColors.border),
+                                  border: Border.all(color: colors.border),
                                 ),
                                 child: Row(
                                   children: [
@@ -172,7 +175,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                       width: 42,
                                       height: 42,
                                       decoration: BoxDecoration(
-                                        color: FPColors.accentTint18,
+                                        color: colors.accent.withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(11),
                                       ),
                                       alignment: Alignment.center,
@@ -185,7 +188,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                         children: [
                                           Text(
                                             session.program?.name ?? 'Séance',
-                                            style: TextStyle(color: FPColors.text, fontWeight: FontWeight.w800),
+                                            style: TextStyle(color: colors.text, fontWeight: FontWeight.w800),
                                           ),
                                           Text(
                                             [
@@ -193,16 +196,16 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                               if (session.program != null) session.program!.muscles.join(', '),
                                               if (session.program?.duration != null) '${session.program!.duration} min',
                                             ].whereType<String>().join(' · '),
-                                            style: TextStyle(color: FPColors.muted2, fontSize: 12),
+                                            style: TextStyle(color: colors.muted2, fontSize: 12),
                                           ),
                                         ],
                                       ),
                                     ),
                                     IconButton(
-                                      icon: Icon(Icons.delete_outline, color: FPColors.red),
+                                      icon: Icon(Icons.delete_outline, color: colors.red),
                                       onPressed: () => _deleteSession(session),
                                       style: IconButton.styleFrom(
-                                        backgroundColor: FPColors.redTint18,
+                                        backgroundColor: colors.red.withValues(alpha: 0.1),
                                       ),
                                     ),
                                   ],

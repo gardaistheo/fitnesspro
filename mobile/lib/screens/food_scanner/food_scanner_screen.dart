@@ -116,21 +116,23 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = FPColorScheme.of(context);
+
     return Scaffold(
-      backgroundColor: FPColors.bg,
+      backgroundColor: colors.bg,
       body: SafeArea(
         child: switch (_phase) {
-          FoodScannerPhase.camera => _buildCameraPhase(),
-          FoodScannerPhase.scanning => _buildScanningPhase(),
-          FoodScannerPhase.result => _buildResultPhase(),
-          FoodScannerPhase.manual => _buildManualPhase(),
-          FoodScannerPhase.logged => _buildLoggedPhase(),
+          FoodScannerPhase.camera => _buildCameraPhase(colors),
+          FoodScannerPhase.scanning => _buildScanningPhase(colors),
+          FoodScannerPhase.result => _buildResultPhase(colors),
+          FoodScannerPhase.manual => _buildManualPhase(colors),
+          FoodScannerPhase.logged => _buildLoggedPhase(colors),
         },
       ),
     );
   }
 
-  Widget _buildCameraPhase() {
+  Widget _buildCameraPhase(FPColorScheme colors) {
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -140,7 +142,7 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
             width: 210,
             height: 170,
             decoration: BoxDecoration(
-              border: Border.all(color: FPColors.accent, width: 3),
+              border: Border.all(color: colors.accent, width: 3),
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -155,16 +157,16 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: FPColors.accent,
+                    color: colors.accent,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.camera_alt, color: FPColors.bg, size: 28),
+                  child: Icon(Icons.camera_alt, color: colors.bg, size: 28),
                 ),
               ),
               const SizedBox(height: 16),
               Text(
                 'Powered by Passio AI',
-                style: TextStyle(color: FPColors.muted2, fontSize: 11),
+                style: TextStyle(color: colors.muted2, fontSize: 11),
               ),
             ],
           ),
@@ -173,7 +175,7 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
           top: 8,
           left: 8,
           child: IconButton(
-            icon: Icon(Icons.close, color: FPColors.text),
+            icon: Icon(Icons.close, color: colors.text),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -184,7 +186,7 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
             onPressed: () => setState(() => _phase = FoodScannerPhase.manual),
             child: Text(
               'Saisie manuelle',
-              style: TextStyle(color: FPColors.muted2),
+              style: TextStyle(color: colors.muted2),
             ),
           ),
         ),
@@ -192,7 +194,7 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
     );
   }
 
-  Widget _buildScanningPhase() {
+  Widget _buildScanningPhase(FPColorScheme colors) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -202,20 +204,20 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
             height: 48,
             child: CircularProgressIndicator(
               strokeWidth: 4,
-              valueColor: AlwaysStoppedAnimation(FPColors.accent),
+              valueColor: AlwaysStoppedAnimation(colors.accent),
             ),
           ),
           const SizedBox(height: 24),
           Text(
             'Analyse en cours...',
-            style: TextStyle(color: FPColors.text, fontSize: 15),
+            style: TextStyle(color: colors.text, fontSize: 15),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildResultPhase() {
+  Widget _buildResultPhase(FPColorScheme colors) {
     final result = _result!;
 
     return Padding(
@@ -225,8 +227,8 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: FPColors.accentTint18,
-              border: Border.all(color: FPColors.accentTint44),
+              color: colors.accent.withValues(alpha: 0.1),
+              border: Border.all(color: colors.accent.withValues(alpha: 0.27)),
               borderRadius: BorderRadius.circular(16),
             ),
             padding: const EdgeInsets.all(20),
@@ -236,7 +238,7 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
                 Text(
                   '✓ REPAS IDENTIFIÉ',
                   style: TextStyle(
-                    color: FPColors.accent,
+                    color: colors.accent,
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1,
@@ -246,7 +248,7 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
                 Text(
                   result.name,
                   style: TextStyle(
-                    color: FPColors.text,
+                    color: colors.text,
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                   ),
@@ -255,7 +257,7 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
                 Text(
                   '${result.calories}',
                   style: TextStyle(
-                    color: FPColors.accent,
+                    color: colors.accent,
                     fontSize: 30,
                     fontWeight: FontWeight.w900,
                   ),
@@ -264,9 +266,9 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildMacro('Protéines', result.proteins, FPColors.blue),
-                    _buildMacro('Glucides', result.carbs, FPColors.orange),
-                    _buildMacro('Lipides', result.fats, FPColors.purple),
+                    _buildMacro(colors, 'Protéines', result.proteins, colors.blue),
+                    _buildMacro(colors, 'Glucides', result.carbs, colors.orange),
+                    _buildMacro(colors, 'Lipides', result.fats, colors.purple),
                   ],
                 ),
               ],
@@ -275,8 +277,8 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _confirmResult,
-            style: ElevatedButton.styleFrom(backgroundColor: FPColors.accent),
-            child: Text('Ajouter', style: TextStyle(color: FPColors.bg)),
+            style: ElevatedButton.styleFrom(backgroundColor: colors.accent),
+            child: Text('Ajouter', style: TextStyle(color: colors.bg)),
           ),
           const SizedBox(height: 12),
           OutlinedButton(
@@ -286,24 +288,24 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
           const SizedBox(height: 12),
           TextButton(
             onPressed: () => setState(() => _phase = FoodScannerPhase.manual),
-            child: Text('Saisie manuelle', style: TextStyle(color: FPColors.muted2)),
+            child: Text('Saisie manuelle', style: TextStyle(color: colors.muted2)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMacro(String label, int grams, Color color) {
+  Widget _buildMacro(FPColorScheme colors, String label, int grams, Color color) {
     return Column(
       children: [
         Text('${grams}g', style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w700)),
         const SizedBox(height: 4),
-        Text(label, style: TextStyle(color: FPColors.muted2, fontSize: 11)),
+        Text(label, style: TextStyle(color: colors.muted2, fontSize: 11)),
       ],
     );
   }
 
-  Widget _buildManualPhase() {
+  Widget _buildManualPhase(FPColorScheme colors) {
     const presets = [200, 400, 600];
 
     return SafeArea(
@@ -314,9 +316,9 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
             const SizedBox(height: 16),
             Text(
               _manualCalories.isEmpty ? '0' : _manualCalories,
-              style: TextStyle(color: FPColors.text, fontSize: 52, fontWeight: FontWeight.w900),
+              style: TextStyle(color: colors.text, fontSize: 52, fontWeight: FontWeight.w900),
             ),
-            Text('calories', style: TextStyle(color: FPColors.muted2, fontSize: 13)),
+            Text('calories', style: TextStyle(color: colors.muted2, fontSize: 13)),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -337,7 +339,7 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
                 for (final digit in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'])
                   digit.isEmpty
                       ? const SizedBox()
-                      : _buildNumpadKey(digit),
+                      : _buildNumpadKey(colors, digit),
               ],
             ),
             const SizedBox(height: 16),
@@ -345,8 +347,8 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _confirmManualEntry,
-                style: ElevatedButton.styleFrom(backgroundColor: FPColors.accent),
-                child: Text('Ajouter', style: TextStyle(color: FPColors.bg)),
+                style: ElevatedButton.styleFrom(backgroundColor: colors.accent),
+                child: Text('Ajouter', style: TextStyle(color: colors.bg)),
               ),
             ),
           ],
@@ -355,21 +357,21 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
     );
   }
 
-  Widget _buildNumpadKey(String digit) {
+  Widget _buildNumpadKey(FPColorScheme colors, String digit) {
     return Padding(
       padding: const EdgeInsets.all(4),
       child: ElevatedButton(
         onPressed: () => _numpadTap(digit),
         style: ElevatedButton.styleFrom(
-          backgroundColor: FPColors.surface2,
-          foregroundColor: FPColors.text,
+          backgroundColor: colors.surface2,
+          foregroundColor: colors.text,
         ),
         child: Text(digit, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
       ),
     );
   }
 
-  Widget _buildLoggedPhase() {
+  Widget _buildLoggedPhase(FPColorScheme colors) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -377,11 +379,11 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
           Container(
             width: 64,
             height: 64,
-            decoration: BoxDecoration(color: FPColors.greenTint22, shape: BoxShape.circle),
-            child: Icon(Icons.check, color: FPColors.green, size: 32),
+            decoration: BoxDecoration(color: colors.green.withValues(alpha: 0.13), shape: BoxShape.circle),
+            child: Icon(Icons.check, color: colors.green, size: 32),
           ),
           const SizedBox(height: 16),
-          Text('Repas enregistré !', style: TextStyle(color: FPColors.text, fontSize: 16, fontWeight: FontWeight.w700)),
+          Text('Repas enregistré !', style: TextStyle(color: colors.text, fontSize: 16, fontWeight: FontWeight.w700)),
         ],
       ),
     );

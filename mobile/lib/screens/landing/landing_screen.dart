@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import '../../core/constants/colors.dart';
 
 class LandingScreen extends StatelessWidget {
-  const LandingScreen({Key? key}) : super(key: key);
+  const LandingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colors = FPColorScheme.of(context);
+
     return Scaffold(
-      backgroundColor: FPColors.bg,
+      backgroundColor: colors.bg,
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -26,7 +28,7 @@ class LandingScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          FPColors.accent.withOpacity(0.1),
+                          colors.accent.withValues(alpha: 0.1),
                           Colors.transparent,
                         ],
                       ),
@@ -45,7 +47,7 @@ class LandingScreen extends StatelessWidget {
                         'Transforme\nton corps\navec IA',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          color: FPColors.text,
+                          color: colors.text,
                           fontWeight: FontWeight.w900,
                           letterSpacing: -1,
                         ),
@@ -55,7 +57,7 @@ class LandingScreen extends StatelessWidget {
                         'Découvre un programme de musculation personnalisé\net atteins tes objectifs en 90 jours',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: FPColors.muted2,
+                          color: colors.muted2,
                           fontSize: 15,
                           height: 1.6,
                         ),
@@ -71,9 +73,9 @@ class LandingScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: FPColors.border, width: 1),
+                  border: Border.all(color: colors.border, width: 1),
                   borderRadius: BorderRadius.circular(20),
-                  color: FPColors.surface,
+                  color: colors.surface,
                 ),
                 padding: const EdgeInsets.all(22),
                 child: Column(
@@ -83,7 +85,7 @@ class LandingScreen extends StatelessWidget {
                     Text(
                       'ACCÈS ILLIMITÉ',
                       style: TextStyle(
-                        color: FPColors.accent,
+                        color: colors.accent,
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 2,
@@ -99,7 +101,7 @@ class LandingScreen extends StatelessWidget {
                         Text(
                           '9,99',
                           style: TextStyle(
-                            color: FPColors.text,
+                            color: colors.text,
                             fontSize: 46,
                             fontWeight: FontWeight.w900,
                           ),
@@ -108,7 +110,7 @@ class LandingScreen extends StatelessWidget {
                         Text(
                           '€/mois',
                           style: TextStyle(
-                            color: FPColors.muted2,
+                            color: colors.muted2,
                             fontSize: 18,
                           ),
                         ),
@@ -117,13 +119,13 @@ class LandingScreen extends StatelessWidget {
                     const SizedBox(height: 22),
 
                     // Features
-                    _buildFeature('Coach IA personnalisé'),
+                    _buildFeature(colors, 'Coach IA personnalisé'),
                     const SizedBox(height: 12),
-                    _buildFeature('Plus de 500 exercices'),
+                    _buildFeature(colors, 'Plus de 500 exercices'),
                     const SizedBox(height: 12),
-                    _buildFeature('Suivi nutritionnel'),
+                    _buildFeature(colors, 'Suivi nutritionnel'),
                     const SizedBox(height: 12),
-                    _buildFeature('Plans d\'entraînement adaptés'),
+                    _buildFeature(colors, 'Plans d\'entraînement adaptés'),
                   ],
                 ),
               ),
@@ -140,7 +142,7 @@ class LandingScreen extends StatelessWidget {
                     Navigator.of(context).pushNamed('/signup');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: FPColors.accent,
+                    backgroundColor: colors.accent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -148,7 +150,7 @@ class LandingScreen extends StatelessWidget {
                   child: Text(
                     'Commencer mon essai gratuit →',
                     style: TextStyle(
-                      color: FPColors.bg,
+                      color: colors.bg,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -161,7 +163,7 @@ class LandingScreen extends StatelessWidget {
             Text(
               '7 jours gratuits',
               style: TextStyle(
-                color: FPColors.muted2,
+                color: colors.muted2,
                 fontSize: 13,
               ),
             ),
@@ -172,13 +174,13 @@ class LandingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeature(String text) {
+  Widget _buildFeature(FPColorScheme colors, String text) {
     return Row(
       children: [
         Text(
           '✓',
           style: TextStyle(
-            color: FPColors.accent,
+            color: colors.accent,
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
@@ -188,7 +190,7 @@ class LandingScreen extends StatelessWidget {
           child: Text(
             text,
             style: TextStyle(
-              color: FPColors.muted2,
+              color: colors.muted2,
               fontSize: 13,
               height: 1.5,
             ),

@@ -24,8 +24,10 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = FPColorScheme.of(context);
+
     return Scaffold(
-      backgroundColor: FPColors.bg,
+      backgroundColor: colors.bg,
       body: IndexedStack(
         index: _currentIndex,
         children: _tabs,
@@ -34,9 +36,9 @@ class _MainScreenState extends State<MainScreen> {
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
         type: BottomNavigationBarType.fixed,
-        backgroundColor: FPColors.surface,
-        selectedItemColor: FPColors.accent,
-        unselectedItemColor: FPColors.muted2,
+        backgroundColor: colors.surface,
+        selectedItemColor: colors.accent,
+        unselectedItemColor: colors.muted2,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Dashboard'),
           BottomNavigationBarItem(icon: Icon(Icons.camera_alt), label: 'Scanner'),

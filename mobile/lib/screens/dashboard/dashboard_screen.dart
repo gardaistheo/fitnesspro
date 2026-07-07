@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/constants/colors.dart';
+import '../../providers/theme_provider.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+  const DashboardScreen({super.key});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -11,12 +13,14 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _hydration = 1250; // ml consumed
   int _caloriesConsumed = 1800;
-  int _caloriesExpended = 500;
+  final int _caloriesExpended = 500;
 
   @override
   Widget build(BuildContext context) {
+    final colors = FPColorScheme.of(context);
+
     return Scaffold(
-      backgroundColor: FPColors.bg,
+      backgroundColor: colors.bg,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -33,7 +37,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Text(
                         'Bonjour 👋',
                         style: TextStyle(
-                          color: FPColors.muted2,
+                          color: colors.muted2,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -42,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Text(
                         'Mon tableau de bord',
                         style: TextStyle(
-                          color: FPColors.text,
+                          color: colors.text,
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
                           letterSpacing: -0.5,
@@ -50,51 +54,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: FPColors.accentTint22,
-                      border: Border.all(color: FPColors.accentTint44),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Row(
-                      children: [
-                        const Text('🔥', style: TextStyle(fontSize: 16)),
-                        const SizedBox(width: 6),
-                        Text(
-                          '12 jours',
-                          style: TextStyle(
-                            color: FPColors.accent,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  Row(
+                    children: [
+                      _buildThemeToggle(context, colors),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: colors.accent.withValues(alpha: 0.13),
+                          border: Border.all(color: colors.accent.withValues(alpha: 0.27)),
+                          borderRadius: BorderRadius.circular(999),
                         ),
-                      ],
-                    ),
+                        child: Row(
+                          children: [
+                            const Text('🔥', style: TextStyle(fontSize: 16)),
+                            const SizedBox(width: 6),
+                            Text(
+                              '12 jours',
+                              style: TextStyle(
+                                color: colors.accent,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
 
               const SizedBox(height: 24),
 
-              // Streak Card
-              _buildStreakCard(),
-
+              _buildStreakCard(colors),
               const SizedBox(height: 12),
-
-              // Next Workout Card
-              _buildNextWorkoutCard(),
-
+              _buildNextWorkoutCard(context, colors),
               const SizedBox(height: 12),
-
-              // Hydration Card
-              _buildHydrationCard(),
-
+              _buildHydrationCard(colors),
               const SizedBox(height: 12),
-
-              // Calories Card
-              _buildCaloriesCard(),
-
+              _buildCaloriesCard(context, colors),
               const SizedBox(height: 32),
             ],
           ),
@@ -103,18 +102,50 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildStreakCard() {
+  Widget _buildThemeToggle(BuildContext context, FPColorScheme colors) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    IconData iconFor(ThemeMode mode) {
+      switch (mode) {
+        case ThemeMode.light:
+          return Icons.light_mode;
+        case ThemeMode.dark:
+          return Icons.dark_mode;
+        case ThemeMode.system:
+          return Icons.brightness_auto;
+      }
+    }
+
+    ThemeMode next(ThemeMode mode) {
+      switch (mode) {
+        case ThemeMode.system:
+          return ThemeMode.light;
+        case ThemeMode.light:
+          return ThemeMode.dark;
+        case ThemeMode.dark:
+          return ThemeMode.system;
+      }
+    }
+
+    return IconButton(
+      icon: Icon(iconFor(themeProvider.themeMode), color: colors.muted2, size: 20),
+      tooltip: 'Changer de thème',
+      onPressed: () => themeProvider.setThemeMode(next(themeProvider.themeMode)),
+    );
+  }
+
+  Widget _buildStreakCard(FPColorScheme colors) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            FPColors.accent.withOpacity(0.2),
-            FPColors.surface,
+            colors.accent.withValues(alpha: 0.2),
+            colors.surface,
           ],
         ),
-        border: Border.all(color: FPColors.accentTint44),
+        border: Border.all(color: colors.accent.withValues(alpha: 0.27)),
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.all(20),
@@ -127,7 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Text(
                 'Streak',
                 style: TextStyle(
-                  color: FPColors.muted2,
+                  color: colors.muted2,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -136,28 +167,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Text(
                 '12',
                 style: TextStyle(
-                  color: FPColors.text,
+                  color: colors.text,
                   fontSize: 34,
                   fontWeight: FontWeight.w900,
                 ),
               ),
             ],
           ),
-          Text(
-            '🔥',
-            style: TextStyle(fontSize: 48),
-          ),
+          const Text('🔥', style: TextStyle(fontSize: 48)),
         ],
       ),
     );
   }
 
-  Widget _buildNextWorkoutCard() {
+  Widget _buildNextWorkoutCard(BuildContext context, FPColorScheme colors) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: FPColors.border),
+        border: Border.all(color: colors.border),
         borderRadius: BorderRadius.circular(16),
-        color: FPColors.surface,
+        color: colors.surface,
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -165,27 +193,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
         children: [
           Text(
             'Lun 7 Juil · 10:00',
-            style: TextStyle(
-              color: FPColors.muted2,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: colors.muted2, fontSize: 12),
           ),
           const SizedBox(height: 8),
           Text(
             'Push Day A',
-            style: TextStyle(
-              color: FPColors.text,
-              fontSize: 17,
-              fontWeight: FontWeight.w800,
-            ),
+            style: TextStyle(color: colors.text, fontSize: 17, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 6),
           Text(
             'Poitrine, Épaules, Triceps',
-            style: TextStyle(
-              color: FPColors.muted2,
-              fontSize: 13,
-            ),
+            style: TextStyle(color: colors.muted2, fontSize: 13),
           ),
           const SizedBox(height: 12),
           Row(
@@ -194,16 +212,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: FPColors.blue.withOpacity(0.2),
+                  color: colors.blue.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
                   '45 min',
-                  style: TextStyle(
-                    color: FPColors.blue,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: TextStyle(color: colors.blue, fontSize: 11, fontWeight: FontWeight.w700),
                 ),
               ),
               ElevatedButton.icon(
@@ -214,7 +228,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 label: const Text('Voir le planning'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
-                  foregroundColor: FPColors.accent,
+                  foregroundColor: colors.accent,
                   elevation: 0,
                   padding: EdgeInsets.zero,
                 ),
@@ -226,15 +240,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildHydrationCard() {
+  Widget _buildHydrationCard(FPColorScheme colors) {
     const int maxHydration = 2000; // ml/day target
     final progress = (_hydration / maxHydration).clamp(0.0, 1.0);
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: FPColors.border),
+        border: Border.all(color: colors.border),
         borderRadius: BorderRadius.circular(16),
-        color: FPColors.surface,
+        color: colors.surface,
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -244,16 +258,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               Text(
                 '$_hydration ml / $maxHydration ml',
-                style: TextStyle(
-                  color: FPColors.text,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(color: colors.text, fontSize: 13, fontWeight: FontWeight.w600),
               ),
-              Text(
-                '💧',
-                style: TextStyle(fontSize: 18),
-              ),
+              const Text('💧', style: TextStyle(fontSize: 18)),
             ],
           ),
           const SizedBox(height: 12),
@@ -262,8 +269,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 8,
-              backgroundColor: FPColors.surface2,
-              valueColor: AlwaysStoppedAnimation(FPColors.blue),
+              backgroundColor: colors.surface2,
+              valueColor: AlwaysStoppedAnimation(colors.blue),
             ),
           ),
           const SizedBox(height: 12),
@@ -273,8 +280,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ElevatedButton(
                 onPressed: () => setState(() => _hydration += 250),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: FPColors.blue.withOpacity(0.2),
-                  foregroundColor: FPColors.blue,
+                  backgroundColor: colors.blue.withValues(alpha: 0.2),
+                  foregroundColor: colors.blue,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
                 child: const Text('+250 ml'),
@@ -282,8 +289,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ElevatedButton(
                 onPressed: () => setState(() => _hydration += 500),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: FPColors.blue.withOpacity(0.2),
-                  foregroundColor: FPColors.blue,
+                  backgroundColor: colors.blue.withValues(alpha: 0.2),
+                  foregroundColor: colors.blue,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
                 child: const Text('+500 ml'),
@@ -291,8 +298,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ElevatedButton(
                 onPressed: () => setState(() => _hydration = 0),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: FPColors.blue.withOpacity(0.2),
-                  foregroundColor: FPColors.blue,
+                  backgroundColor: colors.blue.withValues(alpha: 0.2),
+                  foregroundColor: colors.blue,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
                 child: const Text('↺'),
@@ -304,7 +311,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildCaloriesCard() {
+  Widget _buildCaloriesCard(BuildContext context, FPColorScheme colors) {
     const int calorieTarget = 2500;
     final consumed = _caloriesConsumed;
     final expended = _caloriesExpended;
@@ -313,9 +320,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: FPColors.border),
+        border: Border.all(color: colors.border),
         borderRadius: BorderRadius.circular(16),
-        color: FPColors.surface,
+        color: colors.surface,
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -325,16 +332,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               Text(
                 '$consumed kcal / $calorieTarget kcal',
-                style: TextStyle(
-                  color: FPColors.text,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(color: colors.text, fontSize: 13, fontWeight: FontWeight.w600),
               ),
-              Text(
-                '🔥',
-                style: TextStyle(fontSize: 18),
-              ),
+              const Text('🔥', style: TextStyle(fontSize: 18)),
             ],
           ),
           const SizedBox(height: 12),
@@ -343,28 +343,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: LinearProgressIndicator(
               value: progressConsumed,
               minHeight: 8,
-              backgroundColor: FPColors.surface2,
-              valueColor: AlwaysStoppedAnimation(FPColors.orange),
+              backgroundColor: colors.surface2,
+              valueColor: AlwaysStoppedAnimation(colors.orange),
             ),
           ),
           const SizedBox(height: 12),
           Container(
             decoration: BoxDecoration(
-              color: FPColors.surface2,
+              color: colors.surface2,
               borderRadius: BorderRadius.circular(10),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Column(
               children: [
-                _buildCalorieDetail('Apports', '$consumed kcal'),
+                _buildCalorieDetail(colors, 'Apports', '$consumed kcal'),
                 const SizedBox(height: 8),
-                _buildCalorieDetail('Dépenses', '$expended kcal'),
+                _buildCalorieDetail(colors, 'Dépenses', '$expended kcal'),
                 const SizedBox(height: 8),
-                _buildCalorieDetail('Sport', '${expended ~/ 2} kcal'),
+                _buildCalorieDetail(colors, 'Sport', '${expended ~/ 2} kcal'),
                 const SizedBox(height: 8),
-                Divider(color: FPColors.border, height: 8),
+                Divider(color: colors.border, height: 8),
                 const SizedBox(height: 8),
-                _buildCalorieDetail('Restant', '$remaining kcal', accent: true),
+                _buildCalorieDetail(colors, 'Restant', '$remaining kcal', accent: true),
               ],
             ),
           ),
@@ -377,7 +377,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
-                foregroundColor: FPColors.muted2,
+                foregroundColor: colors.muted2,
                 elevation: 0,
               ),
               child: const Text('📷 Scanner un repas'),
@@ -388,21 +388,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildCalorieDetail(String label, String value, {bool accent = false}) {
+  Widget _buildCalorieDetail(FPColorScheme colors, String label, String value, {bool accent = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: FPColors.muted2,
-            fontSize: 12,
-          ),
-        ),
+        Text(label, style: TextStyle(color: colors.muted2, fontSize: 12)),
         Text(
           value,
           style: TextStyle(
-            color: accent ? FPColors.accent : FPColors.text,
+            color: accent ? colors.accent : colors.text,
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),

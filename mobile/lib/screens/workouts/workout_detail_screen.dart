@@ -35,10 +35,11 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
     setState(() => _isAdding = false);
 
     if (success) {
+      final colors = FPColorScheme.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✓ ${widget.program.name} ajouté au planning'),
-          backgroundColor: FPColors.greenTint22,
+          backgroundColor: colors.green.withValues(alpha: 0.13),
           duration: const Duration(milliseconds: 2200),
         ),
       );
@@ -48,13 +49,14 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final program = widget.program;
+    final colors = FPColorScheme.of(context);
 
     return Scaffold(
-      backgroundColor: FPColors.bg,
+      backgroundColor: colors.bg,
       appBar: AppBar(
-        backgroundColor: FPColors.bg,
-        title: Text(program.name, style: TextStyle(color: FPColors.text)),
-        iconTheme: IconThemeData(color: FPColors.text),
+        backgroundColor: colors.bg,
+        title: Text(program.name, style: TextStyle(color: colors.text)),
+        iconTheme: IconThemeData(color: colors.text),
       ),
       body: Column(
         children: [
@@ -69,8 +71,8 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                     children: [
                       DiffChip(difficulty: program.difficulty),
                       if (program.duration != null)
-                        FPChip(label: '${program.duration} min', color: FPColors.blue),
-                      ...program.muscles.map((m) => FPChip(label: m, color: FPColors.purple)),
+                        FPChip(label: '${program.duration} min', color: colors.blue),
+                      ...program.muscles.map((m) => FPChip(label: m, color: colors.purple)),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -79,16 +81,16 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: FPColors.surface,
+                        color: colors.surface,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: FPColors.border),
+                        border: Border.all(color: colors.border),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             exercise.exerciseName,
-                            style: TextStyle(color: FPColors.text, fontWeight: FontWeight.w700, fontSize: 15),
+                            style: TextStyle(color: colors.text, fontWeight: FontWeight.w700, fontSize: 15),
                           ),
                           const SizedBox(height: 10),
                           Wrap(
@@ -98,19 +100,19 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                               return Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                                 decoration: BoxDecoration(
-                                  color: FPColors.surface2,
+                                  color: colors.surface2,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Column(
                                   children: [
                                     Text(
                                       'Série ${i + 1}',
-                                      style: TextStyle(color: FPColors.muted2, fontSize: 11),
+                                      style: TextStyle(color: colors.muted2, fontSize: 11),
                                     ),
                                     Text(
                                       '${exercise.reps}',
                                       style: TextStyle(
-                                        color: FPColors.accent,
+                                        color: colors.accent,
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
                                       ),
@@ -134,14 +136,14 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _isAdding ? null : _addToPlanning,
-                style: ElevatedButton.styleFrom(backgroundColor: FPColors.accent),
+                style: ElevatedButton.styleFrom(backgroundColor: colors.accent),
                 child: _isAdding
                     ? SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: FPColors.bg),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: colors.bg),
                       )
-                    : Text('📅 Ajouter à mon planning', style: TextStyle(color: FPColors.bg)),
+                    : Text('📅 Ajouter à mon planning', style: TextStyle(color: colors.bg)),
               ),
             ),
           ),

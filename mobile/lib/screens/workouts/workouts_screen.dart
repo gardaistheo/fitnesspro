@@ -28,9 +28,10 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
   @override
   Widget build(BuildContext context) {
     final programProvider = Provider.of<ProgramProvider>(context);
+    final colors = FPColorScheme.of(context);
 
     return Scaffold(
-      backgroundColor: FPColors.bg,
+      backgroundColor: colors.bg,
       body: SafeArea(
         child: Column(
           children: [
@@ -51,10 +52,10 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                       setState(() => _selectedDifficulty = difficulty);
                       programProvider.loadPrograms(difficulty: difficulty);
                     },
-                    backgroundColor: FPColors.surface2,
-                    selectedColor: FPColors.accentTint22,
+                    backgroundColor: colors.surface2,
+                    selectedColor: colors.accent.withValues(alpha: 0.13),
                     labelStyle: TextStyle(
-                      color: isSelected ? FPColors.accent : FPColors.muted2,
+                      color: isSelected ? colors.accent : colors.muted2,
                       fontSize: 12,
                     ),
                   );
@@ -63,7 +64,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
             ),
             Expanded(
               child: programProvider.isLoading
-                  ? Center(child: CircularProgressIndicator(color: FPColors.accent))
+                  ? Center(child: CircularProgressIndicator(color: colors.accent))
                   : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: programProvider.programs.length,
@@ -74,8 +75,8 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                         return Container(
                           margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
-                            color: FPColors.surface,
-                            border: Border.all(color: FPColors.border),
+                            color: colors.surface,
+                            border: Border.all(color: colors.border),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: InkWell(
@@ -102,7 +103,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                                             Text(
                                               program.name,
                                               style: TextStyle(
-                                                color: FPColors.text,
+                                                color: colors.text,
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w800,
                                               ),
@@ -110,7 +111,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                                             const SizedBox(height: 4),
                                             Text(
                                               program.muscles.join(', '),
-                                              style: TextStyle(color: FPColors.muted2, fontSize: 13),
+                                              style: TextStyle(color: colors.muted2, fontSize: 13),
                                             ),
                                           ],
                                         ),
@@ -123,18 +124,18 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                                     Container(
                                       padding: const EdgeInsets.only(top: 12),
                                       decoration: BoxDecoration(
-                                        border: Border(top: BorderSide(color: FPColors.border)),
+                                        border: Border(top: BorderSide(color: colors.border)),
                                       ),
                                       child: Row(
                                         children: [
                                           Expanded(
                                             child: Text(
                                               firstThree,
-                                              style: TextStyle(color: FPColors.muted2, fontSize: 12),
+                                              style: TextStyle(color: colors.muted2, fontSize: 12),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          Icon(Icons.chevron_right, color: FPColors.muted2, size: 18),
+                                          Icon(Icons.chevron_right, color: colors.muted2, size: 18),
                                         ],
                                       ),
                                     ),

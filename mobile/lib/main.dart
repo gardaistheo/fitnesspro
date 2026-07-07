@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'core/constants/colors.dart';
+import 'core/theme/app_theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/exercise_provider.dart';
 import 'providers/meal_provider.dart';
@@ -69,22 +69,8 @@ class FitnessProApp extends StatelessWidget {
             title: 'FitnessPro',
             debugShowCheckedModeBanner: false,
             themeMode: theme.themeMode,
-            theme: ThemeData(
-              brightness: Brightness.light,
-              scaffoldBackgroundColor: FPColors.lightBg,
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: FPColors.accent,
-                brightness: Brightness.light,
-              ),
-            ),
-            darkTheme: ThemeData(
-              brightness: Brightness.dark,
-              scaffoldBackgroundColor: FPColors.bg,
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: FPColors.accent,
-                brightness: Brightness.dark,
-              ),
-            ),
+            theme: AppTheme.light,
+            darkTheme: AppTheme.dark,
             initialRoute: '/',
             routes: {
               '/': (context) => const LandingScreen(),

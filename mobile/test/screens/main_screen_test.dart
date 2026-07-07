@@ -6,6 +6,7 @@ import 'package:mobile/providers/auth_provider.dart';
 import 'package:mobile/providers/exercise_provider.dart';
 import 'package:mobile/providers/meal_provider.dart';
 import 'package:mobile/providers/program_provider.dart';
+import 'package:mobile/providers/theme_provider.dart';
 import 'package:mobile/services/api_service.dart';
 import 'package:mobile/services/storage_service.dart';
 import 'package:mobile/screens/main/main_screen.dart';
@@ -40,6 +41,7 @@ void main() {
         ChangeNotifierProvider<MealProvider>(create: (_) => MealProvider(apiService: mockApiService)),
         ChangeNotifierProvider<ExerciseProvider>(create: (_) => ExerciseProvider(apiService: mockApiService)),
         ChangeNotifierProvider<ProgramProvider>(create: (_) => ProgramProvider(apiService: mockApiService)),
+        ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider(storageService: storageService)),
       ],
       child: const MaterialApp(home: MainScreen()),
     );

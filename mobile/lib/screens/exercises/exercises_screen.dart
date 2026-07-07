@@ -37,9 +37,10 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
   @override
   Widget build(BuildContext context) {
     final exerciseProvider = Provider.of<ExerciseProvider>(context);
+    final colors = FPColorScheme.of(context);
 
     return Scaffold(
-      backgroundColor: FPColors.bg,
+      backgroundColor: colors.bg,
       body: SafeArea(
         child: Column(
           children: [
@@ -47,12 +48,12 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: TextField(
                 onChanged: exerciseProvider.setSearchQuery,
-                style: TextStyle(color: FPColors.text),
+                style: TextStyle(color: colors.text),
                 decoration: InputDecoration(
                   hintText: 'Rechercher un exercice',
-                  hintStyle: TextStyle(color: FPColors.muted2),
+                  hintStyle: TextStyle(color: colors.muted2),
                   filled: true,
-                  fillColor: FPColors.surface2,
+                  fillColor: colors.surface2,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
@@ -77,10 +78,10 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                       setState(() => _selectedCategory = category);
                       exerciseProvider.loadExercises(category: category);
                     },
-                    backgroundColor: FPColors.surface2,
-                    selectedColor: FPColors.accentTint22,
+                    backgroundColor: colors.surface2,
+                    selectedColor: colors.accent.withValues(alpha: 0.13),
                     labelStyle: TextStyle(
-                      color: isSelected ? FPColors.accent : FPColors.muted2,
+                      color: isSelected ? colors.accent : colors.muted2,
                       fontSize: 12,
                     ),
                   );
@@ -90,7 +91,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
             const SizedBox(height: 8),
             Expanded(
               child: exerciseProvider.isLoading
-                  ? Center(child: CircularProgressIndicator(color: FPColors.accent))
+                  ? Center(child: CircularProgressIndicator(color: colors.accent))
                   : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: exerciseProvider.exercises.length,
@@ -102,24 +103,24 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                             width: 42,
                             height: 42,
                             decoration: BoxDecoration(
-                              color: FPColors.accentTint18,
+                              color: colors.accent.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Icon(Icons.fitness_center, color: FPColors.accent),
+                            child: Icon(Icons.fitness_center, color: colors.accent),
                           ),
                           title: Text(
                             exercise.name,
-                            style: TextStyle(color: FPColors.text, fontWeight: FontWeight.w700),
+                            style: TextStyle(color: colors.text, fontWeight: FontWeight.w700),
                           ),
                           subtitle: Text(
                             exercise.muscles.join(', '),
-                            style: TextStyle(color: FPColors.muted2, fontSize: 13),
+                            style: TextStyle(color: colors.muted2, fontSize: 13),
                           ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               DiffChip(difficulty: exercise.difficulty),
-                              Icon(Icons.chevron_right, color: FPColors.muted2),
+                              Icon(Icons.chevron_right, color: colors.muted2),
                             ],
                           ),
                           onTap: () {

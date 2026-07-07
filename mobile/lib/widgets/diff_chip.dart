@@ -6,30 +6,33 @@ class DiffChip extends StatelessWidget {
 
   const DiffChip({super.key, required this.difficulty});
 
-  Color get _color {
+  Color _color(FPColorScheme colors) {
     switch (difficulty) {
       case 'Débutant':
-        return FPColors.green;
+        return colors.green;
       case 'Intermédiaire':
-        return FPColors.orange;
+        return colors.orange;
       case 'Avancé':
-        return FPColors.red;
+        return colors.red;
       default:
-        return FPColors.muted2;
+        return colors.muted2;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = FPColorScheme.of(context);
+    final color = _color(colors);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
       decoration: BoxDecoration(
-        color: _color.withValues(alpha: 0.13),
+        color: color.withValues(alpha: 0.13),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
         difficulty,
-        style: TextStyle(color: _color, fontSize: 11, fontWeight: FontWeight.w700),
+        style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700),
       ),
     );
   }
