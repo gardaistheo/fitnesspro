@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/constants/colors.dart';
 import 'providers/auth_provider.dart';
+import 'providers/exercise_provider.dart';
 import 'providers/meal_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/dashboard/dashboard_screen.dart';
+import 'screens/exercises/exercises_screen.dart';
 import 'screens/food_scanner/food_scanner_screen.dart';
 import 'screens/landing/landing_screen.dart';
 import 'services/api_service.dart';
@@ -53,6 +55,7 @@ class FitnessProApp extends StatelessWidget {
           create: (_) => AuthProvider(apiService: apiService, storageService: storageService),
         ),
         ChangeNotifierProvider(create: (_) => MealProvider(apiService: apiService)),
+        ChangeNotifierProvider(create: (_) => ExerciseProvider(apiService: apiService)),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, theme, _) {
@@ -81,6 +84,7 @@ class FitnessProApp extends StatelessWidget {
               '/': (context) => const LandingScreen(),
               '/dashboard': (context) => const DashboardScreen(),
               '/food-scanner': (context) => const FoodScannerScreen(),
+              '/exercises': (context) => const ExercisesScreen(),
             },
           );
         },
