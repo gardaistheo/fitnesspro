@@ -1,0 +1,96 @@
+name: Backend (Laravel) — Lint + Test + Coverage
+
+on:
+  push:
+    branches: [main, develop, feature/*, fix/*]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/lint-test-backend.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'backend/**'
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: fitnesspro_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:2.5
+          coverage: pcov
+
+      - name: Install Dependencies
+        working-directory: ./backend
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Setup Database
+        working-directory: ./backend
+        run: |
+          cp .env.example .env.testing
+          php artisan key:generate --env=testing
+          php artisan migrate --env=testing --database=testing
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_DATABASE: fitnesspro_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
+
+      - name: Run Linter (Pint)
+        working-directory: ./backend
+        run: ./vendor/bin/pint --test
+
+      - name: Run Static Analysis (Larastan)
+        working-directory: ./backend
+        run: ./vendor/bin/phpstan analyse --memory-limit=512M
+        continue-on-error: true
+
+      - name: Run Tests (Pest) with Coverage
+        working-directory: ./backend
+        run: ./vendor/bin/pest --coverage --coverage-clover=coverage.xml --coverage-html=coverage-report
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_DATABASE: fitnesspro_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
+
+      - name: Check Coverage (70% minimum)
+        working-directory: ./backend
+        run: |
+          COVERAGE=$(grep -oP 'Lines:\s+\K[0-9.]+' coverage-report/index.html)
+          echo "Code Coverage: ${COVERAGE}%"
+          if (( $(echo "$COVERAGE < 70" | bc -l) )); then
+            echo "❌ Coverage below 70% threshold"
+            exit 1
+          fi
+
+      - name: Upload Coverage Reports
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./backend/coverage.xml
+          flags: backend
+          fail_ci_if_error: false
