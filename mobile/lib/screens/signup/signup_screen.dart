@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/colors.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/subscription_provider.dart';
 import '../../widgets/back_header.dart';
 
 /// Account creation step of the signup flow.
 ///
 /// Per Plan-implementation-FitnessPro.md, payment is delegated entirely to
-/// RevenueCat's native paywall SDK (Phase 3) — this screen intentionally
-/// does not include a manual card-entry step, even though the HTML design
-/// reference shows one. Only account creation (name/email/password) is
-/// built here; RevenueCat's purchase flow will follow this screen once the
-/// SDK is integrated.
+/// RevenueCat's native paywall SDK — this screen intentionally does not
+/// include a manual card-entry step, even though the HTML design reference
+/// shows one. On success this pushes '/paywall' (RevenueCat's native UI),
+/// not the quiz directly.
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 
@@ -37,6 +37,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Future<void> _submit() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
 
     final success = await authProvider.register(
       _nameController.text,
@@ -47,7 +48,16 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!mounted) return;
 
     if (success) {
-      Navigator.of(context).pushReplacementNamed('/quiz');
+      final userId = authProvider.user?.id;
+      if (userId != null) {
+        // Link RevenueCat's app user ID to our backend's user ID *before*
+        // presenting the paywall, so the correct customer/offerings are
+        // shown and the RevenueCat webhook can resolve the purchase back
+        // to this account.
+        await subscriptionProvider.login(userId.toString());
+      }
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed('/paywall');
     } else {
       final colors = FPColorScheme.of(context);
       ScaffoldMessenger.of(context).showSnackBar(

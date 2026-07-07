@@ -4,9 +4,11 @@ import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile/providers/auth_provider.dart';
+import 'package:mobile/providers/subscription_provider.dart';
 import 'package:mobile/services/api_service.dart';
 import 'package:mobile/services/storage_service.dart';
 import 'package:mobile/screens/signup/signup_screen.dart';
+import '../support/revenuecat_test_mocks.dart';
 
 class MockApiService extends Mock implements ApiService {}
 
@@ -21,19 +23,29 @@ void main() {
   late StorageService storageService;
 
   setUp(() async {
+    installRevenueCatMocks();
     SharedPreferences.setMockInitialValues({});
     mockApiService = MockApiService();
     storageService = StorageService();
     await storageService.init();
   });
 
+  tearDown(() {
+    clearRevenueCatMocks();
+  });
+
   Widget buildTestable() {
-    return ChangeNotifierProvider<AuthProvider>(
-      create: (_) => AuthProvider(apiService: mockApiService, storageService: storageService),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthProvider>(
+          create: (_) => AuthProvider(apiService: mockApiService, storageService: storageService),
+        ),
+        ChangeNotifierProvider<SubscriptionProvider>(create: (_) => SubscriptionProvider()),
+      ],
       child: MaterialApp(
         routes: {
           '/': (context) => const SignupScreen(),
-          '/quiz': (context) => const Scaffold(body: Text('QUIZ_SCREEN')),
+          '/paywall': (context) => const Scaffold(body: Text('PAYWALL_SCREEN')),
         },
       ),
     );
@@ -54,7 +66,7 @@ void main() {
     expect(buttonAfter.onPressed, isNotNull);
   });
 
-  testWidgets('successful registration navigates to the quiz screen', (tester) async {
+  testWidgets('successful registration links RevenueCat and navigates to the paywall', (tester) async {
     when(() => mockApiService.post('/auth/register', any())).thenAnswer((_) async => {
           'data': {
             'user': {
@@ -77,7 +89,7 @@ void main() {
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
 
-    expect(find.text('QUIZ_SCREEN'), findsOneWidget);
+    expect(find.text('PAYWALL_SCREEN'), findsOneWidget);
   });
 
   testWidgets('failed registration shows an error snackbar and stays on the form', (tester) async {
@@ -93,7 +105,7 @@ void main() {
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
 
-    expect(find.text('QUIZ_SCREEN'), findsNothing);
+    expect(find.text('PAYWALL_SCREEN'), findsNothing);
     expect(find.byType(SnackBar), findsOneWidget);
   });
 

@@ -3,10 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile/core/theme/app_theme.dart';
+import 'package:mobile/providers/subscription_provider.dart';
 import 'package:mobile/providers/theme_provider.dart';
 import 'package:mobile/services/api_service.dart';
 import 'package:mobile/services/storage_service.dart';
 import 'package:mobile/main.dart';
+import '../support/revenuecat_test_mocks.dart';
 
 class MockApiService extends Mock implements ApiService {}
 
@@ -15,6 +17,14 @@ class FakeMap extends Fake implements Map<String, dynamic> {}
 void main() {
   setUpAll(() {
     registerFallbackValue(FakeMap());
+  });
+
+  setUp(() {
+    installRevenueCatMocks(paywallResult: 'CANCELLED');
+  });
+
+  tearDown(() {
+    clearRevenueCatMocks();
   });
 
   testWidgets('full flow: Landing -> Signup -> Quiz -> Onboarding -> Dashboard', (tester) async {
@@ -39,11 +49,14 @@ void main() {
 
     final themeProvider = ThemeProvider(storageService: storageService);
     await themeProvider.init();
+    final subscriptionProvider = SubscriptionProvider();
+    await subscriptionProvider.configure();
 
     await tester.pumpWidget(FitnessProApp(
       apiService: mockApiService,
       storageService: storageService,
       themeProvider: themeProvider,
+      subscriptionProvider: subscriptionProvider,
     ));
     await tester.pumpAndSettle();
 
@@ -54,7 +67,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Créer un compte'), findsOneWidget);
 
-    // Fill the signup form -> Quiz
+    // Fill the signup form -> paywall (mocked as CANCELLED) -> Quiz
     await tester.enterText(find.widgetWithText(TextField, 'Prénom et nom'), 'Jane Doe');
     await tester.enterText(find.widgetWithText(TextField, 'Adresse e-mail'), 'jane@example.com');
     await tester.enterText(find.widgetWithText(TextField, 'Mot de passe'), 'password123');
@@ -108,11 +121,14 @@ void main() {
     final themeProvider = ThemeProvider(storageService: storageService);
     await themeProvider.init();
     await themeProvider.setThemeMode(ThemeMode.dark);
+    final subscriptionProvider = SubscriptionProvider();
+    await subscriptionProvider.configure();
 
     await tester.pumpWidget(FitnessProApp(
       apiService: apiService,
       storageService: storageService,
       themeProvider: themeProvider,
+      subscriptionProvider: subscriptionProvider,
     ));
     await tester.pumpAndSettle();
 

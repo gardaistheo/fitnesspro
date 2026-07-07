@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import '../../core/constants/colors.dart';
 import '../../providers/theme_provider.dart';
 
@@ -56,6 +57,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   Row(
                     children: [
+                      _buildCustomerCenterButton(context, colors),
+                      const SizedBox(width: 4),
                       _buildThemeToggle(context, colors),
                       const SizedBox(width: 8),
                       Container(
@@ -131,6 +134,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       icon: Icon(iconFor(themeProvider.themeMode), color: colors.muted2, size: 20),
       tooltip: 'Changer de thème',
       onPressed: () => themeProvider.setThemeMode(next(themeProvider.themeMode)),
+    );
+  }
+
+  Widget _buildCustomerCenterButton(BuildContext context, FPColorScheme colors) {
+    return IconButton(
+      icon: Icon(Icons.manage_accounts_outlined, color: colors.muted2, size: 20),
+      tooltip: 'Gérer mon abonnement',
+      onPressed: () => RevenueCatUI.presentCustomerCenter(),
     );
   }
 

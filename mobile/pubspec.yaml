@@ -52,6 +52,8 @@ dependencies:
   # Camera & Image
   camera: ^0.10.5
   image_picker: ^1.0.0
+  purchases_flutter: ^10.4.0
+  purchases_ui_flutter: ^10.4.0
 
 dev_dependencies:
   flutter_test:

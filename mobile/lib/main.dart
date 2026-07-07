@@ -5,6 +5,7 @@ import 'providers/auth_provider.dart';
 import 'providers/exercise_provider.dart';
 import 'providers/meal_provider.dart';
 import 'providers/program_provider.dart';
+import 'providers/subscription_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/workout_session_provider.dart';
 import 'screens/exercises/exercises_screen.dart';
@@ -12,6 +13,7 @@ import 'screens/food_scanner/food_scanner_screen.dart';
 import 'screens/landing/landing_screen.dart';
 import 'screens/main/main_screen.dart';
 import 'screens/onboarding/onboarding_slides_screen.dart';
+import 'screens/paywall/paywall_screen.dart';
 import 'screens/planning/planning_screen.dart';
 import 'screens/quiz/quiz_screen.dart';
 import 'screens/signup/signup_screen.dart';
@@ -34,10 +36,14 @@ Future<void> main() async {
   final themeProvider = ThemeProvider(storageService: storageService);
   await themeProvider.init();
 
+  final subscriptionProvider = SubscriptionProvider();
+  await subscriptionProvider.configure();
+
   runApp(FitnessProApp(
     apiService: apiService,
     storageService: storageService,
     themeProvider: themeProvider,
+    subscriptionProvider: subscriptionProvider,
   ));
 }
 
@@ -45,12 +51,14 @@ class FitnessProApp extends StatelessWidget {
   final ApiService apiService;
   final StorageService storageService;
   final ThemeProvider themeProvider;
+  final SubscriptionProvider subscriptionProvider;
 
   const FitnessProApp({
     super.key,
     required this.apiService,
     required this.storageService,
     required this.themeProvider,
+    required this.subscriptionProvider,
   });
 
   @override
@@ -58,6 +66,7 @@ class FitnessProApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: themeProvider),
+        ChangeNotifierProvider.value(value: subscriptionProvider),
         ChangeNotifierProvider(
           create: (_) => AuthProvider(apiService: apiService, storageService: storageService),
         ),
@@ -78,6 +87,10 @@ class FitnessProApp extends StatelessWidget {
             routes: {
               '/': (context) => const LandingScreen(),
               '/signup': (context) => const SignupScreen(),
+              '/paywall': (context) => PaywallScreen(
+                    onSubscribed: () => Navigator.of(context).pushReplacementNamed('/quiz'),
+                    onSkip: () => Navigator.of(context).pushReplacementNamed('/quiz'),
+                  ),
               '/quiz': (context) => QuizScreen(
                     onDone: (quizData) {
                       final navigator = Navigator.of(context);
