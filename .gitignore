@@ -1,0 +1,48 @@
+# Backend Laravel
+backend/.env
+backend/.env.*.local
+backend/vendor/
+backend/node_modules/
+backend/storage/
+backend/bootstrap/cache/
+backend/.vscode/
+backend/.idea/
+backend/*.log
+backend/dist/
+backend/.DS_Store
+
+# Mobile Flutter
+mobile/.dart_tool/
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/coverage/
+mobile/pubspec.lock
+mobile/.idea/
+mobile/.vscode/
+mobile/.DS_Store
+mobile/ios/Flutter/Flutter.framework
+mobile/ios/Flutter/Flutter.podspec
+
+# Dependencies & packages
+*.lock
+*.log
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temporary
+tmp/
+temp/
+*.tmp

@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FitnessPro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#06060C;font-family:'Space Grotesk',sans-serif;color:#F0F0F8}
+body{display:flex;align-items:center;justify-content:center}
+input,button,textarea{outline:none;font-family:'Space Grotesk',sans-serif}
+input::placeholder{color:#5A5A78}
+::-webkit-scrollbar{width:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes dotPulse{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen-in{animation:fadeSlide .22s ease forwards}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- ── BLOCK 1: Data ── -->
+<script type="text/babel">
+const FP_EXERCISES = [
+  {id:1,name:"Squat",category:"Jambes",muscles:["Quadriceps","Fessiers","Ischio-jambiers"],difficulty:"Intermédiaire",
+   description:"Le squat est l'exercice roi pour développer les jambes et les fessiers. Maîtrisez ce mouvement fondamental pour bâtir une base solide.",
+   instructions:["Pieds à la largeur des épaules, orteils légèrement tournés","Descendez en gardant le dos droit et les genoux alignés","Cuisses parallèles au sol minimum","Remontez en poussant sur les talons, expirez"]},
+  {id:2,name:"Développé couché",category:"Poitrine",muscles:["Grand pectoral","Triceps","Deltoïde antérieur"],difficulty:"Intermédiaire",
+   description:"L'exercice fondamental pour développer la masse pectorale.",
+   instructions:["Allongé sur un banc, pieds à plat sur le sol","Saisir la barre légèrement plus large que les épaules","Descendre la barre jusqu'à effleurer le sternum","Pousser vers le haut jusqu'à l'extension complète"]},
+  {id:3,name:"Tractions",category:"Dos",muscles:["Grand dorsal","Biceps","Rhomboïdes"],difficulty:"Intermédiaire",
+   description:"L'exercice idéal pour développer un dos large et sculpté.",
+   instructions:["Saisir la barre en pronation, mains plus larges que les épaules","Partir en suspension complète, bras tendus","Tirer jusqu'à ce que le menton dépasse la barre","Redescendre lentement en contrôlant"]},
+  {id:4,name:"Développé militaire",category:"Épaules",muscles:["Deltoïde antérieur","Deltoïde latéral","Triceps"],difficulty:"Intermédiaire",
+   description:"L'exercice de base pour des épaules larges et puissantes.",
+   instructions:["Saisir la barre à hauteur d'épaule","Pousser la barre vers le haut jusqu'à l'extension","Garder le core contracté","Redescendre lentement jusqu'aux épaules"]},
+  {id:5,name:"Curl biceps",category:"Bras",muscles:["Biceps brachial","Brachioradial"],difficulty:"Débutant",
+   description:"L'exercice d'isolation par excellence pour des bras volumineux.",
+   instructions:["Debout, haltères dans les mains, bras le long du corps","Fléchir les coudes vers les épaules","Contracter les biceps en haut","Redescendre lentement"]},
+  {id:6,name:"Dips",category:"Triceps",muscles:["Triceps","Grand pectoral","Deltoïde antérieur"],difficulty:"Intermédiaire",
+   description:"Excellent pour développer la masse des triceps.",
+   instructions:["Saisir les barres parallèles, bras tendus","Descendre jusqu'à 90° aux coudes","Garder les coudes proches du corps","Remonter jusqu'à l'extension complète"]},
+  {id:7,name:"Soulevé de terre",category:"Dos",muscles:["Ischio-jambiers","Fessiers","Érecteurs du rachis"],difficulty:"Avancé",
+   description:"L'exercice polyarticulaire par excellence, sollicitant l'ensemble du corps.",
+   instructions:["Pieds à la largeur des hanches, barre au-dessus des lacets","Saisir la barre en pronation, dos droit","Pousser dans le sol pour monter","Redescendre en contrôlant"]},
+  {id:8,name:"Pompes",category:"Poitrine",muscles:["Grand pectoral","Triceps","Deltoïde antérieur"],difficulty:"Débutant",
+   description:"L'exercice le plus basique et efficace pour la poitrine, sans matériel.",
+   instructions:["En appui sur mains et orteils, corps aligné","Mains légèrement plus larges que les épaules","Descendre jusqu'à effleurer le sol","Pousser pour revenir à la position de départ"]},
+  {id:9,name:"Fentes",category:"Jambes",muscles:["Quadriceps","Fessiers","Ischio-jambiers"],difficulty:"Débutant",
+   description:"Développent la force et l'équilibre des jambes de façon unilatérale.",
+   instructions:["Debout, faire un grand pas en avant","Fléchir le genou avant jusqu'à 90°","Le genou arrière doit effleurer le sol","Remonter en poussant sur le pied avant"]},
+  {id:10,name:"Gainage",category:"Abdominaux",muscles:["Core","Transverse","Obliques"],difficulty:"Débutant",
+   description:"Renforce profondément le core et protège le bas du dos.",
+   instructions:["Appui sur avant-bras et orteils, corps aligné","Contracter abdominaux et fessiers","Respirer normalement sans relâcher","Maintenir la position le plus longtemps possible"]},
+];
+
+const FP_WORKOUTS = [
+  {id:1,name:"Push Day A",muscles:"Poitrine · Épaules · Triceps",duration:45,difficulty:"Intermédiaire",
+   exercises:[{name:"Développé couché",sets:[{reps:8},{reps:8},{reps:6}]},{name:"Développé militaire",sets:[{reps:10},{reps:10},{reps:8}]},{name:"Dips",sets:[{reps:12},{reps:12},{reps:10}]},{name:"Curl biceps",sets:[{reps:12},{reps:12}]}]},
+  {id:2,name:"Pull Day A",muscles:"Dos · Biceps",duration:50,difficulty:"Intermédiaire",
+   exercises:[{name:"Soulevé de terre",sets:[{reps:5},{reps:5},{reps:5}]},{name:"Tractions",sets:[{reps:8},{reps:8},{reps:6}]},{name:"Curl biceps",sets:[{reps:12},{reps:12},{reps:10}]}]},
+  {id:3,name:"Leg Day A",muscles:"Quadriceps · Fessiers · Ischio",duration:55,difficulty:"Avancé",
+   exercises:[{name:"Squat",sets:[{reps:8},{reps:8},{reps:6},{reps:5}]},{name:"Fentes",sets:[{reps:12},{reps:12},{reps:10}]},{name:"Soulevé de terre roumain",sets:[{reps:10},{reps:10},{reps:8}]}]},
+  {id:4,name:"Full Body Débutant",muscles:"Corps entier",duration:35,difficulty:"Débutant",
+   exercises:[{name:"Pompes",sets:[{reps:10},{reps:10},{reps:8}]},{name:"Squat",sets:[{reps:15},{reps:15},{reps:12}]},{name:"Fentes",sets:[{reps:10},{reps:10}]},{name:"Gainage",sets:[{reps:"30s"},{reps:"30s"},{reps:"30s"}]}]},
+  {id:5,name:"Upper Body",muscles:"Haut du corps",duration:40,difficulty:"Intermédiaire",
+   exercises:[{name:"Développé couché",sets:[{reps:10},{reps:10},{reps:8}]},{name:"Tractions",sets:[{reps:8},{reps:8},{reps:6}]},{name:"Développé militaire",sets:[{reps:10},{reps:10}]},{name:"Curl biceps",sets:[{reps:12},{reps:12}]},{name:"Dips",sets:[{reps:15},{reps:15}]}]},
+];
+
+const FP_INITIAL_PLANNING = [
+  {id:1,workoutId:1,workoutName:"Push Day A",date:"2026-04-28",time:"18:00",muscles:"Poitrine · Épaules · Triceps",duration:45},
+  {id:2,workoutId:2,workoutName:"Pull Day A",date:"2026-04-30",time:"18:00",muscles:"Dos · Biceps",duration:50},
+  {id:3,workoutId:3,workoutName:"Leg Day A",date:"2026-05-02",time:"10:00",muscles:"Quadriceps · Fessiers",duration:55},
+];
+
+const FP_INITIAL_CHAT = [
+  {role:"assistant",text:"Bonjour ! Je suis CoachAI, ton assistant spécialisé en musculation. Comment puis-je t'aider aujourd'hui ?"},
+  {role:"user",text:"Quels exercices pour gagner du dos rapidement ?"},
+  {role:"assistant",text:"Pour développer ton dos rapidement :\n\n• **Tractions** — le grand dorsal en profondeur\n• **Soulevé de terre** — polyarticulaire, masse globale\n• **Rowing barre** — épaisseur du dos\n\nVise 3-4 séances/semaine en progression. Tu veux un programme ?"},
+];
+</script>
+
+<!-- ── BLOCK 2: UI Components ── -->
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const C = {
+  bg:'#0C0C14', surface:'#141420', surface2:'#1C1C2A',
+  border:'#252538', accent:'#C1FF4D', orange:'#FF6B35',
+  text:'#F0F0F8', muted:'#5A5A78', muted2:'#8A8AAA',
+  red:'#FF4F4F', green:'4ADE80', blue:'#60A5FA', purple:'#A78BFA',
+};
+
+function FPBtn({children,onClick,style,variant='primary',disabled,small}){
+  const v={primary:{background:C.accent,color:'#0C0C14'},secondary:{background:C.surface2,color:C.text,border:`1px solid ${C.border}`},ghost:{background:'transparent',color:C.muted2,border:`1px solid ${C.border}`},danger:{background:'#FF4F4F22',color:C.red,border:`1px solid #FF4F4F33`}};
+  return <button onClick={onClick} disabled={disabled} style={{width:'100%',padding:small?'9px 16px':'14px',borderRadius:12,border:'none',cursor:disabled?'not-allowed':'pointer',fontSize:small?13:15,fontWeight:700,letterSpacing:0.3,transition:'opacity .15s',opacity:disabled?.4:1,...v[variant],...style}}>{children}</button>;
+}
+
+function ProgressBar({value,max,color=C.accent,height=6}){
+  const pct=Math.min(100,(value/max)*100);
+  return <div style={{background:C.surface2,borderRadius:999,height,overflow:'hidden'}}><div style={{width:`${pct}%`,height:'100%',background:color,borderRadius:999,transition:'width .4s'}}/></div>;
+}
+
+function Chip({label,color=C.accent}){
+  return <span style={{display:'inline-block',padding:'3px 10px',borderRadius:999,fontSize:11,fontWeight:700,background:`${color}22`,color,letterSpacing:.5,whiteSpace:'nowrap'}}>{label}</span>;
+}
+function DiffChip({level}){
+  const m={Débutant:'#4ADE80',Intermédiaire:C.orange,Avancé:C.red};
+  return <Chip label={level} color={m[level]||C.muted2}/>;
+}
+function Card({children,style,onClick}){
+  return <div onClick={onClick} style={{background:C.surface,borderRadius:16,padding:16,border:`1px solid ${C.border}`,marginBottom:12,cursor:onClick?'pointer':undefined,...style}}>{children}</div>;
+}
+function SecTitle({children}){
+  return <div style={{fontSize:11,fontWeight:700,color:C.muted2,letterSpacing:1,textTransform:'uppercase',marginBottom:10,marginTop:4}}>{children}</div>;
+}
+function BackHeader({title,onBack,rightEl}){
+  return(
+    <div style={{display:'flex',alignItems:'center',padding:'12px 16px',borderBottom:`1px solid ${C.border}`,flexShrink:0,gap:12}}>
+      <button onClick={onBack} style={{background:C.surface2,border:`1px solid ${C.border}`,cursor:'pointer',color:C.text,borderRadius:10,width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center'}}>
+        <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2}><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </button>
+      <span style={{flex:1,fontWeight:700,fontSize:16}}>{title}</span>
+      {rightEl}
+    </div>
+  );
+}
+
+function BottomNav({screen,setScreen}){
+  const tabs=[
+    {id:'dashboard',label:'Accueil',svg:(a)=><svg width={22} height={22} viewBox="0 0 24 24" fill={a?C.accent:'none'} stroke={a?C.accent:C.muted} strokeWidth={a?2.5:1.8}><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22" fill="none" stroke={a?'#0C0C14':C.muted} strokeWidth={a?2:1.8}/></svg>},
+    {id:'ai',label:'Coach IA',svg:(a)=><svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={a?C.accent:C.muted} strokeWidth={a?2.5:1.8}><rect x="3" y="3" width="18" height="13" rx="4"/><path d="M8 16v2m8-2v2m-5 0h4"/><circle cx="9" cy="9.5" r="1.2" fill={a?C.accent:C.muted}/><circle cx="15" cy="9.5" r="1.2" fill={a?C.accent:C.muted}/></svg>},
+    {id:'food',label:'Scanner',svg:(a)=><svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={a?C.accent:C.muted} strokeWidth={a?2.5:1.8}><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>},
+    {id:'exercises',label:'Exercices',svg:(a)=><svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={a?C.accent:C.muted} strokeWidth={a?2.5:1.8}><path d="M6.5 6.5h11M6.5 17.5h11M4 4v16M8 8v8M16 8v8M20 4v16"/></svg>},
+    {id:'workouts',label:'Séances',svg:(a)=><svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={a?C.accent:C.muted} strokeWidth={a?2.5:1.8}><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" strokeWidth={3} strokeLinecap="round"/></svg>},
+  ];
+  return(
+    <div style={{display:'flex',background:C.surface,borderTop:`1px solid ${C.border}`,padding:'6px 0 8px',flexShrink:0}}>
+      {tabs.map(t=>{
+        const active=screen===t.id;
+        return(
+          <button key={t.id} onClick={()=>setScreen(t.id)} style={{flex:1,background:'none',border:'none',cursor:'pointer',display:'flex',flexDirection:'column',alignItems:'center',gap:3,color:active?C.accent:C.muted,padding:'4px 0'}}>
+            {t.svg(active)}
+            <span style={{fontSize:10,fontWeight:active?700:500}}>{t.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+</script>
+
+<!-- ── BLOCK 3: Landing, Signup, Quiz, Onboarding ── -->
+<script type="text/babel">
+function LandingScreen({onCTA}){
+  const feats=[['⚡','Programme personnalisé par IA'],['📊','Suivi calorique & hydratation'],['🧠','Coach IA disponible 24h/24'],['📷','Scan alimentaire instantané']];
+  return(
+    <div style={{width:'100%',height:'100%',background:C.bg,display:'flex',flexDirection:'column',overflowY:'auto'}}>
+      <div style={{padding:'44px 24px 20px',textAlign:'center',position:'relative'}}>
+        <div style={{position:'absolute',top:0,left:'50%',transform:'translateX(-50%)',width:280,height:280,borderRadius:'50%',background:`radial-gradient(circle, ${C.accent}18 0%, transparent 70%)`,pointerEvents:'none'}}/>
+        <div style={{fontSize:11,fontWeight:700,letterSpacing:3,color:C.accent,marginBottom:16,textTransform:'uppercase'}}>Votre coach personnel</div>
+        <div style={{fontSize:34,fontWeight:900,lineHeight:1.1,marginBottom:8,letterSpacing:-1}}>Transformez<br/>votre corps<br/><span style={{color:C.accent}}>dès aujourd'hui.</span></div>
+        <div style={{fontSize:14,color:C.muted2,marginTop:12,lineHeight:1.7}}>Le programme de musculation intelligent<br/>qui s'adapte à vous.</div>
+      </div>
+      <div style={{margin:'0 20px',background:C.surface,borderRadius:20,padding:22,border:`1px solid ${C.border}`,position:'relative',overflow:'hidden'}}>
+        <div style={{position:'absolute',top:-30,right:-30,width:110,height:110,borderRadius:'50%',background:`${C.accent}0F`}}/>
+        <div style={{fontSize:11,fontWeight:700,letterSpacing:2,color:C.accent,marginBottom:8,textTransform:'uppercase'}}>Accès illimité</div>
+        <div style={{display:'flex',alignItems:'flex-end',gap:4,marginBottom:4}}>
+          <span style={{fontSize:46,fontWeight:900,color:C.text,lineHeight:1}}>9,99</span>
+          <span style={{fontSize:18,fontWeight:700,color:C.muted2,marginBottom:6}}>€</span>
+          <span style={{fontSize:13,color:C.muted,marginBottom:8}}>/mois</span>
+        </div>
+        <div style={{fontSize:12,color:C.muted2,marginBottom:18}}>Sans engagement · Résiliable à tout moment</div>
+        {feats.map(([icon,text],i)=>(
+          <div key={i} style={{display:'flex',alignItems:'center',gap:10,marginBottom:10}}>
+            <span style={{fontSize:17}}>{icon}</span>
+            <span style={{fontSize:13,color:C.muted2}}>{text}</span>
+            <svg style={{marginLeft:'auto'}} width={15} height={15} viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth={3}><polyline points="20,6 9,17 4,12"/></svg>
+          </div>
+        ))}
+      </div>
+      <div style={{padding:'22px 20px 36px'}}>
+        <FPBtn onClick={onCTA}>Commencer mon essai gratuit →</FPBtn>
+        <div style={{textAlign:'center',fontSize:12,color:C.muted,marginTop:10}}>7 jours gratuits · Pas de CB requise</div>
+      </div>
+    </div>
+  );
+}
+
+function SignupScreen({onBack,onDone}){
+  const [step,setStep]=useState('form');
+  const [form,setForm]=useState({name:'',email:'',password:''});
+  const [card,setCard]=useState({number:'',expiry:'',cvc:''});
+  const [loading,setLoading]=useState(false);
+  const inp={width:'100%',background:C.surface2,border:`1px solid ${C.border}`,borderRadius:12,padding:'13px 14px',color:C.text,fontSize:15,boxSizing:'border-box',marginBottom:12};
+  function pay(){setLoading(true);setTimeout(()=>{setLoading(false);onDone();},1800);}
+  return(
+    <div style={{width:'100%',height:'100%',background:C.bg,display:'flex',flexDirection:'column'}}>
+      <BackHeader title={step==='form'?'Créer un compte':'Paiement'} onBack={step==='payment'?()=>setStep('form'):onBack}/>
+      <div style={{flex:1,overflowY:'auto',padding:'24px 20px'}}>
+        {step==='form'?(
+          <>
+            <p style={{fontSize:13,color:C.muted2,marginBottom:22}}>Rejoignez des milliers d'athlètes qui transforment leur corps.</p>
+            <input style={inp} placeholder="Prénom et nom" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/>
+            <input style={inp} placeholder="Adresse e-mail" type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/>
+            <input style={inp} placeholder="Mot de passe" type="password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})}/>
+            <FPBtn onClick={()=>setStep('payment')} disabled={!form.name||!form.email||!form.password}>Continuer vers le paiement →</FPBtn>
+          </>
+        ):(
+          <>
+            <div style={{background:C.surface,borderRadius:14,padding:16,border:`1px solid ${C.border}`,marginBottom:20}}>
+              <div style={{fontSize:12,color:C.muted2,marginBottom:4}}>Récapitulatif</div>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <span style={{fontWeight:700}}>FitnessPro Premium</span>
+                <span style={{color:C.accent,fontWeight:700}}>9,99 €/mois</span>
+              </div>
+              <div style={{fontSize:12,color:C.muted,marginTop:4}}>7 jours d'essai gratuit inclus</div>
+            </div>
+            <div style={{fontSize:11,color:C.muted2,marginBottom:6,fontWeight:700,letterSpacing:.5}}>NUMÉRO DE CARTE</div>
+            <input style={inp} placeholder="1234 5678 9012 3456" value={card.number} onChange={e=>setCard({...card,number:e.target.value})}/>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
+              <input style={{...inp,marginBottom:0}} placeholder="MM/AA" value={card.expiry} onChange={e=>setCard({...card,expiry:e.target.value})}/>
+              <input style={{...inp,marginBottom:0}} placeholder="CVC" value={card.cvc} onChange={e=>setCard({...card,cvc:e.target.value})}/>
+            </div>
+            <FPBtn onClick={pay} disabled={loading||!card.number||!card.expiry||!card.cvc}>{loading?'⏳ Traitement...':'🔒 Démarrer mon essai gratuit'}</FPBtn>
+            <div style={{textAlign:'center',fontSize:11,color:C.muted,marginTop:10}}>Paiement sécurisé · Sans engagement</div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function QuizScreen({onDone}){
+  const DAYS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  const EQUIP=['Haltères','Barre + disques','Banc','Barre de traction','Kettlebell','Élastiques','TRX','Vélo/Rameur'];
+  const [step,setStep]=useState(0);
+  const [d,setD]=useState({level:null,goal:null,currentWeight:'75',targetWeight:'70',availableDays:['Lun','Mer','Ven'],hoursPerDay:1.5,location:null,equipment:[],caloriesIn:2000,caloriesOut:400});
+  const set=(k,v)=>setD(p=>({...p,[k]:v}));
+  const tog=(k,v)=>setD(p=>({...p,[k]:p[k].includes(v)?p[k].filter(x=>x!==v):[...p[k],v]}));
+  const totalSteps=d.location==='Maison'?7:6;
+  const calInStep=d.location==='Maison'?5:4;
+  const calOutStep=d.location==='Maison'?6:5;
+  const titles=["Quel est ton niveau ?","Quel est ton objectif ?","Tes disponibilités","Où t'entraînes-tu ?","Ton matériel","Apports caloriques","Dépenses caloriques"];
+  const subs=["Sois honnête, cela personnalisera ton programme.","Définis ton poids actuel et ton objectif.","Quand es-tu disponible pour t'entraîner ?","L'endroit influence le type d'exercices proposés.","Sélectionne le matériel disponible chez toi.","Combien de calories ingères-tu en moyenne ?","Estimation hors activité sportive."];
+  const stepTitleIdx=()=>{
+    if(step<4)return step;
+    if(d.location==='Maison'){if(step===4)return 4;if(step===5)return 5;return 6;}
+    if(step===4)return 5;return 6;
+  };
+  const idx=stepTitleIdx();
+  const canNext=()=>{
+    if(step===0)return!!d.level;
+    if(step===1)return!!d.goal&&d.currentWeight&&d.targetWeight;
+    if(step===2)return d.availableDays.length>0;
+    if(step===3)return!!d.location;
+    return true;
+  };
+  const inp={background:C.surface2,border:`1px solid ${C.border}`,borderRadius:12,padding:'13px 14px',color:C.text,fontSize:15,boxSizing:'border-box',width:'100%'};
+  const tagBtn=(active,onClick,children)=>(
+    <button onClick={onClick} style={{padding:'7px 13px',borderRadius:10,border:`2px solid ${active?C.accent:C.border}`,background:active?`${C.accent}18`:C.surface2,color:active?C.accent:C.muted2,cursor:'pointer',fontWeight:700,fontSize:13}}>{children}</button>
+  );
+  function renderBody(){
+    if(step===0)return(
+      <div style={{display:'flex',flexDirection:'column',gap:12}}>
+        {[['🌱','Débutant','Moins de 6 mois de pratique'],['💪','Intermédiaire','6 mois à 2 ans de pratique'],['🔥','Avancé','Plus de 2 ans, maîtrise des bases']].map(([ic,lv,desc])=>(
+          <button key={lv} onClick={()=>set('level',lv)} style={{padding:'16px',borderRadius:14,border:`2px solid ${d.level===lv?C.accent:C.border}`,background:d.level===lv?`${C.accent}18`:C.surface2,cursor:'pointer',textAlign:'left'}}>
+            <div style={{fontWeight:700,fontSize:15,color:d.level===lv?C.accent:C.text}}>{ic} {lv}</div>
+            <div style={{fontSize:13,color:C.muted2,marginTop:3}}>{desc}</div>
+          </button>
+        ))}
+      </div>
+    );
+    if(step===1)return(
+      <div>
+        <div style={{display:'flex',gap:8,marginBottom:18,flexWrap:'wrap'}}>
+          {['Perdre du poids','Maintenir','Prendre de la masse'].map(g=>tagBtn(d.goal===g,()=>set('goal',g),g))}
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+          <div><div style={{fontSize:12,color:C.muted2,marginBottom:6,fontWeight:600}}>Poids actuel (kg)</div><input style={inp} type="number" value={d.currentWeight} onChange={e=>set('currentWeight',e.target.value)} placeholder="75"/></div>
+          <div><div style={{fontSize:12,color:C.muted2,marginBottom:6,fontWeight:600}}>Poids cible (kg)</div><input style={inp} type="number" value={d.targetWeight} onChange={e=>set('targetWeight',e.target.value)} placeholder="70"/></div>
+        </div>
+      </div>
+    );
+    if(step===2)return(
+      <div>
+        <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:20}}>
+          {DAYS.map(day=>tagBtn(d.availableDays.includes(day),()=>tog('availableDays',day),day))}
+        </div>
+        <div style={{fontSize:13,color:C.muted2,marginBottom:8,fontWeight:600}}>Durée par séance : <span style={{color:C.accent}}>{d.hoursPerDay}h</span></div>
+        <input type="range" min={0.5} max={3} step={0.5} value={d.hoursPerDay} onChange={e=>set('hoursPerDay',parseFloat(e.target.value))} style={{width:'100%',accentColor:C.accent}}/>
+        <div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:C.muted,marginTop:4}}><span>30 min</span><span>3h</span></div>
+      </div>
+    );
+    if(step===3)return(
+      <div style={{display:'flex',flexDirection:'column',gap:12}}>
+        {[['🏠','Maison','Je m\'entraîne depuis chez moi'],['🏋️','Salle','J\'ai accès à une salle équipée'],['🌳','Extérieur','Parcs, stades, espaces publics']].map(([ic,loc,desc])=>(
+          <button key={loc} onClick={()=>set('location',loc)} style={{padding:'16px',borderRadius:14,border:`2px solid ${d.location===loc?C.accent:C.border}`,background:d.location===loc?`${C.accent}18`:C.surface2,cursor:'pointer',textAlign:'left',display:'flex',alignItems:'center',gap:14}}>
+            <span style={{fontSize:26}}>{ic}</span>
+            <div><div style={{fontWeight:700,fontSize:15,color:d.location===loc?C.accent:C.text}}>{loc}</div><div style={{fontSize:13,color:C.muted2}}>{desc}</div></div>
+          </button>
+        ))}
+      </div>
+    );
+    if(d.location==='Maison'&&step===4)return(
+      <div>
+        <p style={{fontSize:13,color:C.muted2,marginBottom:14}}>Sélectionne tout le matériel dont tu disposes.</p>
+        <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+          {EQUIP.map(eq=>tagBtn(d.equipment.includes(eq),()=>tog('equipment',eq),eq))}
+        </div>
+        <button onClick={()=>set('equipment',[])} style={{marginTop:14,background:'none',border:'none',color:C.muted,cursor:'pointer',fontSize:12}}>Aucun matériel (poids du corps uniquement)</button>
+      </div>
+    );
+    if(step===calInStep){
+      const exs=[{l:'Léger',c:1500,d:'Repas simples, peu de snacks'},{l:'Modéré',c:2000,d:'3 repas équilibrés'},{l:'Élevé',c:2500,d:'3 repas + collations'},{l:'Très élevé',c:3000,d:'Prises de masse actives'}];
+      return(
+        <div>
+          <div style={{textAlign:'center',marginBottom:14}}><span style={{fontSize:38,fontWeight:900,color:C.accent}}>{d.caloriesIn.toLocaleString('fr-FR')}</span><span style={{fontSize:16,color:C.muted2}}> kcal</span></div>
+          <input type="range" min={1200} max={4000} step={50} value={d.caloriesIn} onChange={e=>set('caloriesIn',parseInt(e.target.value))} style={{width:'100%',accentColor:C.accent,marginBottom:16}}/>
+          {exs.map(ex=>(
+            <button key={ex.c} onClick={()=>set('caloriesIn',ex.c)} style={{display:'flex',width:'100%',alignItems:'center',justifyContent:'space-between',padding:'10px 14px',borderRadius:10,border:`1px solid ${d.caloriesIn===ex.c?C.accent:C.border}`,background:d.caloriesIn===ex.c?`${C.accent}12`:'transparent',cursor:'pointer',marginBottom:8}}>
+              <div style={{textAlign:'left'}}><div style={{fontWeight:700,fontSize:14,color:d.caloriesIn===ex.c?C.accent:C.text}}>{ex.l}</div><div style={{fontSize:12,color:C.muted}}>{ex.d}</div></div>
+              <span style={{fontWeight:700,color:C.muted2}}>{ex.c} kcal</span>
+            </button>
+          ))}
+        </div>
+      );
+    }
+    if(step===calOutStep){
+      const exs=[{l:'Sédentaire',c:200,d:'Bureau, peu de déplacements'},{l:'Modérément actif',c:400,d:'Marche quotidienne'},{l:'Actif',c:600,d:'Travail physique ou sport quotidien'},{l:'Très actif',c:900,d:'Sport intense, travail manuel'}];
+      return(
+        <div>
+          <p style={{fontSize:13,color:C.muted2,marginBottom:12,lineHeight:1.5}}>Dépenses <strong style={{color:C.text}}>hors activité sportive</strong>. Moyenne : 300–600 kcal/jour.</p>
+          <div style={{textAlign:'center',marginBottom:14}}><span style={{fontSize:38,fontWeight:900,color:C.orange}}>{d.caloriesOut.toLocaleString('fr-FR')}</span><span style={{fontSize:16,color:C.muted2}}> kcal</span></div>
+          <input type="range" min={100} max={1200} step={50} value={d.caloriesOut} onChange={e=>set('caloriesOut',parseInt(e.target.value))} style={{width:'100%',accentColor:C.orange,marginBottom:16}}/>
+          {exs.map(ex=>(
+            <button key={ex.c} onClick={()=>set('caloriesOut',ex.c)} style={{display:'flex',width:'100%',alignItems:'center',justifyContent:'space-between',padding:'10px 14px',borderRadius:10,border:`1px solid ${d.caloriesOut===ex.c?C.orange:C.border}`,background:d.caloriesOut===ex.c?`${C.orange}12`:'transparent',cursor:'pointer',marginBottom:8}}>
+              <div style={{textAlign:'left'}}><div style={{fontWeight:700,fontSize:14,color:d.caloriesOut===ex.c?C.orange:C.text}}>{ex.l}</div><div style={{fontSize:12,color:C.muted}}>{ex.d}</div></div>
+              <span style={{fontWeight:700,color:C.muted2}}>{ex.c} kcal</span>
+            </button>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  }
+  return(
+    <div style={{width:'100%',height:'100%',background:C.bg,display:'flex',flexDirection:'column'}}>
+      <div style={{padding:'16px 20px 12px',flexShrink:0}}>
+        <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
+          <span style={{fontSize:12,color:C.muted2,fontWeight:600}}>Étape {step+1} sur {totalSteps}</span>
+          {step>0&&<button onClick={()=>setStep(s=>s-1)} style={{background:'none',border:'none',color:C.muted2,cursor:'pointer',fontSize:13}}>← Retour</button>}
+        </div>
+        <ProgressBar value={step+1} max={totalSteps}/>
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'8px 20px 20px'}}>
+        <div style={{fontWeight:900,fontSize:22,lineHeight:1.2,marginBottom:6}}>{titles[idx]}</div>
+        <div style={{fontSize:13,color:C.muted2,marginBottom:22,lineHeight:1.5}}>{subs[idx]}</div>
+        {renderBody()}
+      </div>
+      <div style={{padding:'12px 20px 20px',flexShrink:0,borderTop:`1px solid ${C.border}`}}>
+        <FPBtn onClick={()=>{if(step<totalSteps-1)setStep(s=>s+1);else onDone(d);}} disabled={!canNext()}>
+          {step===totalSteps-1?'Créer mon programme →':'Continuer →'}
+        </FPBtn>
+      </div>
+    </div>
+  );
+}
+
+function OnboardingScreen({quizData,onDone}){
+  const [step,setStep]=useState(0);
+  const slides=[
+    {emoji:'🎉',title:'Ton programme est prêt !',body:`Basé sur ton profil ${quizData?.level||'Intermédiaire'}, nous avons créé un programme sur mesure pour ton objectif : ${quizData?.goal||'prendre de la masse'}.`},
+    {emoji:'📊',title:'Ton dashboard personnel',body:'Retrouve toutes tes métriques en un coup d\'œil : prochain entraînement, calories, hydratation et ton streak.'},
+    {emoji:'🧠',title:'Ton Coach IA',body:'Pose toutes tes questions à ton coach personnel disponible 24h/24. Nutrition, technique, motivation.'},
+    {emoji:'📷',title:'Scanner ton alimentation',body:'Prends en photo ton repas et l\'IA calcule automatiquement les calories. Saisie manuelle disponible si besoin.'},
+  ];
+  const s=slides[step];
+  return(
+    <div style={{width:'100%',height:'100%',background:C.bg,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'32px 24px',textAlign:'center',boxSizing:'border-box'}}>
+      <div style={{fontSize:68,marginBottom:22}}>{s.emoji}</div>
+      <div style={{fontSize:24,fontWeight:900,marginBottom:14,lineHeight:1.2}}>{s.title}</div>
+      <div style={{fontSize:14,color:C.muted2,lineHeight:1.7,maxWidth:280}}>{s.body}</div>
+      <div style={{display:'flex',gap:8,margin:'28px 0 22px'}}>
+        {slides.map((_,i)=><div key={i} style={{width:i===step?22:8,height:8,borderRadius:999,background:i===step?C.accent:C.surface2,transition:'all .3s'}}/>)}
+      </div>
+      <div style={{width:'100%',maxWidth:320}}>
+        {step<slides.length-1?<FPBtn onClick={()=>setStep(s=>s+1)}>Suivant →</FPBtn>:<FPBtn onClick={onDone}>Accéder à mon espace →</FPBtn>}
+      </div>
+      {step<slides.length-1&&<button onClick={onDone} style={{marginTop:14,background:'none',border:'none',color:C.muted,cursor:'pointer',fontSize:13}}>Passer</button>}
+    </div>
+  );
+}
+</script>
+
+<!-- ── BLOCK 4: Dashboard, AI, Food ── -->
+<script type="text/babel">
+function DashboardScreen({quizData,planning,setScreen}){
+  const cIn=quizData?.caloriesIn||2200;
+  const cBase=quizData?.caloriesOut||400;
+  const cSport=320;
+  const cLeft=cIn-(cBase-cSport);
+  const [hydration,setHydration]=useState(1.25);
+  const next=planning&&planning.length>0?planning[0]:null;
+  function fmtDate(s){if(!s)return'';const d=new Date(s+'T00:00:00');return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});}
+  return(
+    <div style={{width:'100%',height:'100%',background:C.bg,display:'flex',flexDirection:'column'}}>
+      <div style={{padding:'16px 20px 10px',flexShrink:0,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <div><div style={{fontSize:12,color:C.muted2,fontWeight:600}}>Bonjour 👋</div><div style={{fontSize:21,fontWeight:900}}>Mon tableau de bord</div></div>
+        <div style={{background:`${C.accent}22`,borderRadius:12,padding:'6px 12px',border:`1px solid ${C.accent}44`}}><span style={{fontSize:11,fontWeight:700,color:C.accent}}>🔥 12 jours</span></div>
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'0 16px 16px'}}>
+        {/* Streak */}
+        <Card style={{background:`linear-gradient(135deg,${C.accent}20 0%,${C.surface} 65%)`,border:`1px solid ${C.accent}44`}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+            <div>
+              <div style={{fontSize:11,color:C.accent,fontWeight:700,letterSpacing:1,textTransform:'uppercase',marginBottom:4}}>Streak d'entraînement</div>
+              <div style={{fontSize:34,fontWeight:900,lineHeight:1}}>12 <span style={{fontSize:15,color:C.muted2,fontWeight:500}}>jours consécutifs</span></div>
+              <div style={{fontSize:13,color:C.muted2,marginTop:4}}>Continue comme ça ! 🚀</div>
+            </div>
+            <div style={{fontSize:48}}>🔥</div>
+          </div>
+        </Card>
+        {/* Next workout */}
+        <SecTitle>Prochaine séance</SecTitle>
+        {next?(
+          <Card onClick={()=>setScreen('planning')}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:10}}>
+              <div>
+                <div style={{fontSize:11,color:C.muted2,marginBottom:3}}>{fmtDate(next.date)} · {next.time}</div>
+                <div style={{fontSize:17,fontWeight:800}}>{next.workoutName}</div>
+                <div style={{fontSize:13,color:C.muted2,marginTop:2}}>{next.muscles}</div>
+              </div>
+              <Chip label={`${next.duration} min`} color={C.blue}/>
+            </div>
+            <FPBtn small style={{width:'auto',padding:'8px 18px'}} onClick={e=>{e.stopPropagation();setScreen('planning');}}>Voir le planning →</FPBtn>
+          </Card>
+        ):(
+          <Card><div style={{textAlign:'center',padding:'10px 0'}}><div style={{fontSize:30,marginBottom:8}}>📅</div><div style={{color:C.muted2,fontSize:14}}>Aucune séance planifiée</div><FPBtn small style={{marginTop:12,width:'auto',padding:'8px 18px'}} onClick={()=>setScreen('workouts')}>Ajouter une séance</FPBtn></div></Card>
+        )}
+        {/* Hydration */}
+        <SecTitle>Hydratation du jour</SecTitle>
+        <Card>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+            <div><div style={{fontSize:11,color:C.blue,fontWeight:700,letterSpacing:1,textTransform:'uppercase',marginBottom:2}}>Eau bue</div><div style={{fontSize:22,fontWeight:800}}>{hydration.toFixed(2).replace('.',',')} <span style={{fontSize:13,color:C.muted2,fontWeight:500}}>/ 2,5 L</span></div></div>
+            <div style={{fontSize:34}}>💧</div>
+          </div>
+          <ProgressBar value={hydration} max={2.5} color={C.blue} height={8}/>
+          <div style={{display:'flex',gap:8,marginTop:12}}>
+            {[0.25,0.5].map(amt=><button key={amt} onClick={()=>setHydration(h=>Math.min(2.5,h+amt))} style={{flex:1,padding:'8px',borderRadius:10,border:`1px solid ${C.border}`,background:C.surface2,color:C.blue,cursor:'pointer',fontWeight:700,fontSize:13}}>+ {amt===0.25?'250 ml':'500 ml'}</button>)}
+            <button onClick={()=>setHydration(0)} style={{padding:'8px 12px',borderRadius:10,border:`1px solid ${C.border}`,background:C.surface2,color:C.muted,cursor:'pointer',fontSize:13}}>↺</button>
+          </div>
+        </Card>
+        {/* Calories */}
+        <SecTitle>Suivi calorique</SecTitle>
+        <Card>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+            <div><div style={{fontSize:11,color:C.orange,fontWeight:700,letterSpacing:1,textTransform:'uppercase',marginBottom:2}}>Calories restantes</div><div style={{fontSize:26,fontWeight:900,color:cLeft<200?C.red:C.text}}>{cLeft.toLocaleString('fr-FR')} <span style={{fontSize:13,color:C.muted2,fontWeight:500}}>kcal</span></div></div>
+            <div style={{fontSize:34}}>🥗</div>
+          </div>
+          <ProgressBar value={cLeft} max={cIn} color={cLeft<300?C.red:C.orange} height={8}/>
+          <div style={{marginTop:14,background:C.surface2,borderRadius:10,padding:'10px 12px',fontSize:12}}>
+            <div style={{color:C.muted2,marginBottom:6,fontWeight:700,letterSpacing:.5}}>DÉTAIL DU CALCUL</div>
+            {[['+','Apports cibles',cIn,'#4ADE80'],['-','Dépenses journalières',cBase,C.red],['+','Sport du jour',cSport,C.accent]].map(([sign,label,val,color])=>(
+              <div key={label} style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+                <span style={{color:C.muted2}}>{label}</span>
+                <span style={{color,fontWeight:700}}>{sign}{val.toLocaleString('fr-FR')} kcal</span>
+              </div>
+            ))}
+            <div style={{borderTop:`1px solid ${C.border}`,paddingTop:6,display:'flex',justifyContent:'space-between',fontWeight:800}}>
+              <span>= Restant</span><span style={{color:C.orange}}>{cLeft.toLocaleString('fr-FR')} kcal</span>
+            </div>
+          </div>
+          <FPBtn small variant="ghost" style={{marginTop:10}} onClick={()=>setScreen('food')}>📷 Scanner un repas</FPBtn>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function AIScreen(){
+  const [messages,setMessages]=useState(FP_INITIAL_CHAT);
+  const [input,setInput]=useState('');
+  const [loading,setLoading]=useState(false);
+  const [showHist,setShowHist]=useState(false);
+  const endRef=useRef(null);
+  useEffect(()=>{if(endRef.current)endRef.current.parentElement.scrollTop=9999;},[messages]);
+  async function send(){
+    if(!input.trim()||loading)return;
+    setMessages(m=>[...m,{role:'user',text:input}]);
+    setInput('');setLoading(true);
+    try{
+      const r=await window.claude.complete({messages:[{role:'user',content:`Tu es CoachAI, expert en musculation et nutrition sportive. Réponds en français, de façon concise et encourageante. Question : ${input}`}]});
+      setMessages(m=>[...m,{role:'assistant',text:r}]);
+    }catch{setMessages(m=>[...m,{role:'assistant',text:'Désolé, réessaie dans un instant !'}]);}
+    setLoading(false);
+  }
+  function renderTxt(t){return t.split('\n').map((l,i)=><div key={i} style={{marginBottom:l===''?5:0}} dangerouslySetInnerHTML={{__html:l.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}}/>);}
+  const hist=[{id:1,txt:'Quels exercices pour le dos ?',date:"Aujourd'hui"},{id:2,txt:'Programme perte de poids',date:'Hier'},{id:3,txt:'Nutrition avant sport',date:'22 avr.'}];
+  return(
+    <div style={{width:'100%',height:'100%',background:C.bg,display:'flex',flexDirection:'column',position:'relative'}}>
+      <div style={{padding:'12px 16px',borderBottom:`1px solid ${C.border}`,flexShrink:0,display:'flex',alignItems:'center',gap:12}}>
+        <div style={{width:38,height:38,borderRadius:12,background:`${C.purple}22`,border:`1px solid ${C.purple}44`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:20}}>🧠</div>
+        <div style={{flex:1}}><div style={{fontWeight:800,fontSize:15}}>Coach IA</div><div style={{fontSize:11,color:'#4ADE80'}}>● En ligne</div></div>
+        <button onClick={()=>setShowHist(true)} style={{background:C.surface2,border:`1px solid ${C.border}`,borderRadius:10,padding:'6px 12px',color:C.muted2,cursor:'pointer',fontSize:12,fontWeight:600}}>Historique</button>
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'14px'}}>
+        {messages.map((m,i)=>(
+          <div key={i} style={{display:'flex',justifyContent:m.role==='user'?'flex-end':'flex-start',marginBottom:10}}>
+            {m.role==='assistant'&&<div style={{width:26,height:26,borderRadius:8,background:`${C.purple}22`,display:'flex',alignItems:'center',justifyContent:'center',marginRight:8,flexShrink:0,fontSize:13}}>🧠</div>}
+            <div style={{maxWidth:'82%',padding:'10px 13px',borderRadius:m.role==='user'?'16px 16px 4px 16px':'16px 16px 16px 4px',background:m.role==='user'?C.accent:C.surface2,color:m.role==='user'?'#0C0C14':C.text,fontSize:13,lineHeight:1.6,fontWeight:m.role==='user'?600:400}}>
+              {renderTxt(m.text)}
+            </div>
+          </div>
+        ))}
+        {loading&&<div style={{display:'flex',gap:8,marginBottom:10}}><div style={{width:26,height:26,borderRadius:8,background:`${C.purple}22`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13}}>🧠</div><div style={{background:C.surface2,borderRadius:'16px 16px 16px 4px',padding:'12px 16px',display:'flex',gap:5,alignItems:'center'}}>{[0,1,2].map(i=><div key={i} style={{width:7,height:7,borderRadius:'50%',background:C.muted2,animation:'dotPulse 1s ease infinite',animationDelay:`${i*.2}s`}}/>)}</div></div>}
+        <div ref={endRef}/>
+      </div>
+      <div style={{padding:'0 14px 8px',display:'flex',gap:8,overflowX:'auto',flexShrink:0}}>
+        {['Programme débutant ?','Nutrition avant sport','Récupération musculaire'].map(s=><button key={s} onClick={()=>setInput(s)} style={{whiteSpace:'nowrap',padding:'6px 13px',borderRadius:999,background:C.surface2,border:`1px solid ${C.border}`,color:C.muted2,cursor:'pointer',fontSize:11,fontWeight:600}}>{s}</button>)}
+      </div>
+      <div style={{padding:'8px 14px 16px',flexShrink:0,display:'flex',gap:10}}>
+        <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')send();}} placeholder="Pose ta question au coach..." style={{flex:1,background:C.surface2,border:`1px solid ${C.border}`,borderRadius:12,padding:'12px 14px',color:C.text,fontSize:13}}/>
+        <button onClick={send} disabled={!input.trim()||loading} style={{background:input.trim()?C.accent:C.surface2,border:'none',borderRadius:12,width:44,height:44,cursor:input.trim()?'pointer':'default',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+          <svg width={17} height={17} viewBox="0 0 24 24" fill="none" stroke={input.trim()?'#0C0C14':C.muted} strokeWidth={2.5}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
+        </button>
+      </div>
+      {showHist&&<div style={{position:'absolute',inset:0,background:'rgba(0,0,0,.7)',display:'flex',alignItems:'flex-end',zIndex:50}} onClick={()=>setShowHist(false)}><div style={{width:'100%',background:C.surface,borderRadius:'20px 20px 0 0',padding:20,boxSizing:'border-box'}} onClick={e=>e.stopPropagation()}><div style={{fontWeight:800,fontSize:16,marginBottom:14}}>Conversations précédentes</div>{hist.map(h=><div key={h.id} onClick={()=>setShowHist(false)} style={{padding:'12px 14px',borderRadius:12,background:C.surface2,border:`1px solid ${C.border}`,marginBottom:8,cursor:'pointer'}}><div style={{fontWeight:600,fontSize:14}}>{h.txt}</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>{h.date}</div></div>)}</div></div>}
+    </div>
+  );
+}
+
+function FoodScreen(){
+  const [phase,setPhase]=useState('camera');
+  const [manual,setManual]=useState('');
+  const [food,setFood]=useState(null);
+  const mocks=[{name:'Poulet grillé + riz',cals:520,p:45,c:52,f:8},{name:'Salade César',cals:340,p:22,c:18,f:22},{name:'Pâtes bolognaise',cals:680,p:38,c:72,f:24}];
+  function scan(){setPhase('scanning');setTimeout(()=>{setFood(mocks[Math.floor(Math.random()*mocks.length)]);setPhase('result');},2200);}
+  function log(cals){setPhase('logged');setTimeout(()=>setPhase('camera'),2300);}
+  function numpad(k){if(k==='⌫')setManual(v=>v.slice(0,-1));else if(k==='.'&&manual.includes('.'))return;else if(manual.length<5)setManual(v=>v+k);}
+  return(
+    <div style={{width:'100%',height:'100%',background:C.bg,display:'flex',flexDirection:'column'}}>
+      <div style={{padding:'12px 16px',borderBottom:`1px solid ${C.border}`,flexShrink:0,display:'flex',alignItems:'center',gap:12}}>
+        <div style={{fontSize:19}}>📷</div>
+        <div style={{fontWeight:800,fontSize:16,flex:1}}>Scanner alimentaire</div>
+        <button onClick={()=>setPhase(phase==='manual'?'camera':'manual')} style={{background:'none',border:`1px solid ${C.border}`,borderRadius:8,padding:'5px 12px',color:C.muted2,cursor:'pointer',fontSize:12}}>{phase==='manual'?'Scanner':'Saisie manuelle'}</button>
+      </div>
+      <div style={{flex:1,overflow:'hidden',display:'flex',flexDirection:'column'}}>
+        {phase==='camera'&&(
+          <div style={{flex:1,display:'flex',flexDirection:'column'}}>
+            <div style={{flex:1,background:'#060609',position:'relative',display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <div style={{position:'absolute',inset:0,backgroundImage:`repeating-linear-gradient(0deg,transparent,transparent 39px,#ffffff05 39px,#ffffff05 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#ffffff05 39px,#ffffff05 40px)`}}/>
+              <div style={{position:'relative',textAlign:'center'}}>
+                <div style={{width:210,height:170,border:`2px solid ${C.accent}`,borderRadius:16,margin:'0 auto',position:'relative',display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:8}}>
+                  {['tl','tr','bl','br'].map(p=><div key={p} style={{position:'absolute',...{tl:{top:-2,left:-2,borderTop:`3px solid ${C.accent}`,borderLeft:`3px solid ${C.accent}`,borderRadius:'4px 0 0 0'},tr:{top:-2,right:-2,borderTop:`3px solid ${C.accent}`,borderRight:`3px solid ${C.accent}`,borderRadius:'0 4px 0 0'},bl:{bottom:-2,left:-2,borderBottom:`3px solid ${C.accent}`,borderLeft:`3px solid ${C.accent}`,borderRadius:'0 0 0 4px'},br:{bottom:-2,right:-2,borderBottom:`3px solid ${C.accent}`,borderRight:`3px solid ${C.accent}`,borderRadius:'0 0 4px 0'}}[p],width:18,height:18}}/>)}
+                  <div style={{fontSize:32}}>🍽️</div>
+                  <div style={{fontSize:11,color:`${C.accent}99`}}>Centrez votre assiette</div>
+                </div>
+                <div style={{fontSize:10,color:C.muted2,marginTop:12}}>Powered by Passio AI</div>
+              </div>
+            </div>
+            <div style={{padding:'18px 24px',flexShrink:0,textAlign:'center'}}>
+              <button onClick={scan} style={{width:64,height:64,borderRadius:'50%',background:C.accent,border:'4px solid #ffffff1A',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto'}}>
+                <svg width={26} height={26} viewBox="0 0 24 24" fill="none" stroke="#0C0C14" strokeWidth={2.5}><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="#0C0C14"/></svg>
+              </button>
+              <div style={{fontSize:12,color:C.muted,marginTop:10}}>Appuyez pour scanner</div>
+            </div>
+          </div>
+        )}
+        {phase==='scanning'&&<div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:14}}><div style={{width:72,height:72,borderRadius:'50%',border:`4px solid ${C.accent}33`,borderTopColor:C.accent,animation:'spin 1s linear infinite'}}/><div style={{fontWeight:700,fontSize:16}}>Analyse en cours…</div><div style={{fontSize:13,color:C.muted2}}>Identification par IA</div></div>}
+        {phase==='result'&&food&&(
+          <div style={{flex:1,overflowY:'auto',padding:'18px 16px'}}>
+            <div style={{background:`${C.accent}18`,border:`1px solid ${C.accent}44`,borderRadius:16,padding:16,marginBottom:16}}>
+              <div style={{fontSize:11,color:C.accent,fontWeight:700,letterSpacing:1,marginBottom:6}}>✓ REPAS IDENTIFIÉ</div>
+              <div style={{fontWeight:800,fontSize:18,marginBottom:4}}>{food.name}</div>
+              <div style={{fontSize:30,fontWeight:900,color:C.accent}}>{food.cals} <span style={{fontSize:15,color:C.muted2,fontWeight:500}}>kcal</span></div>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:20}}>
+              {[['Protéines',food.p,'g',C.blue],['Glucides',food.c,'g',C.orange],['Lipides',food.f,'g',C.purple]].map(([l,v,u,col])=>(
+                <div key={l} style={{background:C.surface2,borderRadius:12,padding:'10px',textAlign:'center',border:`1px solid ${C.border}`}}>
+                  <div style={{fontSize:19,fontWeight:800,color:col}}>{v}{u}</div>
+                  <div style={{fontSize:11,color:C.muted2,marginTop:2}}>{l}</div>
+                </div>
+              ))}
+            </div>
+            <FPBtn onClick={()=>log(food.cals)}>Ajouter au suivi calorique</FPBtn>
+            <FPBtn variant="ghost" style={{marginTop:8}} onClick={()=>setPhase('camera')}>Rescanner</FPBtn>
+            <FPBtn variant="ghost" style={{marginTop:8}} onClick={()=>setPhase('manual')}>Saisie manuelle</FPBtn>
+          </div>
+        )}
+        {phase==='logged'&&<div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:12,padding:24}}><div style={{width:66,height:66,borderRadius:'50%',background:'#4ADE8022',border:'2px solid #4ADE80',display:'flex',alignItems:'center',justifyContent:'center',fontSize:30}}>✓</div><div style={{fontWeight:800,fontSize:18}}>Repas enregistré !</div><div style={{fontSize:14,color:C.muted2}}>Le suivi calorique a été mis à jour.</div></div>}
+        {phase==='manual'&&(
+          <div style={{flex:1,display:'flex',flexDirection:'column'}}>
+            <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'16px 24px'}}>
+              <div style={{fontSize:12,color:C.muted2,marginBottom:6}}>Calories à ajouter</div>
+              <div style={{fontSize:52,fontWeight:900,color:manual?C.text:C.muted,minHeight:64,lineHeight:1}}>{manual||'0'}</div>
+              <div style={{fontSize:14,color:C.muted2,marginTop:4}}>kcal</div>
+              <div style={{display:'flex',gap:8,marginTop:14,flexWrap:'wrap',justifyContent:'center'}}>
+                {[{l:'Snack',c:150},{l:'Repas',c:600},{l:'Collation',c:250}].map(p=>(
+                  <button key={p.c} onClick={()=>setManual(String(p.c))} style={{padding:'5px 12px',borderRadius:999,background:C.surface2,border:`1px solid ${C.border}`,color:C.muted2,cursor:'pointer',fontSize:11,fontWeight:600}}>{p.l} ({p.c})</button>
+                ))}
+              </div>
+            </div>
+            <div style={{padding:'0 14px 10px',flexShrink:0}}>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginBottom:8}}>
+                {['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(k=>(
+                  <button key={k} onClick={()=>numpad(k)} style={{padding:'13px',borderRadius:11,background:C.surface2,border:`1px solid ${C.border}`,color:C.text,fontSize:17,fontWeight:700,cursor:'pointer'}}>{k}</button>
+                ))}
+              </div>
+              <FPBtn onClick={()=>log(parseInt(manual)||0)} disabled={!manual||manual==='0'}>Enregistrer {manual?`(${manual} kcal)`:''}</FPBtn>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+</script>
+
+<!-- ── BLOCK 5: Exercises, Workouts, Planning ── -->
+<script type="text/babel">
+function ExDetail({ex,onBack}){
+  return(
+    <div style={{width:'100%',height:'100%',background:C.bg,display:'flex',flexDirection:'column'}}>
+      <BackHeader title={ex.name} onBack={onBack}/>
+      <div style={{flex:1,overflowY:'auto'}}>
+        <div style={{height:190,background:C.surface2,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:10,borderBottom:`1px solid ${C.border}`}}>
+          <div style={{width:56,height:56,borderRadius:'50%',background:`${C.accent}22`,border:`2px solid ${C.accent}44`,display:'flex',alignItems:'center',justifyContent:'center'}}><svg width={22} height={22} viewBox="0 0 24 24" fill={C.accent}><polygon points="5,3 19,12 5,21"/></svg></div>
+          <div style={{fontSize:12,color:C.muted2}}>Vidéo explicative</div>
+          <div style={{fontSize:10,color:C.muted,fontStyle:'italic'}}>// video demo placeholder</div>
+        </div>
+        <div style={{padding:'18px 16px'}}>
+          <div style={{display:'flex',gap:8,marginBottom:14,flexWrap:'wrap'}}><Chip label={ex.category} color={C.blue}/><DiffChip level={ex.difficulty}/></div>
+          <div style={{fontSize:13,color:C.muted2,lineHeight:1.7,marginBottom:18}}>{ex.description}</div>
+          <SecTitle>Muscles travaillés</SecTitle>
+          <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:18}}>{ex.muscles.map(m=><Chip key={m} label={m} color={C.purple}/>)}</div>
+          <SecTitle>Instructions</SecTitle>
+          {ex.instructions.map((inst,i)=>(
+            <div key={i} style={{display:'flex',gap:12,marginBottom:11,alignItems:'flex-start'}}>
+              <div style={{width:24,height:24,borderRadius:8,background:`${C.accent}22`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontWeight:800,fontSize:12,color:C.accent}}>{i+1}</div>
+              <div style={{fontSize:13,color:C.muted2,lineHeight:1.6,paddingTop:4}}>{inst}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExercisesScreen(){
+  const cats=['Tous','Jambes','Poitrine','Dos','Épaules','Bras','Triceps','Abdominaux'];
+  const icons={Jambes:'🦵',Poitrine:'💪',Dos:'🔙',Épaules:'🙆',Bras:'💪',Triceps:'💪',Abdominaux:'🎯'};
+  const [search,setSearch]=useState('');
+  const [cat,setCat]=useState('Tous');
+  const [sel,setSel]=useState(null);
+  const filtered=FP_EXERCISES.filter(e=>(cat==='Tous'||e.category===cat)&&e.name.toLowerCase().includes(search.toLowerCase()));
+  if(sel)return<ExDetail ex={sel} onBack={()=>setSel(null)}/>;
+  return(
+    <div style={{width:'100%',height:'100%',background:C.bg,display:'flex',flexDirection:'column'}}>
+      <div style={{padding:'14px 16px 10px',flexShrink:0}}>
+        <div style={{fontWeight:900,fontSize:20,marginBottom:12}}>Bibliothèque</div>
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍  Rechercher..." style={{width:'100%',background:C.surface2,border:`1px solid ${C.border}`,borderRadius:12,padding:'11px 14px',color:C.text,fontSize:13,boxSizing:'border-box',marginBottom:10}}/>
+        <div style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:4}}>
+          {cats.map(c=><button key={c} onClick={()=>setCat(c)} style={{whiteSpace:'nowrap',padding:'6px 13px',borderRadius:999,fontSize:12,fontWeight:700,cursor:'pointer',background:cat===c?C.accent:C.surface2,color:cat===c?'#0C0C14':C.muted2,border:cat===c?'none':`1px solid ${C.border}`}}>{c}</button>)}
+        </div>
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'4px 16px 16px'}}>
+        {filtered.length===0&&<div style={{textAlign:'center',color:C.muted2,marginTop:40}}>Aucun exercice trouvé</div>}
+        {filtered.map(ex=>(
+          <div key={ex.id} onClick={()=>setSel(ex)} style={{background:C.surface,borderRadius:14,padding:'14px',border:`1px solid ${C.border}`,marginBottom:10,cursor:'pointer',display:'flex',alignItems:'center',gap:13}}>
+            <div style={{width:42,height:42,borderRadius:10,background:`${C.accent}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,flexShrink:0}}>{icons[ex.category]||'🎯'}</div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontWeight:700,fontSize:14,marginBottom:2}}>{ex.name}</div>
+              <div style={{fontSize:12,color:C.muted2}}>{ex.muscles.slice(0,2).join(' · ')}</div>
+            </div>
+            <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:4}}><DiffChip level={ex.difficulty}/><svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke={C.muted} strokeWidth={2}><path d="M9 18l6-6-6-6"/></svg></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function WkDetail({workout,onBack,onAdd}){
+  return(
+    <div style={{width:'100%',height:'100%',background:C.bg,display:'flex',flexDirection:'column'}}>
+      <BackHeader title={workout.name} onBack={onBack}/>
+      <div style={{flex:1,overflowY:'auto',padding:'16px'}}>
+        <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}><DiffChip level={workout.difficulty}/><Chip label={`${workout.duration} min`} color={C.blue}/><Chip label={workout.muscles} color={C.purple}/></div>
+        <SecTitle>Programme de la séance</SecTitle>
+        {workout.exercises.map((ex,i)=>(
+          <div key={i} style={{background:C.surface,borderRadius:14,padding:'14px',border:`1px solid ${C.border}`,marginBottom:10}}>
+            <div style={{fontWeight:700,fontSize:15,marginBottom:10}}>{ex.name}</div>
+            <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+              {ex.sets.map((s,j)=>(
+                <div key={j} style={{background:C.surface2,borderRadius:8,padding:'6px 10px',textAlign:'center',border:`1px solid ${C.border}`}}>
+                  <div style={{fontSize:10,color:C.muted2,marginBottom:2}}>Série {j+1}</div>
+                  <div style={{fontWeight:800,fontSize:15,color:C.accent}}>{s.reps}</div>
+                  <div style={{fontSize:10,color:C.muted2}}>{typeof s.reps==='number'?'reps':'sec'}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{padding:'12px 16px 20px',flexShrink:0,borderTop:`1px solid ${C.border}`}}>
+        <FPBtn onClick={onAdd}>📅 Ajouter à mon planning</FPBtn>
+      </div>
+    </div>
+  );
+}
+
+function WorkoutsScreen({planning,setPlanning}){
+  const diffs=['Tous','Débutant','Intermédiaire','Avancé'];
+  const [filter,setFilter]=useState('Tous');
+  const [sel,setSel]=useState(null);
+  const [toast,setToast]=useState(null);
+  const filtered=FP_WORKOUTS.filter(w=>filter==='Tous'||w.difficulty===filter);
+  if(sel)return<WkDetail workout={sel} onBack={()=>setSel(null)} onAdd={()=>{
+    const nd=new Date();nd.setDate(nd.getDate()+(planning.length*2+1));
+    setPlanning(p=>[...p,{id:Date.now(),workoutId:sel.id,workoutName:sel.name,date:nd.toISOString().slice(0,10),time:'18:00',muscles:sel.muscles,duration:sel.duration}].sort((a,b)=>a.date.localeCompare(b.date)));
+    setToast(sel.name);setTimeout(()=>setToast(null),2200);setSel(null);
+  }}/>;
+  return(
+    <div style={{width:'100%',height:'100%',background:C.bg,display:'flex',flexDirection:'column',position:'relative'}}>
+      <div style={{padding:'14px 16px 10px',flexShrink:0}}>
+        <div style={{fontWeight:900,fontSize:20,marginBottom:12}}>Séances</div>
+        <div style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:4}}>
+          {diffs.map(d=><button key={d} onClick={()=>setFilter(d)} style={{whiteSpace:'nowrap',padding:'6px 13px',borderRadius:999,fontSize:12,fontWeight:700,cursor:'pointer',background:filter===d?C.accent:C.surface2,color:filter===d?'#0C0C14':C.muted2,border:filter===d?'none':`1px solid ${C.border}`}}>{d}</button>)}
+        </div>
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'4px 16px 16px'}}>
+        {filtered.map(w=>(
+          <div key={w.id} onClick={()=>setSel(w)} style={{background:C.surface,borderRadius:16,border:`1px solid ${C.border}`,marginBottom:12,cursor:'pointer',overflow:'hidden'}}>
+            <div style={{padding:'16px',paddingBottom:12}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
+                <div><div style={{fontWeight:800,fontSize:15,marginBottom:3}}>{w.name}</div><div style={{fontSize:13,color:C.muted2}}>{w.muscles}</div></div>
+                <DiffChip level={w.difficulty}/>
+              </div>
+              <div style={{display:'flex',gap:12}}><span style={{fontSize:12,color:C.muted2}}>⏱ {w.duration} min</span><span style={{fontSize:12,color:C.muted2}}>📋 {w.exercises.length} exercices</span></div>
+            </div>
+            <div style={{borderTop:`1px solid ${C.border}`,padding:'10px 16px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>{w.exercises.slice(0,3).map((e,i)=><span key={i} style={{fontSize:11,color:C.muted2}}>{e.name}{i<2&&i<w.exercises.length-1?' · ':''}</span>)}{w.exercises.length>3&&<span style={{fontSize:11,color:C.muted}}>+{w.exercises.length-3}</span>}</div>
+              <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke={C.muted} strokeWidth={2}><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+          </div>
+        ))}
+      </div>
+      {toast&&<div style={{position:'absolute',bottom:16,left:'50%',transform:'translateX(-50%)',background:`#4ADE8022`,border:`1px solid #4ADE8044`,borderRadius:12,padding:'10px 18px',color:'#4ADE80',fontWeight:700,fontSize:13,whiteSpace:'nowrap',zIndex:50}}>✓ {toast} ajouté au planning</div>}
+    </div>
+  );
+}
+
+function PlanningScreen({planning,setPlanning,onBack}){
+  const [picker,setPicker]=useState(false);
+  function del(id){setPlanning(p=>p.filter(x=>x.id!==id));}
+  function fmtDate(s){const d=new Date(s+'T00:00:00');return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});}
+  function until(s){const t=new Date();t.setHours(0,0,0,0);const d=new Date(s+'T00:00:00');const diff=Math.round((d-t)/86400000);if(diff===0)return"Aujourd'hui";if(diff===1)return'Demain';if(diff<0)return'Passé';return`Dans ${diff}j`;}
+  return(
+    <div style={{width:'100%',height:'100%',background:C.bg,display:'flex',flexDirection:'column',position:'relative'}}>
+      <BackHeader title="Mon planning" onBack={onBack} rightEl={<button onClick={()=>setPicker(true)} style={{background:C.accent,border:'none',borderRadius:10,padding:'7px 14px',fontWeight:700,fontSize:13,cursor:'pointer',color:'#0C0C14'}}>+ Ajouter</button>}/>
+      <div style={{flex:1,overflowY:'auto',padding:'14px'}}>
+        {planning.length===0?(
+          <div style={{textAlign:'center',marginTop:50}}><div style={{fontSize:44,marginBottom:14}}>📅</div><div style={{fontWeight:700,fontSize:17,marginBottom:8}}>Aucune séance planifiée</div><div style={{color:C.muted2,fontSize:13,marginBottom:20}}>Ajoute des séances depuis la bibliothèque</div><FPBtn onClick={()=>setPicker(true)}>Parcourir les séances</FPBtn></div>
+        ):planning.map((p,i)=>(
+          <div key={p.id} style={{marginBottom:13}}>
+            {(i===0||planning[i-1].date!==p.date)&&(
+              <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
+                <div style={{fontSize:12,color:C.muted2,fontWeight:700,textTransform:'capitalize',flex:1}}>{fmtDate(p.date)}</div>
+                <Chip label={until(p.date)} color={until(p.date)==="Aujourd'hui"?C.accent:until(p.date)==='Passé'?C.muted:C.blue}/>
+              </div>
+            )}
+            <div style={{background:C.surface,borderRadius:14,border:`1px solid ${C.border}`}}>
+              <div style={{padding:'13px',display:'flex',gap:12,alignItems:'center'}}>
+                <div style={{width:42,height:42,borderRadius:11,background:`${C.accent}18`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:20}}>💪</div>
+                <div style={{flex:1,minWidth:0}}><div style={{fontWeight:800,fontSize:14}}>{p.workoutName}</div><div style={{fontSize:12,color:C.muted2,marginTop:2}}>{p.time} · {p.muscles}</div><div style={{fontSize:12,color:C.muted2}}>⏱ {p.duration} min</div></div>
+                <button onClick={()=>del(p.id)} style={{background:'#FF4F4F18',border:`1px solid #FF4F4F33`,borderRadius:10,padding:'7px 10px',cursor:'pointer',color:C.red}}>
+                  <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2}><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M9,6V4h6v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      {picker&&(
+        <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,.75)',display:'flex',alignItems:'flex-end',zIndex:50}} onClick={()=>setPicker(false)}>
+          <div style={{width:'100%',background:C.surface,borderRadius:'20px 20px 0 0',padding:20,maxHeight:'70%',overflowY:'auto',boxSizing:'border-box'}} onClick={e=>e.stopPropagation()}>
+            <div style={{fontWeight:800,fontSize:16,marginBottom:14}}>Choisir une séance</div>
+            {FP_WORKOUTS.map(w=>(
+              <div key={w.id} onClick={()=>{
+                const nd=new Date();nd.setDate(nd.getDate()+(planning.length*2+1));
+                setPlanning(p=>[...p,{id:Date.now(),workoutId:w.id,workoutName:w.name,date:nd.toISOString().slice(0,10),time:'18:00',muscles:w.muscles,duration:w.duration}].sort((a,b)=>a.date.localeCompare(b.date)));
+                setPicker(false);
+              }} style={{display:'flex',alignItems:'center',gap:12,padding:'12px 14px',background:C.surface2,borderRadius:12,border:`1px solid ${C.border}`,marginBottom:8,cursor:'pointer'}}>
+                <div style={{flex:1}}><div style={{fontWeight:700,fontSize:14}}>{w.name}</div><div style={{fontSize:12,color:C.muted2,marginTop:2}}>{w.muscles} · {w.duration} min</div></div>
+                <DiffChip level={w.difficulty}/>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+</script>
+
+<!-- ── BLOCK 6: iOS Frame (inlined) ── -->
+<script type="text/babel">
+function IOSStatusBar({ dark = false, time = '9:41' }) {
+  const c = dark ? '#fff' : '#000';
+  return (
+    <div style={{ display:'flex', gap:154, alignItems:'center', justifyContent:'center', padding:'21px 24px 19px', boxSizing:'border-box', position:'relative', zIndex:20, width:'100%' }}>
+      <div style={{ flex:1, height:22, display:'flex', alignItems:'center', justifyContent:'center', paddingTop:1.5 }}>
+        <span style={{ fontFamily:'-apple-system,"SF Pro",system-ui', fontWeight:590, fontSize:17, lineHeight:'22px', color:c }}>{time}</span>
+      </div>
+      <div style={{ flex:1, height:22, display:'flex', alignItems:'center', justifyContent:'center', gap:7, paddingTop:1, paddingRight:1 }}>
+        <svg width="19" height="12" viewBox="0 0 19 12">
+          <rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill={c}/>
+          <rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill={c}/>
+          <rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill={c}/>
+          <rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill={c}/>
+        </svg>
+        <svg width="17" height="12" viewBox="0 0 17 12">
+          <path d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z" fill={c}/>
+          <path d="M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z" fill={c}/>
+          <circle cx="8.5" cy="10.5" r="1.5" fill={c}/>
+        </svg>
+        <svg width="27" height="13" viewBox="0 0 27 13">
+          <rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke={c} strokeOpacity="0.35" fill="none"/>
+          <rect x="2" y="2" width="20" height="9" rx="2" fill={c}/>
+          <path d="M25 4.5V8.5C25.8 8.2 26.5 7.2 26.5 6.5C26.5 5.8 25.8 4.8 25 4.5Z" fill={c} fillOpacity="0.4"/>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function IOSDevice({ children, width=393, height=852, dark=false }) {
+  return (
+    <div style={{ width, height, borderRadius:48, overflow:'hidden', position:'relative', background: dark?'#000':'#1a1a2e', boxShadow:'0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.3)', fontFamily:'-apple-system,system-ui,sans-serif', WebkitFontSmoothing:'antialiased' }}>
+      {/* Dynamic island */}
+      <div style={{ position:'absolute', top:11, left:'50%', transform:'translateX(-50%)', width:126, height:37, borderRadius:24, background:'#000', zIndex:50 }}/>
+      {/* Status bar */}
+      <div style={{ position:'absolute', top:0, left:0, right:0, zIndex:10 }}>
+        <IOSStatusBar dark={true}/>
+      </div>
+      {/* Content */}
+      <div style={{ height:'100%', display:'flex', flexDirection:'column' }}>
+        <div style={{ flex:1, overflow:'hidden', paddingTop:59 }}>{children}</div>
+      </div>
+      {/* Home indicator */}
+      <div style={{ position:'absolute', bottom:0, left:0, right:0, zIndex:60, height:34, display:'flex', justifyContent:'center', alignItems:'flex-end', paddingBottom:8, pointerEvents:'none' }}>
+        <div style={{ width:139, height:5, borderRadius:100, background:'rgba(255,255,255,0.5)' }}/>
+      </div>
+    </div>
+  );
+}
+</script>
+
+<!-- ── BLOCK 7: App Root ── -->
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "startScreen": "ai"
+}/*EDITMODE-END*/;
+
+function App(){
+  const [screen,setScreen]=useState(TWEAK_DEFAULTS.startScreen);
+  const [quizData,setQuizData]=useState(null);
+  const [planning,setPlanning]=useState(FP_INITIAL_PLANNING);
+  const mainScreens=['dashboard','ai','food','exercises','workouts'];
+  const showNav=mainScreens.includes(screen);
+
+  function renderScreen(){
+    switch(screen){
+      case 'landing':    return <LandingScreen onCTA={()=>setScreen('signup')}/>;
+      case 'signup':     return <SignupScreen onBack={()=>setScreen('landing')} onDone={()=>setScreen('quiz')}/>;
+      case 'quiz':       return <QuizScreen onDone={d=>{setQuizData(d);setScreen('onboarding');}}/>;
+      case 'onboarding': return <OnboardingScreen quizData={quizData} onDone={()=>setScreen('dashboard')}/>;
+      case 'dashboard':  return <DashboardScreen quizData={quizData} planning={planning} setScreen={setScreen}/>;
+      case 'ai':         return <AIScreen/>;
+      case 'food':       return <FoodScreen/>;
+      case 'exercises':  return <ExercisesScreen/>;
+      case 'workouts':   return <WorkoutsScreen planning={planning} setPlanning={setPlanning}/>;
+      case 'planning':   return <PlanningScreen planning={planning} setPlanning={setPlanning} onBack={()=>setScreen('dashboard')}/>;
+      default:           return <DashboardScreen quizData={quizData} planning={planning} setScreen={setScreen}/>;
+    }
+  }
+  return(
+    <IOSDevice statusBarDark={true}>
+      <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',overflow:'hidden',position:'relative'}}>
+        <div key={screen} className="screen-in" style={{flex:1,overflow:'hidden',display:'flex',flexDirection:'column'}}>
+          {renderScreen()}
+        </div>
+        {showNav&&<BottomNav screen={screen} setScreen={setScreen}/>}
+      </div>
+    </IOSDevice>
+  );
+}
+
+function TweaksPanel({visible,onClose}){
+  const screens=[{id:'landing',l:'Landing'},{id:'signup',l:'Inscription'},{id:'quiz',l:'Quiz'},{id:'onboarding',l:'Onboarding'},{id:'dashboard',l:'Dashboard'},{id:'ai',l:'Coach IA'},{id:'food',l:'Scanner'},{id:'exercises',l:'Exercices'},{id:'workouts',l:'Séances'},{id:'planning',l:'Planning'}];
+  if(!visible)return null;
+  return(
+    <div style={{position:'fixed',bottom:20,right:20,background:'#1C1C2A',border:'1px solid #252538',borderRadius:16,padding:20,zIndex:1000,width:250,boxShadow:'0 20px 60px rgba(0,0,0,.8)'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}}>
+        <span style={{fontWeight:800,fontSize:15,color:'#F0F0F8'}}>Tweaks</span>
+        <button onClick={onClose} style={{background:'none',border:'none',color:'#5A5A78',cursor:'pointer',fontSize:20,lineHeight:1}}>×</button>
+      </div>
+      <div style={{fontSize:11,color:'#5A5A78',fontWeight:700,letterSpacing:1,marginBottom:8,textTransform:'uppercase'}}>Écran de démarrage</div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
+        {screens.map(s=>(
+          <button key={s.id} onClick={()=>{
+            window.parent.postMessage({type:'__edit_mode_set_keys',edits:{startScreen:s.id}},'*');
+            setTimeout(()=>window.location.reload(),100);
+          }} style={{padding:'7px 10px',borderRadius:8,border:'1px solid #252538',background:TWEAK_DEFAULTS.startScreen===s.id?'#C1FF4D22':'#141420',color:TWEAK_DEFAULTS.startScreen===s.id?'#C1FF4D':'#8A8AAA',cursor:'pointer',fontSize:12,fontWeight:600,textAlign:'left'}}>
+            {s.l}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Root(){
+  const [tweaks,setTweaks]=useState(false);
+  useEffect(()=>{
+    const h=(e)=>{
+      if(e.data?.type==='__activate_edit_mode')setTweaks(true);
+      if(e.data?.type==='__deactivate_edit_mode')setTweaks(false);
+    };
+    window.addEventListener('message',h);
+    window.parent.postMessage({type:'__edit_mode_available'},'*');
+    return()=>window.removeEventListener('message',h);
+  },[]);
+  return<><App/><TweaksPanel visible={tweaks} onClose={()=>{setTweaks(false);window.parent.postMessage({type:'__edit_mode_dismissed'},'*');}}/></>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Root/>);
+</script>
+</body>
+</html>
