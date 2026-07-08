@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import '../../core/constants/colors.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/subscription_provider.dart';
 import '../../providers/theme_provider.dart';
+
+enum _AccountAction { customerCenter, logout }
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -57,7 +61,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   Row(
                     children: [
-                      _buildCustomerCenterButton(context, colors),
+                      _buildAccountMenu(context, colors),
                       const SizedBox(width: 4),
                       _buildThemeToggle(context, colors),
                       const SizedBox(width: 8),
@@ -137,12 +141,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildCustomerCenterButton(BuildContext context, FPColorScheme colors) {
-    return IconButton(
+  Widget _buildAccountMenu(BuildContext context, FPColorScheme colors) {
+    return PopupMenuButton<_AccountAction>(
       icon: Icon(Icons.manage_accounts_outlined, color: colors.muted2, size: 20),
-      tooltip: 'Gérer mon abonnement',
-      onPressed: () => RevenueCatUI.presentCustomerCenter(),
+      tooltip: 'Mon compte',
+      color: colors.surface,
+      onSelected: (action) async {
+        switch (action) {
+          case _AccountAction.customerCenter:
+            await RevenueCatUI.presentCustomerCenter();
+          case _AccountAction.logout:
+            await _logout(context);
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: _AccountAction.customerCenter,
+          child: Text('Gérer mon abonnement', style: TextStyle(color: colors.text)),
+        ),
+        PopupMenuItem(
+          value: _AccountAction.logout,
+          child: Text('Se déconnecter', style: TextStyle(color: colors.red)),
+        ),
+      ],
     );
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
+
+    await authProvider.logout();
+    await subscriptionProvider.logout();
+
+    if (!context.mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
   }
 
   Widget _buildStreakCard(FPColorScheme colors) {
