@@ -52,8 +52,18 @@ Future<void> main() async {
     themeProvider: themeProvider,
     subscriptionProvider: subscriptionProvider,
     authProvider: authProvider,
-    initialRoute: hasSession ? '/dashboard' : '/',
+    initialRoute: resolveInitialRoute(hasSession: hasSession, isPro: subscriptionProvider.isPro),
   ));
+}
+
+/// A returning, authenticated user without an active entitlement (never
+/// subscribed past the trial, or it lapsed/was cancelled) is sent back
+/// through the paywall before reaching the dashboard — re-checked on every
+/// launch rather than only once at signup. Still skippable, per the
+/// design's "Continuer sans abonnement" escape hatch.
+String resolveInitialRoute({required bool hasSession, required bool isPro}) {
+  if (!hasSession) return '/';
+  return isPro ? '/dashboard' : '/paywall-recheck';
 }
 
 class FitnessProApp extends StatelessWidget {
@@ -99,9 +109,18 @@ class FitnessProApp extends StatelessWidget {
               '/': (context) => const LandingScreen(),
               '/signup': (context) => const SignupScreen(),
               '/login': (context) => const LoginScreen(),
+              // Reached after a fresh signup: still needs onboarding (quiz +
+              // slides) whether or not the user actually subscribes.
               '/paywall': (context) => PaywallScreen(
                     onSubscribed: () => Navigator.of(context).pushReplacementNamed('/quiz'),
                     onSkip: () => Navigator.of(context).pushReplacementNamed('/quiz'),
+                  ),
+              // Reached at startup for a returning, already-onboarded user
+              // whose entitlement isn't active — skip straight to the
+              // dashboard either way instead of repeating the quiz.
+              '/paywall-recheck': (context) => PaywallScreen(
+                    onSubscribed: () => Navigator.of(context).pushReplacementNamed('/dashboard'),
+                    onSkip: () => Navigator.of(context).pushReplacementNamed('/dashboard'),
                   ),
               '/quiz': (context) => QuizScreen(
                     onDone: (quizData) {
