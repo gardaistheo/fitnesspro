@@ -11,6 +11,7 @@ import 'providers/workout_session_provider.dart';
 import 'screens/exercises/exercises_screen.dart';
 import 'screens/food_scanner/food_scanner_screen.dart';
 import 'screens/landing/landing_screen.dart';
+import 'screens/login/login_screen.dart';
 import 'screens/main/main_screen.dart';
 import 'screens/onboarding/onboarding_slides_screen.dart';
 import 'screens/paywall/paywall_screen.dart';
@@ -39,11 +40,19 @@ Future<void> main() async {
   final subscriptionProvider = SubscriptionProvider();
   await subscriptionProvider.configure();
 
+  final authProvider = AuthProvider(apiService: apiService, storageService: storageService);
+  final hasSession = await authProvider.restoreSession();
+  if (hasSession && authProvider.user != null) {
+    await subscriptionProvider.login(authProvider.user!.id.toString());
+  }
+
   runApp(FitnessProApp(
     apiService: apiService,
     storageService: storageService,
     themeProvider: themeProvider,
     subscriptionProvider: subscriptionProvider,
+    authProvider: authProvider,
+    initialRoute: hasSession ? '/dashboard' : '/',
   ));
 }
 
@@ -52,6 +61,8 @@ class FitnessProApp extends StatelessWidget {
   final StorageService storageService;
   final ThemeProvider themeProvider;
   final SubscriptionProvider subscriptionProvider;
+  final AuthProvider authProvider;
+  final String initialRoute;
 
   const FitnessProApp({
     super.key,
@@ -59,6 +70,8 @@ class FitnessProApp extends StatelessWidget {
     required this.storageService,
     required this.themeProvider,
     required this.subscriptionProvider,
+    required this.authProvider,
+    this.initialRoute = '/',
   });
 
   @override
@@ -67,9 +80,7 @@ class FitnessProApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: themeProvider),
         ChangeNotifierProvider.value(value: subscriptionProvider),
-        ChangeNotifierProvider(
-          create: (_) => AuthProvider(apiService: apiService, storageService: storageService),
-        ),
+        ChangeNotifierProvider.value(value: authProvider),
         ChangeNotifierProvider(create: (_) => MealProvider(apiService: apiService)),
         ChangeNotifierProvider(create: (_) => ExerciseProvider(apiService: apiService)),
         ChangeNotifierProvider(create: (_) => ProgramProvider(apiService: apiService)),
@@ -83,10 +94,11 @@ class FitnessProApp extends StatelessWidget {
             themeMode: theme.themeMode,
             theme: AppTheme.light,
             darkTheme: AppTheme.dark,
-            initialRoute: '/',
+            initialRoute: initialRoute,
             routes: {
               '/': (context) => const LandingScreen(),
               '/signup': (context) => const SignupScreen(),
+              '/login': (context) => const LoginScreen(),
               '/paywall': (context) => PaywallScreen(
                     onSubscribed: () => Navigator.of(context).pushReplacementNamed('/quiz'),
                     onSkip: () => Navigator.of(context).pushReplacementNamed('/quiz'),

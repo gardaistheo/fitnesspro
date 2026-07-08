@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile/core/theme/app_theme.dart';
+import 'package:mobile/providers/auth_provider.dart';
 import 'package:mobile/providers/subscription_provider.dart';
 import 'package:mobile/providers/theme_provider.dart';
 import 'package:mobile/services/api_service.dart';
@@ -57,6 +58,7 @@ void main() {
       storageService: storageService,
       themeProvider: themeProvider,
       subscriptionProvider: subscriptionProvider,
+      authProvider: AuthProvider(apiService: mockApiService, storageService: storageService),
     ));
     await tester.pumpAndSettle();
 
@@ -129,6 +131,7 @@ void main() {
       storageService: storageService,
       themeProvider: themeProvider,
       subscriptionProvider: subscriptionProvider,
+      authProvider: AuthProvider(apiService: apiService, storageService: storageService),
     ));
     await tester.pumpAndSettle();
 

@@ -167,6 +167,22 @@ class LandingScreen extends StatelessWidget {
                 fontSize: 13,
               ),
             ),
+            const SizedBox(height: 20),
+            TextButton(
+              onPressed: () => Navigator.of(context).pushNamed('/login'),
+              child: Text.rich(
+                TextSpan(
+                  style: TextStyle(color: colors.muted2, fontSize: 13),
+                  children: [
+                    const TextSpan(text: 'Déjà un compte ? '),
+                    TextSpan(
+                      text: 'Se connecter',
+                      style: TextStyle(color: colors.accent, fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 40),
           ],
         ),
