@@ -105,4 +105,84 @@ void main() {
         );
     expect(bigDisplay.data, '400');
   });
+
+  testWidgets('manual entry Ajouter button is disabled until a valid calorie value is entered', (tester) async {
+    await tester.pumpWidget(buildTestable());
+
+    await tester.tap(find.text('Saisie manuelle'));
+    await tester.pump();
+
+    final addButton = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Ajouter'));
+    expect(addButton.onPressed, isNull);
+
+    final presetButton = find.widgetWithText(OutlinedButton, '400');
+    await tester.ensureVisible(presetButton);
+    await tester.tap(presetButton);
+    await tester.pump();
+
+    final addButtonAfter = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Ajouter'));
+    expect(addButtonAfter.onPressed, isNotNull);
+  });
+
+  testWidgets('backspace removes the last digit and re-disables Ajouter once empty', (tester) async {
+    await tester.pumpWidget(buildTestable());
+
+    await tester.tap(find.text('Saisie manuelle'));
+    await tester.pump();
+
+    final digitFour = find.widgetWithText(ElevatedButton, '4');
+    await tester.ensureVisible(digitFour);
+    await tester.tap(digitFour);
+    await tester.pump();
+    expect(find.text('4'), findsWidgets);
+
+    final backspace = find.widgetWithText(ElevatedButton, '⌫');
+    await tester.ensureVisible(backspace);
+    await tester.tap(backspace);
+    await tester.pump();
+
+    final bigDisplay = tester.widgetList<Text>(find.text('0')).firstWhere(
+          (widget) => widget.style?.fontSize == 52,
+        );
+    expect(bigDisplay.data, '0');
+    final addButton = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Ajouter'));
+    expect(addButton.onPressed, isNull);
+  });
+
+  testWidgets('Rescanner returns to the camera phase and clears the previous result', (tester) async {
+    await tester.pumpWidget(buildTestable());
+
+    await tester.tap(find.byIcon(Icons.camera_alt));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1700));
+    expect(find.text('✓ REPAS IDENTIFIÉ'), findsOneWidget);
+
+    await tester.tap(find.text('Rescanner'));
+    await tester.pump();
+
+    expect(find.byIcon(Icons.camera_alt), findsOneWidget);
+    expect(find.text('✓ REPAS IDENTIFIÉ'), findsNothing);
+  });
+
+  testWidgets('a failed manual entry submission stays on the manual phase', (tester) async {
+    when(() => mockApiService.post('/meals', any())).thenThrow(Exception('network error'));
+
+    await tester.pumpWidget(buildTestable());
+    await tester.tap(find.text('Saisie manuelle'));
+    await tester.pump();
+
+    final presetButton = find.widgetWithText(OutlinedButton, '400');
+    await tester.ensureVisible(presetButton);
+    await tester.tap(presetButton);
+    await tester.pump();
+
+    final addButton = find.widgetWithText(ElevatedButton, 'Ajouter');
+    await tester.ensureVisible(addButton);
+    await tester.tap(addButton);
+    await tester.pump();
+
+    verify(() => mockApiService.post('/meals', any())).called(1);
+    expect(find.text('Repas enregistré !'), findsNothing);
+    expect(find.text('calories'), findsOneWidget);
+  });
 }

@@ -22,7 +22,7 @@ class ScannedMealResult {
 }
 
 class FoodScannerScreen extends StatefulWidget {
-  const FoodScannerScreen({Key? key}) : super(key: key);
+  const FoodScannerScreen({super.key});
 
   @override
   State<FoodScannerScreen> createState() => _FoodScannerScreenState();
@@ -73,6 +73,11 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
         if (mounted) Navigator.of(context).pop();
       });
     }
+  }
+
+  bool get _canConfirmManualEntry {
+    final calories = int.tryParse(_manualCalories);
+    return calories != null && calories > 0;
   }
 
   Future<void> _confirmManualEntry() async {
@@ -346,7 +351,7 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _confirmManualEntry,
+                onPressed: _canConfirmManualEntry ? _confirmManualEntry : null,
                 style: ElevatedButton.styleFrom(backgroundColor: colors.accent),
                 child: Text('Ajouter', style: TextStyle(color: colors.bg)),
               ),
