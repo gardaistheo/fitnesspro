@@ -1,17 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../core/constants/colors.dart';
 import '../../models/exercise_model.dart';
 import '../../widgets/diff_chip.dart';
 import '../../widgets/fp_chip.dart';
 
-class ExerciseDetailScreen extends StatelessWidget {
+class ExerciseDetailScreen extends StatefulWidget {
   final Exercise exercise;
 
   const ExerciseDetailScreen({super.key, required this.exercise});
 
   @override
+  State<ExerciseDetailScreen> createState() => _ExerciseDetailScreenState();
+}
+
+class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
+  YoutubePlayerController? _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    final url = widget.exercise.youtubeUrl;
+    final videoId = url != null ? YoutubePlayer.convertUrlToId(url) : null;
+    if (videoId != null) {
+      _controller = YoutubePlayerController(
+        initialVideoId: videoId,
+        flags: const YoutubePlayerFlags(autoPlay: false),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colors = FPColorScheme.of(context);
+    final exercise = widget.exercise;
 
     return Scaffold(
       backgroundColor: colors.bg,
@@ -25,26 +53,7 @@ class ExerciseDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Video placeholder
-            Container(
-              height: 190,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: colors.surface2,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: colors.accent.withValues(alpha: 0.13),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.play_arrow, color: colors.accent, size: 32),
-                ),
-              ),
-            ),
+            _buildVideo(colors),
             const SizedBox(height: 16),
 
             Wrap(
@@ -126,6 +135,47 @@ class ExerciseDetailScreen extends StatelessWidget {
               );
             }),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVideo(FPColorScheme colors) {
+    final controller = _controller;
+
+    if (controller == null) {
+      // No video URL, or it didn't match a recognizable YouTube format —
+      // fall back to a static placeholder rather than a broken player.
+      return Container(
+        height: 190,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: colors.surface2,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Center(
+          child: Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: colors.accent.withValues(alpha: 0.13),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.play_arrow, color: colors.accent, size: 32),
+          ),
+        ),
+      );
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: YoutubePlayer(
+        controller: controller,
+        showVideoProgressIndicator: true,
+        progressIndicatorColor: colors.accent,
+        progressColors: ProgressBarColors(
+          playedColor: colors.accent,
+          handleColor: colors.accent,
         ),
       ),
     );
