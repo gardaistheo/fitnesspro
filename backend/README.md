@@ -1,58 +1,129 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FitnessPro — Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST Laravel pour l'application FitnessPro (musculation + nutrition avec IA).
 
-## About Laravel
+Pour une vue d'ensemble du projet (mobile + backend), voir le [README racine](../README.md).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Framework** : Laravel 13 (PHP 8.3+)
+- **Base de données** : PostgreSQL
+- **Auth** : Laravel Sanctum (tokens)
+- **Architecture** : Controller → Service → Model
+- **Validation** : Form Requests
+- **Tests** : Pest
+- **Documentation API** : Swagger/OpenAPI (`darkaonline/l5-swagger`)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Démarrage rapide
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Avec Docker (recommandé)
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+cd ..  # racine du repo
+docker compose up -d --build
+docker compose exec backend php artisan migrate --seed
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+L'API est alors servie sur `http://localhost:8000`.
 
-## Contributing
+### En local (sans Docker)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+cd backend
+cp .env.example .env
+composer install
+php artisan key:generate
+# configurer DB_* dans .env pour pointer vers un Postgres local
+php artisan migrate --seed
+php artisan serve
+```
 
-## Code of Conduct
+## Tests
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+vendor/bin/pest
+```
 
-## Security Vulnerabilities
+87 tests / 191 assertions au moment de la rédaction (feature tests par endpoint + tests unitaires sur les Services/Models/Policies). Le seuil de couverture visé en CI est ≥ 70 % (voir `.github/workflows/lint-test-backend.yml`, qui utilise pcov).
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Modèle de données
 
-## License
+| Table | Description |
+|---|---|
+| `users` | Comptes utilisateurs (`is_admin` gère les droits sur les programmes) |
+| `subscriptions` | Statut d'abonnement synchronisé depuis RevenueCat |
+| `exercises` | Catalogue d'exercices (catégorie, difficulté, instructions, vidéo YouTube) |
+| `programs` | Programmes d'entraînement (séances types) |
+| `program_exercises` | Table pivot programme ↔ exercice (sets, reps, ordre) |
+| `workout_sessions` | Séances planifiées/complétées par un utilisateur |
+| `meals` | Historique des repas loggés (calories, macros) |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Voir les migrations dans `database/migrations/` pour le détail des colonnes, et `database/seeders/` pour les données de démo (10 exercices, 5 programmes, comptes de test).
+
+## Endpoints API
+
+Toutes les routes sous `auth:sanctum` nécessitent un header `Authorization: Bearer <token>`.
+
+| Méthode | Route | Description | Auth |
+|---|---|---|---|
+| POST | `/api/auth/register` | Inscription | non |
+| POST | `/api/auth/login` | Connexion | non |
+| POST | `/api/auth/logout` | Déconnexion (révoque le token) | oui |
+| GET | `/api/auth/me` | Utilisateur courant | oui |
+| GET | `/api/exercises` | Liste des exercices (filtrable par catégorie/difficulté) | oui |
+| GET | `/api/exercises/{id}` | Détail d'un exercice | oui |
+| GET | `/api/programs` | Liste des programmes (filtrable par difficulté) | oui |
+| GET | `/api/programs/{id}` | Détail d'un programme + exercices | oui |
+| POST | `/api/programs` | Créer un programme | oui, admin |
+| PUT | `/api/programs/{id}` | Modifier un programme | oui, admin |
+| DELETE | `/api/programs/{id}` | Supprimer un programme | oui, admin |
+| GET | `/api/workout-sessions` | Séances planifiées de l'utilisateur | oui |
+| GET | `/api/workout-sessions/{id}` | Détail d'une séance (propriétaire uniquement) | oui |
+| POST | `/api/workout-sessions` | Planifier une séance | oui |
+| PUT | `/api/workout-sessions/{id}` | Modifier une séance (propriétaire uniquement) | oui |
+| DELETE | `/api/workout-sessions/{id}` | Supprimer une séance (propriétaire uniquement) | oui |
+| GET | `/api/meals` | Historique des repas (filtrable par période) | oui |
+| POST | `/api/meals` | Logger un repas | oui |
+| POST | `/api/subscriptions/webhook` | Webhook RevenueCat (secret partagé, pas Sanctum) | non |
+
+Toutes les réponses suivent la structure `{status, message, data, errors}` (voir `app/Http/Responses/ApiResponse.php`).
+
+### Documentation interactive (Swagger)
+
+Une fois le serveur lancé :
+
+- Interface Swagger UI : `http://localhost:8000/api/documentation`
+- Spec OpenAPI brute (JSON) : `http://localhost:8000/docs`
+
+Pour régénérer la doc après avoir modifié les annotations `#[OA\...]` des controllers :
+
+```bash
+php artisan l5-swagger:generate
+```
+
+## Webhook RevenueCat
+
+`POST /api/subscriptions/webhook` reçoit les événements RevenueCat (achat, renouvellement, expiration, annulation) et met à jour la table `subscriptions`. L'authentification se fait via un secret partagé dans le header `Authorization`, configuré via `REVENUECAT_WEBHOOK_SECRET` dans `.env` — **pas** de Sanctum, puisque l'appel vient directement de RevenueCat et non d'un utilisateur authentifié de l'app.
+
+Point important : RevenueCat identifie les utilisateurs via un `app_user_id` qui **doit correspondre** à l'ID utilisateur Laravel (voir `App\Services\SubscriptionService::handleRevenueCatEvent`, qui résout via `User::find($app_user_id)`). Côté mobile, `SubscriptionProvider.login(userId)` est appelé juste après l'inscription/connexion pour garantir cette correspondance.
+
+## Comptes de test (seeders)
+
+Après `php artisan migrate --seed` :
+
+| Email | Mot de passe | Rôle |
+|---|---|---|
+| `test@fitnesspro.local` | `password` | Utilisateur standard |
+| `admin@fitnesspro.local` | `password` | Admin (peut gérer les programmes) |
+
+## Conventions
+
+- **Migrations** : 1 migration = 1 concept, colonnes `snake_case`
+- **Models** : PascalCase singulier (`WorkoutSession`, pas `WorkoutSessions`)
+- **Routes** : kebab-case (`/workout-sessions`, pas `/workoutSessions`)
+- **Validation** : toujours via Form Request dédiée, jamais dans le controller
+- **Autorisation** : via Policy (`app/Policies/`), pas de vérifications ad-hoc dans les controllers
+
+## Déploiement
+
+Hébergement backend prévu sur Render (push sur `main` → déploiement auto + migrations). Voir le [Plan d'implémentation](../project/Plan-implementation-FitnessPro.md) pour le détail des phases.
