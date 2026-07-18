@@ -4,6 +4,7 @@ class StorageService {
   static const String _tokenKey = 'auth_token';
   static const String _userKey = 'user_data';
   static const String _themeKey = 'theme_mode';
+  static const String _workoutSessionsKey = 'workout_sessions_cache';
 
   late SharedPreferences _prefs;
 
@@ -44,6 +45,19 @@ class StorageService {
 
   String? getThemeMode() {
     return _prefs.getString(_themeKey) ?? 'system';
+  }
+
+  // Workout sessions cache (offline planning persistence)
+  Future<void> saveWorkoutSessions(String sessionsJson) async {
+    await _prefs.setString(_workoutSessionsKey, sessionsJson);
+  }
+
+  String? getWorkoutSessions() {
+    return _prefs.getString(_workoutSessionsKey);
+  }
+
+  Future<void> clearWorkoutSessions() async {
+    await _prefs.remove(_workoutSessionsKey);
   }
 
   // Clear all

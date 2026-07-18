@@ -5,6 +5,7 @@ import '../../core/constants/colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/subscription_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/workout_session_provider.dart';
 
 enum _AccountAction { customerCenter, logout }
 
@@ -19,6 +20,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _hydration = 1250; // ml consumed
   int _caloriesConsumed = 1800;
   final int _caloriesExpended = 500;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<WorkoutSessionProvider>(context, listen: false).loadSessions();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +233,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  String _formatSessionDate(DateTime date) {
+    const weekdays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+    const months = [
+      'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc',
+    ];
+    return '${weekdays[date.weekday - 1]} ${date.day} ${months[date.month - 1]}';
+  }
+
   Widget _buildNextWorkoutCard(BuildContext context, FPColorScheme colors) {
+    final session = Provider.of<WorkoutSessionProvider>(context).nextSession;
+
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: colors.border),
@@ -235,35 +254,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Lun 7 Juil · 10:00',
-            style: TextStyle(color: colors.muted2, fontSize: 12),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Push Day A',
-            style: TextStyle(color: colors.text, fontSize: 17, fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Poitrine, Épaules, Triceps',
-            style: TextStyle(color: colors.muted2, fontSize: 13),
-          ),
+          if (session == null) ...[
+            Text(
+              'Aucune séance planifiée',
+              style: TextStyle(color: colors.text, fontSize: 17, fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Ajoute une séance à ton planning pour la voir ici.',
+              style: TextStyle(color: colors.muted2, fontSize: 13),
+            ),
+          ] else ...[
+            Text(
+              [
+                _formatSessionDate(session.scheduledDate),
+                if (session.scheduledTime != null) session.scheduledTime,
+              ].whereType<String>().join(' · '),
+              style: TextStyle(color: colors.muted2, fontSize: 12),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              session.program?.name ?? 'Séance',
+              style: TextStyle(color: colors.text, fontSize: 17, fontWeight: FontWeight.w800),
+            ),
+            if (session.program != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                session.program!.muscles.join(', '),
+                style: TextStyle(color: colors.muted2, fontSize: 13),
+              ),
+            ],
+          ],
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: colors.blue.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  '45 min',
-                  style: TextStyle(color: colors.blue, fontSize: 11, fontWeight: FontWeight.w700),
-                ),
-              ),
+              if (session?.program?.duration != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: colors.blue.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '${session!.program!.duration} min',
+                    style: TextStyle(color: colors.blue, fontSize: 11, fontWeight: FontWeight.w700),
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
               ElevatedButton.icon(
                 onPressed: () {
                   Navigator.of(context).pushNamed('/planning');

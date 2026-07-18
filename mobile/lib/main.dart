@@ -94,7 +94,9 @@ class FitnessProApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MealProvider(apiService: apiService)),
         ChangeNotifierProvider(create: (_) => ExerciseProvider(apiService: apiService)),
         ChangeNotifierProvider(create: (_) => ProgramProvider(apiService: apiService)),
-        ChangeNotifierProvider(create: (_) => WorkoutSessionProvider(apiService: apiService)),
+        ChangeNotifierProvider(
+          create: (_) => WorkoutSessionProvider(apiService: apiService, storageService: storageService),
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, theme, _) {

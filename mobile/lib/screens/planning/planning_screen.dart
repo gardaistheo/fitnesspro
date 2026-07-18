@@ -59,14 +59,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                 subtitle: Text(program.muscles.join(', '), style: TextStyle(color: colors.muted2)),
                 onTap: () async {
                   Navigator.of(context).pop();
-                  final tomorrow = DateTime.now().add(const Duration(days: 1));
-                  final scheduledDate =
-                      '${tomorrow.year}-${tomorrow.month.toString().padLeft(2, '0')}-${tomorrow.day.toString().padLeft(2, '0')}';
-                  final success =
-                      await programProvider.addToPlanning(programId: program.id, scheduledDate: scheduledDate);
-                  if (success && mounted) {
-                    Provider.of<WorkoutSessionProvider>(this.context, listen: false).loadSessions();
-                  }
+                  await _pickDateAndSchedule(programProvider, program);
                 },
               );
             },
@@ -74,6 +67,72 @@ class _PlanningScreenState extends State<PlanningScreen> {
         );
       },
     );
+  }
+
+  Future<void> _pickDateAndSchedule(ProgramProvider programProvider, Program program) async {
+    final colors = FPColorScheme.of(context);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: today,
+      firstDate: today,
+      lastDate: DateTime(now.year + 2),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: colors.accent,
+                  onPrimary: colors.bg,
+                  surface: colors.surface,
+                  onSurface: colors.text,
+                ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (pickedDate == null || !mounted) return;
+
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: colors.accent,
+                  onPrimary: colors.bg,
+                  surface: colors.surface,
+                  onSurface: colors.text,
+                ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (!mounted) return;
+
+    final scheduledDate =
+        '${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}';
+    final scheduledTime = pickedTime != null
+        ? '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}'
+        : null;
+
+    final success = await programProvider.addToPlanning(
+      programId: program.id,
+      scheduledDate: scheduledDate,
+      scheduledTime: scheduledTime,
+    );
+    if (!mounted) return;
+
+    if (success) {
+      Provider.of<WorkoutSessionProvider>(context, listen: false).loadSessions();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(programProvider.error ?? "Impossible d'ajouter la séance au planning.")),
+      );
+    }
   }
 
   @override

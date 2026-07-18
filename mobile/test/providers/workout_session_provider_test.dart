@@ -1,17 +1,25 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile/providers/workout_session_provider.dart';
 import 'package:mobile/services/api_service.dart';
+import 'package:mobile/services/storage_service.dart';
 
 class MockApiService extends Mock implements ApiService {}
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late MockApiService mockApiService;
+  late StorageService storageService;
   late WorkoutSessionProvider provider;
 
-  setUp(() {
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
     mockApiService = MockApiService();
-    provider = WorkoutSessionProvider(apiService: mockApiService);
+    storageService = StorageService();
+    await storageService.init();
+    provider = WorkoutSessionProvider(apiService: mockApiService, storageService: storageService);
   });
 
   Map<String, dynamic> sessionJson(
@@ -30,6 +38,18 @@ void main() {
         'status': status,
         'program': program,
       };
+
+  test('normalizes a HH:mm:ss scheduled_time from the backend to HH:mm', () async {
+    when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
+          'data': {
+            'data': [sessionJson(1, scheduledDate: '2026-07-15', scheduledTime: '16:31:00')],
+          },
+        });
+
+    await provider.loadSessions();
+
+    expect(provider.sessions.single.scheduledTime, '16:31');
+  });
 
   test('loads sessions sorted by scheduled_date ascending', () async {
     when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
@@ -95,6 +115,60 @@ void main() {
     expect(result, isFalse);
     expect(provider.sessions, hasLength(1));
     expect(provider.error, isNotNull);
+  });
+
+  group('nextSession', () {
+    String isoDate(DateTime date) =>
+        '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+
+    test('returns the soonest planned session today or later', () async {
+      final today = DateTime.now();
+      final tomorrow = today.add(const Duration(days: 1));
+      final nextWeek = today.add(const Duration(days: 7));
+
+      when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
+            'data': {
+              'data': [
+                sessionJson(1, scheduledDate: isoDate(nextWeek), program: {'id': 1, 'name': 'Later'}),
+                sessionJson(2, scheduledDate: isoDate(tomorrow), program: {'id': 2, 'name': 'Soonest'}),
+              ],
+            },
+          });
+
+      await provider.loadSessions();
+
+      expect(provider.nextSession?.program?.name, 'Soonest');
+    });
+
+    test('ignores past sessions and non-planned statuses', () async {
+      final today = DateTime.now();
+      final yesterday = today.subtract(const Duration(days: 1));
+      final tomorrow = today.add(const Duration(days: 1));
+
+      when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
+            'data': {
+              'data': [
+                sessionJson(1, scheduledDate: isoDate(yesterday), status: 'planned'),
+                sessionJson(2, scheduledDate: isoDate(today), status: 'completed'),
+                sessionJson(3, scheduledDate: isoDate(tomorrow), status: 'planned', program: {'id': 3, 'name': 'Upcoming'}),
+              ],
+            },
+          });
+
+      await provider.loadSessions();
+
+      expect(provider.nextSession?.program?.name, 'Upcoming');
+    });
+
+    test('is null when there is no upcoming planned session', () async {
+      when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
+            'data': {'data': []},
+          });
+
+      await provider.loadSessions();
+
+      expect(provider.nextSession, isNull);
+    });
   });
 
   group('dateLabel', () {

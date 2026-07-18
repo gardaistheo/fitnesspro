@@ -1,24 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile/core/theme/app_theme.dart';
 import 'package:mobile/providers/theme_provider.dart';
+import 'package:mobile/providers/workout_session_provider.dart';
 import 'package:mobile/screens/dashboard/dashboard_screen.dart';
+import 'package:mobile/services/api_service.dart';
 import 'package:mobile/services/storage_service.dart';
+
+class MockApiService extends Mock implements ApiService {}
 
 void main() {
   late StorageService storageService;
+  late MockApiService mockApiService;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
     storageService = StorageService();
     await storageService.init();
+    mockApiService = MockApiService();
+    when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
+          'data': {'data': []},
+        });
   });
 
   Widget buildTestable(ThemeProvider themeProvider) {
-    return ChangeNotifierProvider<ThemeProvider>.value(
-      value: themeProvider,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ThemeProvider>.value(value: themeProvider),
+        ChangeNotifierProvider<WorkoutSessionProvider>(
+          create: (_) => WorkoutSessionProvider(apiService: mockApiService, storageService: storageService),
+        ),
+      ],
       child: Consumer<ThemeProvider>(
         builder: (context, theme, _) {
           return MaterialApp(

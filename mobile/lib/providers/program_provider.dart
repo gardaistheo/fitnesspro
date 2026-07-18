@@ -51,7 +51,7 @@ class ProgramProvider extends ChangeNotifier {
       });
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceFirst('Exception: ', '');
       notifyListeners();
       return false;
     }

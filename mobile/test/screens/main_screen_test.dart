@@ -7,6 +7,7 @@ import 'package:mobile/providers/exercise_provider.dart';
 import 'package:mobile/providers/meal_provider.dart';
 import 'package:mobile/providers/program_provider.dart';
 import 'package:mobile/providers/theme_provider.dart';
+import 'package:mobile/providers/workout_session_provider.dart';
 import 'package:mobile/services/api_service.dart';
 import 'package:mobile/services/storage_service.dart';
 import 'package:mobile/screens/main/main_screen.dart';
@@ -30,6 +31,9 @@ void main() {
     when(() => mockApiService.get('/programs')).thenAnswer((_) async => {
           'data': {'data': []},
         });
+    when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
+          'data': {'data': []},
+        });
   });
 
   Widget buildTestable() {
@@ -42,6 +46,9 @@ void main() {
         ChangeNotifierProvider<ExerciseProvider>(create: (_) => ExerciseProvider(apiService: mockApiService)),
         ChangeNotifierProvider<ProgramProvider>(create: (_) => ProgramProvider(apiService: mockApiService)),
         ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider(storageService: storageService)),
+        ChangeNotifierProvider<WorkoutSessionProvider>(
+          create: (_) => WorkoutSessionProvider(apiService: mockApiService, storageService: storageService),
+        ),
       ],
       child: const MaterialApp(home: MainScreen()),
     );

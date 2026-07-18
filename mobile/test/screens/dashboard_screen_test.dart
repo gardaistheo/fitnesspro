@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile/providers/auth_provider.dart';
 import 'package:mobile/providers/subscription_provider.dart';
 import 'package:mobile/providers/theme_provider.dart';
+import 'package:mobile/providers/workout_session_provider.dart';
 import 'package:mobile/services/api_service.dart';
 import 'package:mobile/services/storage_service.dart';
 import 'package:mobile/screens/dashboard/dashboard_screen.dart';
@@ -36,6 +37,9 @@ void main() {
     subscriptionProvider = SubscriptionProvider();
     themeProvider = ThemeProvider(storageService: storageService);
     await themeProvider.init();
+    when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
+          'data': {'data': []},
+        });
   });
 
   tearDown(() {
@@ -48,6 +52,9 @@ void main() {
         ChangeNotifierProvider<AuthProvider>.value(value: authProvider),
         ChangeNotifierProvider<SubscriptionProvider>.value(value: subscriptionProvider),
         ChangeNotifierProvider<ThemeProvider>.value(value: themeProvider),
+        ChangeNotifierProvider<WorkoutSessionProvider>(
+          create: (_) => WorkoutSessionProvider(apiService: mockApiService, storageService: storageService),
+        ),
       ],
       child: MaterialApp(
         routes: {
@@ -124,5 +131,42 @@ void main() {
 
     expect(find.text('LANDING_SCREEN'), findsOneWidget);
     expect(authProvider.isAuthenticated, isFalse);
+  });
+
+  testWidgets('shows the next planned session pulled from the API, not a hardcoded card', (tester) async {
+    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    final tomorrowStr =
+        '${tomorrow.year}-${tomorrow.month.toString().padLeft(2, '0')}-${tomorrow.day.toString().padLeft(2, '0')}';
+
+    when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
+          'data': {
+            'data': [
+              {
+                'id': 1,
+                'program_id': 1,
+                'scheduled_date': tomorrowStr,
+                'scheduled_time': '10:00',
+                'completed_at': null,
+                'status': 'planned',
+                'program': {'id': 1, 'name': 'Push Day A', 'muscles': ['Poitrine', 'Épaules'], 'duration': 45},
+              },
+            ],
+          },
+        });
+
+    await tester.pumpWidget(buildTestable());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Push Day A'), findsOneWidget);
+    expect(find.text('Poitrine, Épaules'), findsOneWidget);
+    expect(find.text('45 min'), findsOneWidget);
+    expect(find.textContaining('10:00'), findsOneWidget);
+  });
+
+  testWidgets('shows an empty state when no session is planned', (tester) async {
+    await tester.pumpWidget(buildTestable());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Aucune séance planifiée'), findsOneWidget);
   });
 }

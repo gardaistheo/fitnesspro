@@ -85,4 +85,14 @@ void main() {
     expect(result, isFalse);
     expect(provider.error, isNotNull);
   });
+
+  test('addToPlanning strips the "Exception: " prefix so the message is user-presentable', () async {
+    when(() => mockApiService.post('/workout-sessions', any()))
+        .thenThrow(Exception('The scheduled date must be today or a future date.'));
+
+    final result = await provider.addToPlanning(programId: 3, scheduledDate: '2026-07-01');
+
+    expect(result, isFalse);
+    expect(provider.error, 'The scheduled date must be today or a future date.');
+  });
 }
