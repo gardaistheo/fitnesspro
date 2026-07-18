@@ -10,6 +10,13 @@ class RevenueCatConfig {
     defaultValue: 'test_EYKjaEEAedawACCckXIaPQwpYAd',
   );
 
+  /// The RevenueCat Android SDK is known to crash natively on `configure()`
+  /// when using a Test Store key (prefixed `test_`) on some devices/emulators
+  /// — a Dart try/catch can't stop it since the crash happens outside the
+  /// Dart VM. Skip RevenueCat entirely for local dev via:
+  ///   flutter run --dart-define=DISABLE_REVENUECAT=true
+  static const bool disabled = bool.fromEnvironment('DISABLE_REVENUECAT');
+
   /// Entitlement identifier configured in the RevenueCat dashboard that
   /// gates access to FitnessPro's paid features.
   static const String entitlementId = 'FitnessPro Pro';

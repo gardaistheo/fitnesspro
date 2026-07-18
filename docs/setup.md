@@ -10,6 +10,8 @@
 
 ### Avec Docker (recommandé)
 
+> **Docker Desktop doit être lancé et son moteur prêt** avant `docker compose up`. Sur Windows, ouvrez l'application Docker Desktop et attendez que l'icône de la barre des tâches indique qu'elle est prête (pas juste "en cours de démarrage") avant de lancer la commande — sinon vous obtiendrez une erreur `open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified` (voir "Problèmes courants" ci-dessous).
+
 ```bash
 docker compose up -d --build
 docker compose exec backend php artisan migrate --seed
@@ -49,7 +51,17 @@ flutter pub get
 flutter run
 ```
 
-L'app pointe sur `http://localhost:8000` par défaut (voir `lib/services/api_service.dart`). Si vous testez sur un émulateur Android, `localhost` depuis l'émulateur pointe vers l'émulateur lui-même, pas votre machine hôte — utiliser `10.0.2.2` à la place, ou lancer sur un simulateur iOS / device physique sur le même réseau.
+L'app pointe sur `http://10.0.2.2:8000` par défaut (voir `lib/services/api_service.dart`), l'adresse spéciale qui, depuis un émulateur Android, redirige vers `localhost` de la machine hôte. Sur simulateur iOS ou device physique sur le même réseau, adapter `baseUrl` en conséquence (`http://localhost:8000` pour iOS, ou l'IP LAN de votre machine pour un device physique).
+
+### Désactiver RevenueCat en local
+
+Le SDK RevenueCat Android peut crasher nativement au démarrage (`Purchases.configure()`) avec la clé Test Store par défaut — l'app se ferme juste après le log `Using a Test Store API key` et `flutter run` affiche `Lost connection to device`. Si ça arrive, lancer avec RevenueCat désactivé :
+
+```bash
+flutter run --dart-define=DISABLE_REVENUECAT=true
+```
+
+Dans ce mode, `SubscriptionProvider` court-circuite tous les appels RevenueCat et `isPro` est forcé à `true` (pas de blocage sur le paywall). Voir `lib/core/config/revenuecat_config.dart`.
 
 ### Lancer les tests
 
@@ -79,3 +91,7 @@ Une fois le backend lancé : `http://localhost:8000/api/documentation` (Swagger 
 **Les migrations échouent avec "role does not exist"** : la base Postgres n'a pas encore terminé son health check au moment où `migrate` s'exécute — relancer `docker compose exec backend php artisan migrate --seed` après quelques secondes.
 
 **Le paywall RevenueCat ne s'affiche pas en local** : la clé API sandbox par défaut (`lib/core/config/revenuecat_config.dart`) nécessite que l'offering "monthly"/"yearly" et l'entitlement "FitnessPro Pro" soient configurés côté dashboard RevenueCat — sans ça, `Purchases.getOfferings()` renvoie une liste vide. Voir [docs/architecture.md](architecture.md#authentification--synchronisation-revenuecat).
+
+**`flutter run` affiche "Lost connection to device" juste après le log RevenueCat** : crash natif connu du SDK Android avec la clé Test Store. Relancer avec `flutter run --dart-define=DISABLE_REVENUECAT=true` (voir section Mobile ci-dessus).
+
+**`docker compose up` échoue avec `unable to get image '...'` / `open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified`** (Windows) : Docker Desktop n'est pas lancé, ou son moteur n'a pas fini de démarrer. Vérifier avec `docker info` — si la section `Server:` affiche une erreur de connexion au lieu des infos du moteur, ouvrir/attendre Docker Desktop puis relancer `docker compose up -d --build`.

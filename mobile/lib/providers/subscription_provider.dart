@@ -22,12 +22,18 @@ class SubscriptionProvider extends ChangeNotifier {
   String? get error => _error;
 
   bool get isPro {
+    if (RevenueCatConfig.disabled) return true;
     final entitlement = _customerInfo?.entitlements.active[RevenueCatConfig.entitlementId];
     return entitlement != null;
   }
 
   /// Configures the RevenueCat SDK. Call once at app startup, before login.
+  ///
+  /// No-ops when [RevenueCatConfig.disabled] is set, so local dev builds
+  /// don't hit the native Test Store crash (see [RevenueCatConfig.disabled]).
   Future<void> configure() async {
+    if (RevenueCatConfig.disabled) return;
+
     await Purchases.setLogLevel(LogLevel.warn);
     await Purchases.configure(PurchasesConfiguration(RevenueCatConfig.apiKey));
 
@@ -42,6 +48,8 @@ class SubscriptionProvider extends ChangeNotifier {
   /// Links the RevenueCat app user ID to our backend's user ID so that the
   /// RevenueCat webhook can resolve purchases back to the correct account.
   Future<void> login(String appUserId) async {
+    if (RevenueCatConfig.disabled) return;
+
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -60,6 +68,8 @@ class SubscriptionProvider extends ChangeNotifier {
 
   /// Resets RevenueCat back to an anonymous user, e.g. on app logout.
   Future<void> logout() async {
+    if (RevenueCatConfig.disabled) return;
+
     try {
       _customerInfo = await Purchases.logOut();
       notifyListeners();
