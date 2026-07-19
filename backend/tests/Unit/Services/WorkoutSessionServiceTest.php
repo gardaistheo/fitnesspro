@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\Program;
 use App\Models\User;
 use App\Models\WorkoutSession;
 use App\Services\WorkoutSessionService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 
@@ -117,7 +117,7 @@ it('throws when finding a session belonging to another user', function () {
     $session = WorkoutSession::factory()->create(['user_id' => $otherUser->id]);
 
     $this->service->find($this->user, $session->id);
-})->throws(Illuminate\Database\Eloquent\ModelNotFoundException::class);
+})->throws(ModelNotFoundException::class);
 
 it('deletes a session', function () {
     $session = WorkoutSession::factory()->create(['user_id' => $this->user->id]);

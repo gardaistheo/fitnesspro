@@ -49,7 +49,7 @@ jobs:
         run: |
           cp .env.example .env.testing
           php artisan key:generate --env=testing
-          php artisan migrate --env=testing --database=testing
+          php artisan migrate --env=testing --force
         env:
           DB_CONNECTION: pgsql
           DB_HOST: localhost
@@ -65,7 +65,6 @@ jobs:
       - name: Run Static Analysis (Larastan)
         working-directory: ./backend
         run: ./vendor/bin/phpstan analyse --memory-limit=512M
-        continue-on-error: true
 
       - name: Run Tests (Pest) with Coverage
         working-directory: ./backend
@@ -81,7 +80,7 @@ jobs:
       - name: Check Coverage (70% minimum)
         working-directory: ./backend
         run: |
-          COVERAGE=$(grep -oP 'Lines:\s+\K[0-9.]+' coverage-report/index.html)
+          COVERAGE=$(grep -A5 '>Total</td>' coverage-report/index.html | grep -oP 'aria-valuenow="\K[0-9.]+' | head -1)
           echo "Code Coverage: ${COVERAGE}%"
           if (( $(echo "$COVERAGE < 70" | bc -l) )); then
             echo "❌ Coverage below 70% threshold"
