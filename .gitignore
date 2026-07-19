@@ -4,7 +4,8 @@ backend/.env.*.local
 backend/vendor/
 backend/node_modules/
 backend/storage/
-backend/bootstrap/cache/
+backend/bootstrap/cache/*
+!backend/bootstrap/cache/.gitignore
 backend/.vscode/
 backend/.idea/
 backend/*.log
