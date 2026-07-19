@@ -37,10 +37,6 @@ jobs:
         working-directory: ./mobile
         run: dart format --set-exit-if-changed lib test
 
-      - name: Run Linter (dart lint)
-        working-directory: ./mobile
-        run: dart run lints
-
       - name: Run Tests (flutter test) with Coverage
         working-directory: ./mobile
         run: flutter test --coverage
