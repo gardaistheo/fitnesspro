@@ -68,7 +68,11 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
             if (exercise.description != null) ...[
               Text(
                 exercise.description!,
-                style: TextStyle(color: colors.muted2, fontSize: 13, height: 1.6),
+                style: TextStyle(
+                  color: colors.muted2,
+                  fontSize: 13,
+                  height: 1.6,
+                ),
               ),
               const SizedBox(height: 24),
             ],
@@ -120,14 +124,22 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
                       alignment: Alignment.center,
                       child: Text(
                         '${index + 1}',
-                        style: TextStyle(color: colors.accent, fontSize: 12, fontWeight: FontWeight.w700),
+                        style: TextStyle(
+                          color: colors.accent,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         instruction,
-                        style: TextStyle(color: colors.muted2, fontSize: 13, height: 1.5),
+                        style: TextStyle(
+                          color: colors.muted2,
+                          fontSize: 13,
+                          height: 1.5,
+                        ),
                       ),
                     ),
                   ],

@@ -21,7 +21,10 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
   Future<void> _addToPlanning() async {
     setState(() => _isAdding = true);
 
-    final programProvider = Provider.of<ProgramProvider>(context, listen: false);
+    final programProvider = Provider.of<ProgramProvider>(
+      context,
+      listen: false,
+    );
     final tomorrow = DateTime.now().add(const Duration(days: 1));
     final scheduledDate =
         '${tomorrow.year}-${tomorrow.month.toString().padLeft(2, '0')}-${tomorrow.day.toString().padLeft(2, '0')}';
@@ -71,8 +74,13 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                     children: [
                       DiffChip(difficulty: program.difficulty),
                       if (program.duration != null)
-                        FPChip(label: '${program.duration} min', color: colors.blue),
-                      ...program.muscles.map((m) => FPChip(label: m, color: colors.purple)),
+                        FPChip(
+                          label: '${program.duration} min',
+                          color: colors.blue,
+                        ),
+                      ...program.muscles.map(
+                        (m) => FPChip(label: m, color: colors.purple),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -90,7 +98,11 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                         children: [
                           Text(
                             exercise.exerciseName,
-                            style: TextStyle(color: colors.text, fontWeight: FontWeight.w700, fontSize: 15),
+                            style: TextStyle(
+                              color: colors.text,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                            ),
                           ),
                           const SizedBox(height: 10),
                           Wrap(
@@ -98,7 +110,10 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                             runSpacing: 8,
                             children: List.generate(exercise.sets, (i) {
                               return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 8,
+                                ),
                                 decoration: BoxDecoration(
                                   color: colors.surface2,
                                   borderRadius: BorderRadius.circular(8),
@@ -107,7 +122,10 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                                   children: [
                                     Text(
                                       'Série ${i + 1}',
-                                      style: TextStyle(color: colors.muted2, fontSize: 11),
+                                      style: TextStyle(
+                                        color: colors.muted2,
+                                        fontSize: 11,
+                                      ),
                                     ),
                                     Text(
                                       '${exercise.reps}',
@@ -141,9 +159,15 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                     ? SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: colors.bg),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: colors.bg,
+                        ),
                       )
-                    : Text('📅 Ajouter à mon planning', style: TextStyle(color: colors.bg)),
+                    : Text(
+                        '📅 Ajouter à mon planning',
+                        style: TextStyle(color: colors.bg),
+                      ),
               ),
             ),
           ),

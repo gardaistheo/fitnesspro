@@ -24,14 +24,18 @@ void main() {
     );
   }
 
-  testWidgets('starts on the camera phase with a shutter button', (tester) async {
+  testWidgets('starts on the camera phase with a shutter button', (
+    tester,
+  ) async {
     await tester.pumpWidget(buildTestable());
 
     expect(find.byIcon(Icons.camera_alt), findsOneWidget);
     expect(find.text('Powered by Passio AI'), findsOneWidget);
   });
 
-  testWidgets('tapping the shutter transitions to scanning then result phase', (tester) async {
+  testWidgets('tapping the shutter transitions to scanning then result phase', (
+    tester,
+  ) async {
     await tester.pumpWidget(buildTestable());
 
     await tester.tap(find.byIcon(Icons.camera_alt));
@@ -45,8 +49,11 @@ void main() {
     expect(find.text('Poulet et riz'), findsOneWidget);
   });
 
-  testWidgets('confirming the result posts the meal and shows the logged confirmation', (tester) async {
-    when(() => mockApiService.post('/meals', any())).thenAnswer((_) async => {
+  testWidgets(
+    'confirming the result posts the meal and shows the logged confirmation',
+    (tester) async {
+      when(() => mockApiService.post('/meals', any())).thenAnswer(
+        (_) async => {
           'data': {
             'id': 1,
             'name': 'Poulet et riz',
@@ -56,24 +63,28 @@ void main() {
             'fats': 15,
             'logged_at': DateTime.now().toIso8601String(),
           },
-        });
+        },
+      );
 
-    await tester.pumpWidget(buildTestable());
-    await tester.tap(find.byIcon(Icons.camera_alt));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 1700));
+      await tester.pumpWidget(buildTestable());
+      await tester.tap(find.byIcon(Icons.camera_alt));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 1700));
 
-    await tester.tap(find.text('Ajouter'));
-    await tester.pump();
+      await tester.tap(find.text('Ajouter'));
+      await tester.pump();
 
-    verify(() => mockApiService.post('/meals', any())).called(1);
-    expect(find.text('Repas enregistré !'), findsOneWidget);
+      verify(() => mockApiService.post('/meals', any())).called(1);
+      expect(find.text('Repas enregistré !'), findsOneWidget);
 
-    // Drain the screen's auto-dismiss timer so it doesn't leak into other tests.
-    await tester.pump(const Duration(milliseconds: 2400));
-  });
+      // Drain the screen's auto-dismiss timer so it doesn't leak into other tests.
+      await tester.pump(const Duration(milliseconds: 2400));
+    },
+  );
 
-  testWidgets('manual entry numpad builds up the calorie value', (tester) async {
+  testWidgets('manual entry numpad builds up the calorie value', (
+    tester,
+  ) async {
     await tester.pumpWidget(buildTestable());
 
     await tester.tap(find.text('Saisie manuelle'));
@@ -89,7 +100,9 @@ void main() {
     expect(find.text('450'), findsOneWidget);
   });
 
-  testWidgets('manual entry preset buttons set the calorie value directly', (tester) async {
+  testWidgets('manual entry preset buttons set the calorie value directly', (
+    tester,
+  ) async {
     await tester.pumpWidget(buildTestable());
 
     await tester.tap(find.text('Saisie manuelle'));
@@ -100,72 +113,91 @@ void main() {
     await tester.tap(presetButton);
     await tester.pump();
 
-    final bigDisplay = tester.widgetList<Text>(find.text('400')).firstWhere(
-          (widget) => widget.style?.fontSize == 52,
-        );
+    final bigDisplay = tester
+        .widgetList<Text>(find.text('400'))
+        .firstWhere((widget) => widget.style?.fontSize == 52);
     expect(bigDisplay.data, '400');
   });
 
-  testWidgets('manual entry Ajouter button is disabled until a valid calorie value is entered', (tester) async {
-    await tester.pumpWidget(buildTestable());
+  testWidgets(
+    'manual entry Ajouter button is disabled until a valid calorie value is entered',
+    (tester) async {
+      await tester.pumpWidget(buildTestable());
 
-    await tester.tap(find.text('Saisie manuelle'));
-    await tester.pump();
+      await tester.tap(find.text('Saisie manuelle'));
+      await tester.pump();
 
-    final addButton = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Ajouter'));
-    expect(addButton.onPressed, isNull);
+      final addButton = tester.widget<ElevatedButton>(
+        find.widgetWithText(ElevatedButton, 'Ajouter'),
+      );
+      expect(addButton.onPressed, isNull);
 
-    final presetButton = find.widgetWithText(OutlinedButton, '400');
-    await tester.ensureVisible(presetButton);
-    await tester.tap(presetButton);
-    await tester.pump();
+      final presetButton = find.widgetWithText(OutlinedButton, '400');
+      await tester.ensureVisible(presetButton);
+      await tester.tap(presetButton);
+      await tester.pump();
 
-    final addButtonAfter = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Ajouter'));
-    expect(addButtonAfter.onPressed, isNotNull);
-  });
+      final addButtonAfter = tester.widget<ElevatedButton>(
+        find.widgetWithText(ElevatedButton, 'Ajouter'),
+      );
+      expect(addButtonAfter.onPressed, isNotNull);
+    },
+  );
 
-  testWidgets('backspace removes the last digit and re-disables Ajouter once empty', (tester) async {
-    await tester.pumpWidget(buildTestable());
+  testWidgets(
+    'backspace removes the last digit and re-disables Ajouter once empty',
+    (tester) async {
+      await tester.pumpWidget(buildTestable());
 
-    await tester.tap(find.text('Saisie manuelle'));
-    await tester.pump();
+      await tester.tap(find.text('Saisie manuelle'));
+      await tester.pump();
 
-    final digitFour = find.widgetWithText(ElevatedButton, '4');
-    await tester.ensureVisible(digitFour);
-    await tester.tap(digitFour);
-    await tester.pump();
-    expect(find.text('4'), findsWidgets);
+      final digitFour = find.widgetWithText(ElevatedButton, '4');
+      await tester.ensureVisible(digitFour);
+      await tester.tap(digitFour);
+      await tester.pump();
+      expect(find.text('4'), findsWidgets);
 
-    final backspace = find.widgetWithText(ElevatedButton, '⌫');
-    await tester.ensureVisible(backspace);
-    await tester.tap(backspace);
-    await tester.pump();
+      final backspace = find.widgetWithText(ElevatedButton, '⌫');
+      await tester.ensureVisible(backspace);
+      await tester.tap(backspace);
+      await tester.pump();
 
-    final bigDisplay = tester.widgetList<Text>(find.text('0')).firstWhere(
-          (widget) => widget.style?.fontSize == 52,
-        );
-    expect(bigDisplay.data, '0');
-    final addButton = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Ajouter'));
-    expect(addButton.onPressed, isNull);
-  });
+      final bigDisplay = tester
+          .widgetList<Text>(find.text('0'))
+          .firstWhere((widget) => widget.style?.fontSize == 52);
+      expect(bigDisplay.data, '0');
+      final addButton = tester.widget<ElevatedButton>(
+        find.widgetWithText(ElevatedButton, 'Ajouter'),
+      );
+      expect(addButton.onPressed, isNull);
+    },
+  );
 
-  testWidgets('Rescanner returns to the camera phase and clears the previous result', (tester) async {
-    await tester.pumpWidget(buildTestable());
+  testWidgets(
+    'Rescanner returns to the camera phase and clears the previous result',
+    (tester) async {
+      await tester.pumpWidget(buildTestable());
 
-    await tester.tap(find.byIcon(Icons.camera_alt));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 1700));
-    expect(find.text('✓ REPAS IDENTIFIÉ'), findsOneWidget);
+      await tester.tap(find.byIcon(Icons.camera_alt));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 1700));
+      expect(find.text('✓ REPAS IDENTIFIÉ'), findsOneWidget);
 
-    await tester.tap(find.text('Rescanner'));
-    await tester.pump();
+      await tester.tap(find.text('Rescanner'));
+      await tester.pump();
 
-    expect(find.byIcon(Icons.camera_alt), findsOneWidget);
-    expect(find.text('✓ REPAS IDENTIFIÉ'), findsNothing);
-  });
+      expect(find.byIcon(Icons.camera_alt), findsOneWidget);
+      expect(find.text('✓ REPAS IDENTIFIÉ'), findsNothing);
+    },
+  );
 
-  testWidgets('a failed manual entry submission stays on the manual phase', (tester) async {
-    when(() => mockApiService.post('/meals', any())).thenThrow(Exception('network error'));
+  testWidgets('a failed manual entry submission stays on the manual phase', (
+    tester,
+  ) async {
+    when(
+      () => mockApiService.post('/meals', any()),
+    ).thenThrow(Exception('network error'));
 
     await tester.pumpWidget(buildTestable());
     await tester.tap(find.text('Saisie manuelle'));

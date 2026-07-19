@@ -91,7 +91,9 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
             const SizedBox(height: 8),
             Expanded(
               child: exerciseProvider.isLoading
-                  ? Center(child: CircularProgressIndicator(color: colors.accent))
+                  ? Center(
+                      child: CircularProgressIndicator(color: colors.accent),
+                    )
                   : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: exerciseProvider.exercises.length,
@@ -106,15 +108,24 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                               color: colors.accent.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Icon(Icons.fitness_center, color: colors.accent),
+                            child: Icon(
+                              Icons.fitness_center,
+                              color: colors.accent,
+                            ),
                           ),
                           title: Text(
                             exercise.name,
-                            style: TextStyle(color: colors.text, fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                              color: colors.text,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                           subtitle: Text(
                             exercise.muscles.join(', '),
-                            style: TextStyle(color: colors.muted2, fontSize: 13),
+                            style: TextStyle(
+                              color: colors.muted2,
+                              fontSize: 13,
+                            ),
                           ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -126,7 +137,8 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => ExerciseDetailScreen(exercise: exercise),
+                                builder: (_) =>
+                                    ExerciseDetailScreen(exercise: exercise),
                               ),
                             );
                           },

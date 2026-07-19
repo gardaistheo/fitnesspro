@@ -15,7 +15,10 @@ class ApiService {
       throw Exception('Unauthorized: Token expired or invalid');
     } else {
       final errorBody = jsonDecode(response.body) as Map<String, dynamic>;
-      throw Exception(errorBody['message'] ?? 'Request failed with status ${response.statusCode}');
+      throw Exception(
+        errorBody['message'] ??
+            'Request failed with status ${response.statusCode}',
+      );
     }
   }
 
@@ -31,7 +34,10 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> post(String endpoint, Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> post(
+    String endpoint,
+    Map<String, dynamic> body,
+  ) async {
     final uri = Uri.parse('$baseUrl$endpoint');
     final headers = _getHeaders();
 
@@ -47,7 +53,10 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> put(String endpoint, Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> put(
+    String endpoint,
+    Map<String, dynamic> body,
+  ) async {
     final uri = Uri.parse('$baseUrl$endpoint');
     final headers = _getHeaders();
 

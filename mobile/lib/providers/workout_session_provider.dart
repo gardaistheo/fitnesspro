@@ -12,7 +12,10 @@ class WorkoutSessionProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
 
-  WorkoutSessionProvider({required this.apiService, required this.storageService});
+  WorkoutSessionProvider({
+    required this.apiService,
+    required this.storageService,
+  });
 
   List<WorkoutSession> get sessions => _sessions;
   bool get isLoading => _isLoading;
@@ -35,8 +38,13 @@ class WorkoutSessionProvider extends ChangeNotifier {
       final response = await apiService.get('/workout-sessions');
       final data = response['data']['data'] as List<dynamic>;
 
-      _sessions = data.map((json) => WorkoutSession.fromJson(json as Map<String, dynamic>)).toList()
-        ..sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
+      _sessions =
+          data
+              .map(
+                (json) => WorkoutSession.fromJson(json as Map<String, dynamic>),
+              )
+              .toList()
+            ..sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
 
       _isLoading = false;
       notifyListeners();
@@ -67,7 +75,9 @@ class WorkoutSessionProvider extends ChangeNotifier {
     if (raw == null) return null;
     try {
       final decoded = jsonDecode(raw) as List<dynamic>;
-      return decoded.map((json) => WorkoutSession.fromJson(json as Map<String, dynamic>)).toList()
+      return decoded
+          .map((json) => WorkoutSession.fromJson(json as Map<String, dynamic>))
+          .toList()
         ..sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
     } catch (_) {
       return null;
@@ -87,7 +97,11 @@ class WorkoutSessionProvider extends ChangeNotifier {
     final todayDay = DateTime(today.year, today.month, today.day);
     for (final session in _sessions) {
       if (session.status != 'planned') continue;
-      final day = DateTime(session.scheduledDate.year, session.scheduledDate.month, session.scheduledDate.day);
+      final day = DateTime(
+        session.scheduledDate.year,
+        session.scheduledDate.month,
+        session.scheduledDate.day,
+      );
       if (!day.isBefore(todayDay)) return session;
     }
     return null;
@@ -97,7 +111,11 @@ class WorkoutSessionProvider extends ChangeNotifier {
   Map<DateTime, List<WorkoutSession>> get sessionsByDate {
     final grouped = <DateTime, List<WorkoutSession>>{};
     for (final session in _sessions) {
-      final day = DateTime(session.scheduledDate.year, session.scheduledDate.month, session.scheduledDate.day);
+      final day = DateTime(
+        session.scheduledDate.year,
+        session.scheduledDate.month,
+        session.scheduledDate.day,
+      );
       grouped.putIfAbsent(day, () => []).add(session);
     }
     return grouped;

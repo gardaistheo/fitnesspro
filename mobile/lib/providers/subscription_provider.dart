@@ -23,7 +23,8 @@ class SubscriptionProvider extends ChangeNotifier {
 
   bool get isPro {
     if (RevenueCatConfig.disabled) return true;
-    final entitlement = _customerInfo?.entitlements.active[RevenueCatConfig.entitlementId];
+    final entitlement =
+        _customerInfo?.entitlements.active[RevenueCatConfig.entitlementId];
     return entitlement != null;
   }
 

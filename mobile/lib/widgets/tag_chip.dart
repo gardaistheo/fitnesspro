@@ -6,7 +6,12 @@ class TagChip extends StatelessWidget {
   final bool active;
   final VoidCallback onTap;
 
-  const TagChip({super.key, required this.label, required this.active, required this.onTap});
+  const TagChip({
+    super.key,
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +23,13 @@ class TagChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
         decoration: BoxDecoration(
-          color: active ? colors.accent.withValues(alpha: 0.1) : colors.surface2,
-          border: Border.all(color: active ? colors.accent : colors.border, width: 2),
+          color: active
+              ? colors.accent.withValues(alpha: 0.1)
+              : colors.surface2,
+          border: Border.all(
+            color: active ? colors.accent : colors.border,
+            width: 2,
+          ),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(

@@ -111,7 +111,10 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
     setState(() {
       if (digit == '⌫') {
         if (_manualCalories.isNotEmpty) {
-          _manualCalories = _manualCalories.substring(0, _manualCalories.length - 1);
+          _manualCalories = _manualCalories.substring(
+            0,
+            _manualCalories.length - 1,
+          );
         }
       } else if (_manualCalories.length < 5) {
         _manualCalories += digit;
@@ -271,8 +274,18 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildMacro(colors, 'Protéines', result.proteins, colors.blue),
-                    _buildMacro(colors, 'Glucides', result.carbs, colors.orange),
+                    _buildMacro(
+                      colors,
+                      'Protéines',
+                      result.proteins,
+                      colors.blue,
+                    ),
+                    _buildMacro(
+                      colors,
+                      'Glucides',
+                      result.carbs,
+                      colors.orange,
+                    ),
                     _buildMacro(colors, 'Lipides', result.fats, colors.purple),
                   ],
                 ),
@@ -286,24 +299,36 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
             child: Text('Ajouter', style: TextStyle(color: colors.bg)),
           ),
           const SizedBox(height: 12),
-          OutlinedButton(
-            onPressed: _rescan,
-            child: const Text('Rescanner'),
-          ),
+          OutlinedButton(onPressed: _rescan, child: const Text('Rescanner')),
           const SizedBox(height: 12),
           TextButton(
             onPressed: () => setState(() => _phase = FoodScannerPhase.manual),
-            child: Text('Saisie manuelle', style: TextStyle(color: colors.muted2)),
+            child: Text(
+              'Saisie manuelle',
+              style: TextStyle(color: colors.muted2),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMacro(FPColorScheme colors, String label, int grams, Color color) {
+  Widget _buildMacro(
+    FPColorScheme colors,
+    String label,
+    int grams,
+    Color color,
+  ) {
     return Column(
       children: [
-        Text('${grams}g', style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w700)),
+        Text(
+          '${grams}g',
+          style: TextStyle(
+            color: color,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         const SizedBox(height: 4),
         Text(label, style: TextStyle(color: colors.muted2, fontSize: 11)),
       ],
@@ -321,15 +346,23 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
             const SizedBox(height: 16),
             Text(
               _manualCalories.isEmpty ? '0' : _manualCalories,
-              style: TextStyle(color: colors.text, fontSize: 52, fontWeight: FontWeight.w900),
+              style: TextStyle(
+                color: colors.text,
+                fontSize: 52,
+                fontWeight: FontWeight.w900,
+              ),
             ),
-            Text('calories', style: TextStyle(color: colors.muted2, fontSize: 13)),
+            Text(
+              'calories',
+              style: TextStyle(color: colors.muted2, fontSize: 13),
+            ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: presets.map((preset) {
                 return OutlinedButton(
-                  onPressed: () => setState(() => _manualCalories = preset.toString()),
+                  onPressed: () =>
+                      setState(() => _manualCalories = preset.toString()),
                   child: Text('$preset'),
                 );
               }).toList(),
@@ -341,7 +374,20 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
               physics: const NeverScrollableScrollPhysics(),
               childAspectRatio: 1.6,
               children: [
-                for (final digit in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'])
+                for (final digit in [
+                  '1',
+                  '2',
+                  '3',
+                  '4',
+                  '5',
+                  '6',
+                  '7',
+                  '8',
+                  '9',
+                  '',
+                  '0',
+                  '⌫',
+                ])
                   digit.isEmpty
                       ? const SizedBox()
                       : _buildNumpadKey(colors, digit),
@@ -371,7 +417,10 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
           backgroundColor: colors.surface2,
           foregroundColor: colors.text,
         ),
-        child: Text(digit, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+        child: Text(
+          digit,
+          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+        ),
       ),
     );
   }
@@ -384,11 +433,21 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
           Container(
             width: 64,
             height: 64,
-            decoration: BoxDecoration(color: colors.green.withValues(alpha: 0.13), shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: colors.green.withValues(alpha: 0.13),
+              shape: BoxShape.circle,
+            ),
             child: Icon(Icons.check, color: colors.green, size: 32),
           ),
           const SizedBox(height: 16),
-          Text('Repas enregistré !', style: TextStyle(color: colors.text, fontSize: 16, fontWeight: FontWeight.w700)),
+          Text(
+            'Repas enregistré !',
+            style: TextStyle(
+              color: colors.text,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ],
       ),
     );

@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// A minimal, valid CustomerInfo JSON payload with no active entitlements —
 /// the shape purchases_flutter's native side would normally return.
-Map<String, dynamic> fakeCustomerInfoJson({Map<String, dynamic>? activeEntitlements}) {
+Map<String, dynamic> fakeCustomerInfoJson({
+  Map<String, dynamic>? activeEntitlements,
+}) {
   return {
     'entitlements': {
       'all': activeEntitlements ?? {},
@@ -40,55 +42,49 @@ void installRevenueCatMocks({
   const purchasesChannel = MethodChannel('purchases_flutter');
   const purchasesUiChannel = MethodChannel('purchases_ui_flutter');
 
-  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-    purchasesChannel,
-    (call) async {
-      switch (call.method) {
-        case 'setupPurchases':
-          return null;
-        case 'getCustomerInfo':
-          return fakeCustomerInfoJson(activeEntitlements: activeEntitlements);
-        case 'logIn':
-          return {
-            'customerInfo': fakeCustomerInfoJson(activeEntitlements: activeEntitlements),
-            'created': false,
-          };
-        case 'logOut':
-          return fakeCustomerInfoJson(activeEntitlements: activeEntitlements);
-        case 'restorePurchases':
-          return fakeCustomerInfoJson(activeEntitlements: activeEntitlements);
-        case 'setLogLevel':
-          return null;
-        default:
-          return null;
-      }
-    },
-  );
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(purchasesChannel, (call) async {
+        switch (call.method) {
+          case 'setupPurchases':
+            return null;
+          case 'getCustomerInfo':
+            return fakeCustomerInfoJson(activeEntitlements: activeEntitlements);
+          case 'logIn':
+            return {
+              'customerInfo': fakeCustomerInfoJson(
+                activeEntitlements: activeEntitlements,
+              ),
+              'created': false,
+            };
+          case 'logOut':
+            return fakeCustomerInfoJson(activeEntitlements: activeEntitlements);
+          case 'restorePurchases':
+            return fakeCustomerInfoJson(activeEntitlements: activeEntitlements);
+          case 'setLogLevel':
+            return null;
+          default:
+            return null;
+        }
+      });
 
-  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-    purchasesUiChannel,
-    (call) async {
-      switch (call.method) {
-        case 'presentPaywall':
-        case 'presentPaywallIfNeeded':
-          return paywallResult;
-        default:
-          return null;
-      }
-    },
-  );
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(purchasesUiChannel, (call) async {
+        switch (call.method) {
+          case 'presentPaywall':
+          case 'presentPaywallIfNeeded':
+            return paywallResult;
+          default:
+            return null;
+        }
+      });
 }
 
 void clearRevenueCatMocks() {
   const purchasesChannel = MethodChannel('purchases_flutter');
   const purchasesUiChannel = MethodChannel('purchases_ui_flutter');
 
-  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-    purchasesChannel,
-    null,
-  );
-  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-    purchasesUiChannel,
-    null,
-  );
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(purchasesChannel, null);
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(purchasesUiChannel, null);
 }

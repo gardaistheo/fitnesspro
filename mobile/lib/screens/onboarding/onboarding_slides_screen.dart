@@ -14,7 +14,11 @@ class OnboardingSlidesScreen extends StatefulWidget {
   final QuizData? quizData;
   final VoidCallback onDone;
 
-  const OnboardingSlidesScreen({super.key, this.quizData, required this.onDone});
+  const OnboardingSlidesScreen({
+    super.key,
+    this.quizData,
+    required this.onDone,
+  });
 
   @override
   State<OnboardingSlidesScreen> createState() => _OnboardingSlidesScreenState();
@@ -31,22 +35,26 @@ class _OnboardingSlidesScreenState extends State<OnboardingSlidesScreen> {
       _Slide(
         emoji: '🎉',
         title: 'Ton programme est prêt !',
-        body: 'Basé sur ton profil $level, nous avons créé un programme sur mesure pour ton objectif : $goal.',
+        body:
+            'Basé sur ton profil $level, nous avons créé un programme sur mesure pour ton objectif : $goal.',
       ),
       const _Slide(
         emoji: '📊',
         title: 'Ton dashboard personnel',
-        body: "Retrouve toutes tes métriques en un coup d'œil : prochain entraînement, calories, hydratation et ton streak.",
+        body:
+            "Retrouve toutes tes métriques en un coup d'œil : prochain entraînement, calories, hydratation et ton streak.",
       ),
       const _Slide(
         emoji: '🧠',
         title: 'Ton Coach IA',
-        body: 'Pose toutes tes questions à ton coach personnel disponible 24h/24. Nutrition, technique, motivation.',
+        body:
+            'Pose toutes tes questions à ton coach personnel disponible 24h/24. Nutrition, technique, motivation.',
       ),
       const _Slide(
         emoji: '📷',
         title: 'Scanner ton alimentation',
-        body: "Prends en photo ton repas et l'IA calcule automatiquement les calories. Saisie manuelle disponible si besoin.",
+        body:
+            "Prends en photo ton repas et l'IA calcule automatiquement les calories. Saisie manuelle disponible si besoin.",
       ),
     ];
   }
@@ -80,7 +88,12 @@ class _OnboardingSlidesScreenState extends State<OnboardingSlidesScreen> {
               Text(
                 slide.title,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: colors.text, fontSize: 24, fontWeight: FontWeight.w900, height: 1.2),
+                style: TextStyle(
+                  color: colors.text,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                  height: 1.2,
+                ),
               ),
               const SizedBox(height: 14),
               ConstrainedBox(
@@ -88,7 +101,11 @@ class _OnboardingSlidesScreenState extends State<OnboardingSlidesScreen> {
                 child: Text(
                   slide.body,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: colors.muted2, fontSize: 14, height: 1.7),
+                  style: TextStyle(
+                    color: colors.muted2,
+                    fontSize: 14,
+                    height: 1.7,
+                  ),
                 ),
               ),
               Padding(
@@ -122,7 +139,10 @@ class _OnboardingSlidesScreenState extends State<OnboardingSlidesScreen> {
                     ),
                     child: Text(
                       _isLast ? 'Accéder à mon espace →' : 'Suivant →',
-                      style: TextStyle(color: colors.bg, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                        color: colors.bg,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),
@@ -132,7 +152,10 @@ class _OnboardingSlidesScreenState extends State<OnboardingSlidesScreen> {
                   padding: const EdgeInsets.only(top: 14),
                   child: TextButton(
                     onPressed: widget.onDone,
-                    child: Text('Passer', style: TextStyle(color: colors.muted, fontSize: 13)),
+                    child: Text(
+                      'Passer',
+                      style: TextStyle(color: colors.muted, fontSize: 13),
+                    ),
                   ),
                 ),
             ],

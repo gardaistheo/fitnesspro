@@ -21,7 +21,8 @@ class ExerciseProvider extends ChangeNotifier {
 
   List<Exercise> _filteredExercises() {
     return _exercises.where((exercise) {
-      final matchesSearch = _searchQuery.isEmpty ||
+      final matchesSearch =
+          _searchQuery.isEmpty ||
           exercise.name.toLowerCase().contains(_searchQuery.toLowerCase());
       return matchesSearch;
     }).toList();
@@ -34,14 +35,19 @@ class ExerciseProvider extends ChangeNotifier {
 
     try {
       final query = <String>[];
-      if (category != null && category != 'Tous') query.add('category=$category');
+      if (category != null && category != 'Tous')
+        query.add('category=$category');
       if (difficulty != null) query.add('difficulty=$difficulty');
-      final endpoint = query.isEmpty ? '/exercises' : '/exercises?${query.join('&')}';
+      final endpoint = query.isEmpty
+          ? '/exercises'
+          : '/exercises?${query.join('&')}';
 
       final response = await apiService.get(endpoint);
       final data = response['data']['data'] as List<dynamic>;
 
-      _exercises = data.map((json) => Exercise.fromJson(json as Map<String, dynamic>)).toList();
+      _exercises = data
+          .map((json) => Exercise.fromJson(json as Map<String, dynamic>))
+          .toList();
       _selectedCategory = category;
       _isLoading = false;
       notifyListeners();

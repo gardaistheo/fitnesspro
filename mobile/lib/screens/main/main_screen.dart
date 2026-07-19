@@ -30,10 +30,7 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       backgroundColor: colors.bg,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _tabs,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _tabs),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
@@ -43,9 +40,18 @@ class _MainScreenState extends State<MainScreen> {
         unselectedItemColor: colors.muted2,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Dashboard'),
-          BottomNavigationBarItem(icon: Icon(Icons.smart_toy_outlined), label: 'Coach IA'),
-          BottomNavigationBarItem(icon: Icon(Icons.camera_alt), label: 'Scanner'),
-          BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: 'Exercices'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.smart_toy_outlined),
+            label: 'Coach IA',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.camera_alt),
+            label: 'Scanner',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.fitness_center),
+            label: 'Exercices',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Séances'),
         ],
       ),

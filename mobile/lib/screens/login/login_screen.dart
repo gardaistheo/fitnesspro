@@ -27,13 +27,20 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  bool get _canSubmit => _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+  bool get _canSubmit =>
+      _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
 
   Future<void> _submit() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
+    final subscriptionProvider = Provider.of<SubscriptionProvider>(
+      context,
+      listen: false,
+    );
 
-    final success = await authProvider.login(_emailController.text, _passwordController.text);
+    final success = await authProvider.login(
+      _emailController.text,
+      _passwordController.text,
+    );
 
     if (!mounted) return;
 
@@ -98,7 +105,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: (_canSubmit && !authProvider.isLoading) ? _submit : null,
+                      onPressed: (_canSubmit && !authProvider.isLoading)
+                          ? _submit
+                          : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colors.accent,
                         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -107,11 +116,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           ? SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: colors.bg),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: colors.bg,
+                              ),
                             )
                           : Text(
                               'Se connecter →',
-                              style: TextStyle(color: colors.bg, fontWeight: FontWeight.w700),
+                              style: TextStyle(
+                                color: colors.bg,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                     ),
                   ),

@@ -21,6 +21,6 @@ class QuizData {
     List<String>? equipment,
     this.caloriesIn = 2000,
     this.caloriesOut = 400,
-  })  : availableDays = availableDays ?? ['Lun', 'Mer', 'Ven'],
-        equipment = equipment ?? [];
+  }) : availableDays = availableDays ?? ['Lun', 'Mer', 'Ven'],
+       equipment = equipment ?? [];
 }

@@ -28,8 +28,13 @@ class SelectCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: active ? colors.accent.withValues(alpha: 0.1) : colors.surface2,
-          border: Border.all(color: active ? colors.accent : colors.border, width: 2),
+          color: active
+              ? colors.accent.withValues(alpha: 0.1)
+              : colors.surface2,
+          border: Border.all(
+            color: active ? colors.accent : colors.border,
+            width: 2,
+          ),
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(

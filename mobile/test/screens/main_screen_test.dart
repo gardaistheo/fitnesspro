@@ -25,29 +25,49 @@ void main() {
     storageService = StorageService();
     await storageService.init();
 
-    when(() => mockApiService.get('/exercises')).thenAnswer((_) async => {
-          'data': {'data': []},
-        });
-    when(() => mockApiService.get('/programs')).thenAnswer((_) async => {
-          'data': {'data': []},
-        });
-    when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
-          'data': {'data': []},
-        });
+    when(() => mockApiService.get('/exercises')).thenAnswer(
+      (_) async => {
+        'data': {'data': []},
+      },
+    );
+    when(() => mockApiService.get('/programs')).thenAnswer(
+      (_) async => {
+        'data': {'data': []},
+      },
+    );
+    when(() => mockApiService.get('/workout-sessions')).thenAnswer(
+      (_) async => {
+        'data': {'data': []},
+      },
+    );
   });
 
   Widget buildTestable() {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthProvider>(
-          create: (_) => AuthProvider(apiService: mockApiService, storageService: storageService),
+          create: (_) => AuthProvider(
+            apiService: mockApiService,
+            storageService: storageService,
+          ),
         ),
-        ChangeNotifierProvider<MealProvider>(create: (_) => MealProvider(apiService: mockApiService)),
-        ChangeNotifierProvider<ExerciseProvider>(create: (_) => ExerciseProvider(apiService: mockApiService)),
-        ChangeNotifierProvider<ProgramProvider>(create: (_) => ProgramProvider(apiService: mockApiService)),
-        ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider(storageService: storageService)),
+        ChangeNotifierProvider<MealProvider>(
+          create: (_) => MealProvider(apiService: mockApiService),
+        ),
+        ChangeNotifierProvider<ExerciseProvider>(
+          create: (_) => ExerciseProvider(apiService: mockApiService),
+        ),
+        ChangeNotifierProvider<ProgramProvider>(
+          create: (_) => ProgramProvider(apiService: mockApiService),
+        ),
+        ChangeNotifierProvider<ThemeProvider>(
+          create: (_) => ThemeProvider(storageService: storageService),
+        ),
         ChangeNotifierProvider<WorkoutSessionProvider>(
-          create: (_) => WorkoutSessionProvider(apiService: mockApiService, storageService: storageService),
+          create: (_) => WorkoutSessionProvider(
+            apiService: mockApiService,
+            storageService: storageService,
+          ),
         ),
       ],
       child: const MaterialApp(home: MainScreen()),
@@ -61,7 +81,9 @@ void main() {
     expect(find.text('Mon tableau de bord'), findsOneWidget);
   });
 
-  testWidgets('switching tabs shows the correct screen for each', (tester) async {
+  testWidgets('switching tabs shows the correct screen for each', (
+    tester,
+  ) async {
     await tester.pumpWidget(buildTestable());
     await tester.pumpAndSettle();
 
@@ -86,19 +108,22 @@ void main() {
     expect(find.text('Mon tableau de bord'), findsOneWidget);
   });
 
-  testWidgets('preserves Dashboard hydration state when switching away and back', (tester) async {
-    await tester.pumpWidget(buildTestable());
-    await tester.pumpAndSettle();
+  testWidgets(
+    'preserves Dashboard hydration state when switching away and back',
+    (tester) async {
+      await tester.pumpWidget(buildTestable());
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text('+250 ml'));
-    await tester.pump();
-    expect(find.text('1500 ml / 2000 ml'), findsOneWidget);
+      await tester.tap(find.text('+250 ml'));
+      await tester.pump();
+      expect(find.text('1500 ml / 2000 ml'), findsOneWidget);
 
-    await tester.tap(find.text('Scanner'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Dashboard'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Scanner'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Dashboard'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('1500 ml / 2000 ml'), findsOneWidget);
-  });
+      expect(find.text('1500 ml / 2000 ml'), findsOneWidget);
+    },
+  );
 }

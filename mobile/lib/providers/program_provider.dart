@@ -28,7 +28,9 @@ class ProgramProvider extends ChangeNotifier {
       final response = await apiService.get(endpoint);
       final data = response['data']['data'] as List<dynamic>;
 
-      _programs = data.map((json) => Program.fromJson(json as Map<String, dynamic>)).toList();
+      _programs = data
+          .map((json) => Program.fromJson(json as Map<String, dynamic>))
+          .toList();
       _isLoading = false;
       notifyListeners();
     } catch (e) {

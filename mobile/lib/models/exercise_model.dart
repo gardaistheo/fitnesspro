@@ -24,10 +24,14 @@ class Exercise {
       id: json['id'] as int,
       name: json['name'] as String,
       category: json['category'] as String,
-      muscles: (json['muscles'] as List<dynamic>? ?? []).map((e) => e as String).toList(),
+      muscles: (json['muscles'] as List<dynamic>? ?? [])
+          .map((e) => e as String)
+          .toList(),
       difficulty: json['difficulty'] as String,
       description: json['description'] as String?,
-      instructions: (json['instructions'] as List<dynamic>? ?? []).map((e) => e as String).toList(),
+      instructions: (json['instructions'] as List<dynamic>? ?? [])
+          .map((e) => e as String)
+          .toList(),
       youtubeUrl: json['youtube_url'] as String?,
     );
   }

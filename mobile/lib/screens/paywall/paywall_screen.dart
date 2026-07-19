@@ -15,7 +15,11 @@ class PaywallScreen extends StatefulWidget {
   final VoidCallback onSubscribed;
   final VoidCallback onSkip;
 
-  const PaywallScreen({super.key, required this.onSubscribed, required this.onSkip});
+  const PaywallScreen({
+    super.key,
+    required this.onSubscribed,
+    required this.onSkip,
+  });
 
   @override
   State<PaywallScreen> createState() => _PaywallScreenState();
@@ -39,14 +43,19 @@ class _PaywallScreenState extends State<PaywallScreen> {
     });
 
     try {
-      final result = await RevenueCatUI.presentPaywall(displayCloseButton: true);
+      final result = await RevenueCatUI.presentPaywall(
+        displayCloseButton: true,
+      );
 
       if (!mounted) return;
 
       switch (result) {
         case PaywallResult.purchased:
         case PaywallResult.restored:
-          await Provider.of<SubscriptionProvider>(context, listen: false).refreshCustomerInfo();
+          await Provider.of<SubscriptionProvider>(
+            context,
+            listen: false,
+          ).refreshCustomerInfo();
           if (!mounted) return;
           widget.onSubscribed();
         case PaywallResult.cancelled:
@@ -88,12 +97,20 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _presentPaywall,
-                      style: ElevatedButton.styleFrom(backgroundColor: colors.accent),
-                      child: Text('Réessayer', style: TextStyle(color: colors.bg)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colors.accent,
+                      ),
+                      child: Text(
+                        'Réessayer',
+                        style: TextStyle(color: colors.bg),
+                      ),
                     ),
                     TextButton(
                       onPressed: widget.onSkip,
-                      child: Text('Continuer sans abonnement', style: TextStyle(color: colors.muted)),
+                      child: Text(
+                        'Continuer sans abonnement',
+                        style: TextStyle(color: colors.muted),
+                      ),
                     ),
                   ],
                 ),
