@@ -22,28 +22,33 @@ void main() {
     String name, {
     String difficulty = 'Débutant',
     List<Map<String, dynamic>>? exercises,
-  }) =>
-      {
-        'id': id,
-        'name': name,
-        'muscles': ['Jambes', 'Fessiers'],
-        'difficulty': difficulty,
-        'duration': 45,
-        'description': 'desc',
-        'exercises': exercises ?? [],
-      };
+  }) => {
+    'id': id,
+    'name': name,
+    'muscles': ['Jambes', 'Fessiers'],
+    'difficulty': difficulty,
+    'duration': 45,
+    'description': 'desc',
+    'exercises': exercises ?? [],
+  };
 
-  Map<String, dynamic> exerciseWithPivot(int id, String name, {int sets = 3, int reps = 10, int order = 0}) => {
-        'id': id,
-        'name': name,
-        'category': 'Jambes',
-        'muscles': ['Jambes'],
-        'difficulty': 'Débutant',
-        'description': null,
-        'instructions': [],
-        'youtube_url': null,
-        'pivot': {'sets': sets, 'reps': reps, 'order': order},
-      };
+  Map<String, dynamic> exerciseWithPivot(
+    int id,
+    String name, {
+    int sets = 3,
+    int reps = 10,
+    int order = 0,
+  }) => {
+    'id': id,
+    'name': name,
+    'category': 'Jambes',
+    'muscles': ['Jambes'],
+    'difficulty': 'Débutant',
+    'description': null,
+    'instructions': [],
+    'youtube_url': null,
+    'pivot': {'sets': sets, 'reps': reps, 'order': order},
+  };
 
   setUp(() {
     mockApiService = MockApiService();
@@ -57,11 +62,13 @@ void main() {
   }
 
   testWidgets('loads and displays programs on init', (tester) async {
-    when(() => mockApiService.get('/programs')).thenAnswer((_) async => {
-          'data': {
-            'data': [programJson(1, 'Leg Day A'), programJson(2, 'Push Day A')],
-          },
-        });
+    when(() => mockApiService.get('/programs')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [programJson(1, 'Leg Day A'), programJson(2, 'Push Day A')],
+        },
+      },
+    );
 
     await tester.pumpWidget(buildTestable());
     await tester.pumpAndSettle();
@@ -70,17 +77,26 @@ void main() {
     expect(find.text('Push Day A'), findsOneWidget);
   });
 
-  testWidgets('tapping a difficulty chip reloads with that filter', (tester) async {
-    when(() => mockApiService.get('/programs')).thenAnswer((_) async => {
-          'data': {
-            'data': [programJson(1, 'Leg Day A'), programJson(2, 'Full Body Avancé', difficulty: 'Avancé')],
-          },
-        });
-    when(() => mockApiService.get('/programs?difficulty=Avancé')).thenAnswer((_) async => {
-          'data': {
-            'data': [programJson(2, 'Full Body Avancé', difficulty: 'Avancé')],
-          },
-        });
+  testWidgets('tapping a difficulty chip reloads with that filter', (
+    tester,
+  ) async {
+    when(() => mockApiService.get('/programs')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [
+            programJson(1, 'Leg Day A'),
+            programJson(2, 'Full Body Avancé', difficulty: 'Avancé'),
+          ],
+        },
+      },
+    );
+    when(() => mockApiService.get('/programs?difficulty=Avancé')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [programJson(2, 'Full Body Avancé', difficulty: 'Avancé')],
+        },
+      },
+    );
 
     await tester.pumpWidget(buildTestable());
     await tester.pumpAndSettle();
@@ -93,18 +109,26 @@ void main() {
     expect(find.text('Leg Day A'), findsNothing);
   });
 
-  testWidgets('shows the first 3 exercise names joined in the footer', (tester) async {
-    when(() => mockApiService.get('/programs')).thenAnswer((_) async => {
-          'data': {
-            'data': [
-              programJson(1, 'Leg Day A', exercises: [
+  testWidgets('shows the first 3 exercise names joined in the footer', (
+    tester,
+  ) async {
+    when(() => mockApiService.get('/programs')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [
+            programJson(
+              1,
+              'Leg Day A',
+              exercises: [
                 exerciseWithPivot(1, 'Squat'),
                 exerciseWithPivot(2, 'Fentes'),
                 exerciseWithPivot(3, 'Soulevé de terre'),
-              ]),
-            ],
-          },
-        });
+              ],
+            ),
+          ],
+        },
+      },
+    );
 
     await tester.pumpWidget(buildTestable());
     await tester.pumpAndSettle();
@@ -112,30 +136,41 @@ void main() {
     expect(find.text('Squat · Fentes · Soulevé de terre'), findsOneWidget);
   });
 
-  testWidgets('tapping a program navigates to its detail and can add to planning', (tester) async {
-    when(() => mockApiService.get('/programs')).thenAnswer((_) async => {
+  testWidgets(
+    'tapping a program navigates to its detail and can add to planning',
+    (tester) async {
+      when(() => mockApiService.get('/programs')).thenAnswer(
+        (_) async => {
           'data': {
             'data': [
-              programJson(1, 'Leg Day A', exercises: [exerciseWithPivot(1, 'Squat', sets: 2, reps: 8)]),
+              programJson(
+                1,
+                'Leg Day A',
+                exercises: [exerciseWithPivot(1, 'Squat', sets: 2, reps: 8)],
+              ),
             ],
           },
-        });
-    when(() => mockApiService.post('/workout-sessions', any())).thenAnswer((_) async => {'data': {}});
+        },
+      );
+      when(
+        () => mockApiService.post('/workout-sessions', any()),
+      ).thenAnswer((_) async => {'data': {}});
 
-    await tester.pumpWidget(buildTestable());
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(buildTestable());
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Leg Day A'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Leg Day A'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Squat'), findsOneWidget);
-    expect(find.text('Série 1'), findsOneWidget);
-    expect(find.text('Série 2'), findsOneWidget);
+      expect(find.text('Squat'), findsOneWidget);
+      expect(find.text('Série 1'), findsOneWidget);
+      expect(find.text('Série 2'), findsOneWidget);
 
-    await tester.tap(find.text('📅 Ajouter à mon planning'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('📅 Ajouter à mon planning'));
+      await tester.pumpAndSettle();
 
-    verify(() => mockApiService.post('/workout-sessions', any())).called(1);
-    expect(find.text('✓ Leg Day A ajouté au planning'), findsOneWidget);
-  });
+      verify(() => mockApiService.post('/workout-sessions', any())).called(1);
+      expect(find.text('✓ Leg Day A ajouté au planning'), findsOneWidget);
+    },
+  );
 }

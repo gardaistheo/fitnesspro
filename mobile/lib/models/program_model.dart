@@ -49,7 +49,9 @@ class Program {
     return Program(
       id: json['id'] as int,
       name: json['name'] as String,
-      muscles: (json['muscles'] as List<dynamic>? ?? []).map((e) => e as String).toList(),
+      muscles: (json['muscles'] as List<dynamic>? ?? [])
+          .map((e) => e as String)
+          .toList(),
       difficulty: json['difficulty'] as String,
       duration: json['duration'] as int?,
       description: json['description'] as String?,

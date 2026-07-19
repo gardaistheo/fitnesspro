@@ -15,18 +15,15 @@ class WorkoutSessionProgram {
     return WorkoutSessionProgram(
       id: json['id'] as int,
       name: json['name'] as String,
-      muscles: (json['muscles'] as List<dynamic>? ?? []).map((e) => e as String).toList(),
+      muscles: (json['muscles'] as List<dynamic>? ?? [])
+          .map((e) => e as String)
+          .toList(),
       duration: json['duration'] as int?,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'muscles': muscles,
-      'duration': duration,
-    };
+    return {'id': id, 'name': name, 'muscles': muscles, 'duration': duration};
   }
 }
 
@@ -56,11 +53,17 @@ class WorkoutSession {
       programId: json['program_id'] as int?,
       scheduledDate: DateTime.parse(json['scheduled_date'] as String),
       // Backend may return HH:mm:ss; the UI only ever needs HH:mm.
-      scheduledTime: rawTime != null && rawTime.length >= 5 ? rawTime.substring(0, 5) : rawTime,
-      completedAt: json['completed_at'] != null ? DateTime.parse(json['completed_at'] as String) : null,
+      scheduledTime: rawTime != null && rawTime.length >= 5
+          ? rawTime.substring(0, 5)
+          : rawTime,
+      completedAt: json['completed_at'] != null
+          ? DateTime.parse(json['completed_at'] as String)
+          : null,
       status: json['status'] as String,
       program: json['program'] != null
-          ? WorkoutSessionProgram.fromJson(json['program'] as Map<String, dynamic>)
+          ? WorkoutSessionProgram.fromJson(
+              json['program'] as Map<String, dynamic>,
+            )
           : null,
     );
   }

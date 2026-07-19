@@ -40,20 +40,28 @@ Future<void> main() async {
   final subscriptionProvider = SubscriptionProvider();
   await subscriptionProvider.configure();
 
-  final authProvider = AuthProvider(apiService: apiService, storageService: storageService);
+  final authProvider = AuthProvider(
+    apiService: apiService,
+    storageService: storageService,
+  );
   final hasSession = await authProvider.restoreSession();
   if (hasSession && authProvider.user != null) {
     await subscriptionProvider.login(authProvider.user!.id.toString());
   }
 
-  runApp(FitnessProApp(
-    apiService: apiService,
-    storageService: storageService,
-    themeProvider: themeProvider,
-    subscriptionProvider: subscriptionProvider,
-    authProvider: authProvider,
-    initialRoute: resolveInitialRoute(hasSession: hasSession, isPro: subscriptionProvider.isPro),
-  ));
+  runApp(
+    FitnessProApp(
+      apiService: apiService,
+      storageService: storageService,
+      themeProvider: themeProvider,
+      subscriptionProvider: subscriptionProvider,
+      authProvider: authProvider,
+      initialRoute: resolveInitialRoute(
+        hasSession: hasSession,
+        isPro: subscriptionProvider.isPro,
+      ),
+    ),
+  );
 }
 
 /// A returning, authenticated user without an active entitlement (never
@@ -91,11 +99,20 @@ class FitnessProApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: themeProvider),
         ChangeNotifierProvider.value(value: subscriptionProvider),
         ChangeNotifierProvider.value(value: authProvider),
-        ChangeNotifierProvider(create: (_) => MealProvider(apiService: apiService)),
-        ChangeNotifierProvider(create: (_) => ExerciseProvider(apiService: apiService)),
-        ChangeNotifierProvider(create: (_) => ProgramProvider(apiService: apiService)),
         ChangeNotifierProvider(
-          create: (_) => WorkoutSessionProvider(apiService: apiService, storageService: storageService),
+          create: (_) => MealProvider(apiService: apiService),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ExerciseProvider(apiService: apiService),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ProgramProvider(apiService: apiService),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => WorkoutSessionProvider(
+            apiService: apiService,
+            storageService: storageService,
+          ),
         ),
       ],
       child: Consumer<ThemeProvider>(
@@ -114,29 +131,34 @@ class FitnessProApp extends StatelessWidget {
               // Reached after a fresh signup: still needs onboarding (quiz +
               // slides) whether or not the user actually subscribes.
               '/paywall': (context) => PaywallScreen(
-                    onSubscribed: () => Navigator.of(context).pushReplacementNamed('/quiz'),
-                    onSkip: () => Navigator.of(context).pushReplacementNamed('/quiz'),
-                  ),
+                onSubscribed: () =>
+                    Navigator.of(context).pushReplacementNamed('/quiz'),
+                onSkip: () =>
+                    Navigator.of(context).pushReplacementNamed('/quiz'),
+              ),
               // Reached at startup for a returning, already-onboarded user
               // whose entitlement isn't active — skip straight to the
               // dashboard either way instead of repeating the quiz.
               '/paywall-recheck': (context) => PaywallScreen(
-                    onSubscribed: () => Navigator.of(context).pushReplacementNamed('/dashboard'),
-                    onSkip: () => Navigator.of(context).pushReplacementNamed('/dashboard'),
-                  ),
+                onSubscribed: () =>
+                    Navigator.of(context).pushReplacementNamed('/dashboard'),
+                onSkip: () =>
+                    Navigator.of(context).pushReplacementNamed('/dashboard'),
+              ),
               '/quiz': (context) => QuizScreen(
-                    onDone: (quizData) {
-                      final navigator = Navigator.of(context);
-                      navigator.pushReplacement(
-                        MaterialPageRoute(
-                          builder: (_) => OnboardingSlidesScreen(
-                            quizData: quizData,
-                            onDone: () => navigator.pushReplacementNamed('/dashboard'),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                onDone: (quizData) {
+                  final navigator = Navigator.of(context);
+                  navigator.pushReplacement(
+                    MaterialPageRoute(
+                      builder: (_) => OnboardingSlidesScreen(
+                        quizData: quizData,
+                        onDone: () =>
+                            navigator.pushReplacementNamed('/dashboard'),
+                      ),
+                    ),
+                  );
+                },
+              ),
               '/dashboard': (context) => const MainScreen(),
               '/food-scanner': (context) => const FoodScannerScreen(),
               '/exercises': (context) => const ExercisesScreen(),

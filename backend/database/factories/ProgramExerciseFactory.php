@@ -4,10 +4,11 @@ namespace Database\Factories;
 
 use App\Models\Exercise;
 use App\Models\Program;
+use App\Models\ProgramExercise;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<\App\Models\ProgramExercise>
+ * @extends Factory<ProgramExercise>
  */
 class ProgramExerciseFactory extends Factory
 {

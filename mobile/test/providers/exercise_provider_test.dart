@@ -14,23 +14,29 @@ void main() {
     provider = ExerciseProvider(apiService: mockApiService);
   });
 
-  Map<String, dynamic> exerciseJson(int id, String name, {String category = 'Jambes'}) => {
-        'id': id,
-        'name': name,
-        'category': category,
-        'muscles': ['Quadriceps'],
-        'difficulty': 'Débutant',
-        'description': 'desc',
-        'instructions': ['step 1'],
-        'youtube_url': null,
-      };
+  Map<String, dynamic> exerciseJson(
+    int id,
+    String name, {
+    String category = 'Jambes',
+  }) => {
+    'id': id,
+    'name': name,
+    'category': category,
+    'muscles': ['Quadriceps'],
+    'difficulty': 'Débutant',
+    'description': 'desc',
+    'instructions': ['step 1'],
+    'youtube_url': null,
+  };
 
   test('loads exercises from the API without any filter', () async {
-    when(() => mockApiService.get('/exercises')).thenAnswer((_) async => {
-          'data': {
-            'data': [exerciseJson(1, 'Squat'), exerciseJson(2, 'Fentes')],
-          },
-        });
+    when(() => mockApiService.get('/exercises')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [exerciseJson(1, 'Squat'), exerciseJson(2, 'Fentes')],
+        },
+      },
+    );
 
     await provider.loadExercises();
 
@@ -39,11 +45,13 @@ void main() {
   });
 
   test('requests the category filter when not "Tous"', () async {
-    when(() => mockApiService.get('/exercises?category=Poitrine')).thenAnswer((_) async => {
-          'data': {
-            'data': [exerciseJson(1, 'Développé couché', category: 'Poitrine')],
-          },
-        });
+    when(() => mockApiService.get('/exercises?category=Poitrine')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [exerciseJson(1, 'Développé couché', category: 'Poitrine')],
+        },
+      },
+    );
 
     await provider.loadExercises(category: 'Poitrine');
 
@@ -52,9 +60,11 @@ void main() {
   });
 
   test('does not add a category filter for "Tous"', () async {
-    when(() => mockApiService.get('/exercises')).thenAnswer((_) async => {
-          'data': {'data': []},
-        });
+    when(() => mockApiService.get('/exercises')).thenAnswer(
+      (_) async => {
+        'data': {'data': []},
+      },
+    );
 
     await provider.loadExercises(category: 'Tous');
 
@@ -62,11 +72,13 @@ void main() {
   });
 
   test('filters loaded exercises locally by search query', () async {
-    when(() => mockApiService.get('/exercises')).thenAnswer((_) async => {
-          'data': {
-            'data': [exerciseJson(1, 'Squat'), exerciseJson(2, 'Fentes')],
-          },
-        });
+    when(() => mockApiService.get('/exercises')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [exerciseJson(1, 'Squat'), exerciseJson(2, 'Fentes')],
+        },
+      },
+    );
 
     await provider.loadExercises();
     provider.setSearchQuery('squ');
@@ -76,7 +88,9 @@ void main() {
   });
 
   test('sets an error and stops loading when the API call fails', () async {
-    when(() => mockApiService.get('/exercises')).thenThrow(Exception('network error'));
+    when(
+      () => mockApiService.get('/exercises'),
+    ).thenThrow(Exception('network error'));
 
     await provider.loadExercises();
 

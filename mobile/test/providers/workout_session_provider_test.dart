@@ -19,7 +19,10 @@ void main() {
     mockApiService = MockApiService();
     storageService = StorageService();
     await storageService.init();
-    provider = WorkoutSessionProvider(apiService: mockApiService, storageService: storageService);
+    provider = WorkoutSessionProvider(
+      apiService: mockApiService,
+      storageService: storageService,
+    );
   });
 
   Map<String, dynamic> sessionJson(
@@ -28,38 +31,50 @@ void main() {
     String? scheduledTime,
     String status = 'planned',
     Map<String, dynamic>? program,
-  }) =>
-      {
-        'id': id,
-        'program_id': program?['id'],
-        'scheduled_date': scheduledDate,
-        'scheduled_time': scheduledTime,
-        'completed_at': null,
-        'status': status,
-        'program': program,
-      };
+  }) => {
+    'id': id,
+    'program_id': program?['id'],
+    'scheduled_date': scheduledDate,
+    'scheduled_time': scheduledTime,
+    'completed_at': null,
+    'status': status,
+    'program': program,
+  };
 
-  test('normalizes a HH:mm:ss scheduled_time from the backend to HH:mm', () async {
-    when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
-          'data': {
-            'data': [sessionJson(1, scheduledDate: '2026-07-15', scheduledTime: '16:31:00')],
-          },
-        });
-
-    await provider.loadSessions();
-
-    expect(provider.sessions.single.scheduledTime, '16:31');
-  });
-
-  test('loads sessions sorted by scheduled_date ascending', () async {
-    when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
+  test(
+    'normalizes a HH:mm:ss scheduled_time from the backend to HH:mm',
+    () async {
+      when(() => mockApiService.get('/workout-sessions')).thenAnswer(
+        (_) async => {
           'data': {
             'data': [
-              sessionJson(1, scheduledDate: '2026-07-15'),
-              sessionJson(2, scheduledDate: '2026-07-08'),
+              sessionJson(
+                1,
+                scheduledDate: '2026-07-15',
+                scheduledTime: '16:31:00',
+              ),
             ],
           },
-        });
+        },
+      );
+
+      await provider.loadSessions();
+
+      expect(provider.sessions.single.scheduledTime, '16:31');
+    },
+  );
+
+  test('loads sessions sorted by scheduled_date ascending', () async {
+    when(() => mockApiService.get('/workout-sessions')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [
+            sessionJson(1, scheduledDate: '2026-07-15'),
+            sessionJson(2, scheduledDate: '2026-07-08'),
+          ],
+        },
+      },
+    );
 
     await provider.loadSessions();
 
@@ -68,15 +83,17 @@ void main() {
   });
 
   test('groups sessions by calendar day', () async {
-    when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
-          'data': {
-            'data': [
-              sessionJson(1, scheduledDate: '2026-07-08'),
-              sessionJson(2, scheduledDate: '2026-07-08'),
-              sessionJson(3, scheduledDate: '2026-07-09'),
-            ],
-          },
-        });
+    when(() => mockApiService.get('/workout-sessions')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [
+            sessionJson(1, scheduledDate: '2026-07-08'),
+            sessionJson(2, scheduledDate: '2026-07-08'),
+            sessionJson(3, scheduledDate: '2026-07-09'),
+          ],
+        },
+      },
+    );
 
     await provider.loadSessions();
 
@@ -86,12 +103,19 @@ void main() {
   });
 
   test('deleteSession removes it from the in-memory list on success', () async {
-    when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
-          'data': {
-            'data': [sessionJson(1, scheduledDate: '2026-07-08'), sessionJson(2, scheduledDate: '2026-07-09')],
-          },
-        });
-    when(() => mockApiService.delete('/workout-sessions/1')).thenAnswer((_) async => {'data': null});
+    when(() => mockApiService.get('/workout-sessions')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [
+            sessionJson(1, scheduledDate: '2026-07-08'),
+            sessionJson(2, scheduledDate: '2026-07-09'),
+          ],
+        },
+      },
+    );
+    when(
+      () => mockApiService.delete('/workout-sessions/1'),
+    ).thenAnswer((_) async => {'data': null});
 
     await provider.loadSessions();
     final result = await provider.deleteSession(1);
@@ -101,21 +125,28 @@ void main() {
     expect(provider.sessions.first.id, 2);
   });
 
-  test('deleteSession keeps the session and sets an error on API failure', () async {
-    when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
+  test(
+    'deleteSession keeps the session and sets an error on API failure',
+    () async {
+      when(() => mockApiService.get('/workout-sessions')).thenAnswer(
+        (_) async => {
           'data': {
             'data': [sessionJson(1, scheduledDate: '2026-07-08')],
           },
-        });
-    when(() => mockApiService.delete('/workout-sessions/1')).thenThrow(Exception('boom'));
+        },
+      );
+      when(
+        () => mockApiService.delete('/workout-sessions/1'),
+      ).thenThrow(Exception('boom'));
 
-    await provider.loadSessions();
-    final result = await provider.deleteSession(1);
+      await provider.loadSessions();
+      final result = await provider.deleteSession(1);
 
-    expect(result, isFalse);
-    expect(provider.sessions, hasLength(1));
-    expect(provider.error, isNotNull);
-  });
+      expect(result, isFalse);
+      expect(provider.sessions, hasLength(1));
+      expect(provider.error, isNotNull);
+    },
+  );
 
   group('nextSession', () {
     String isoDate(DateTime date) =>
@@ -126,14 +157,24 @@ void main() {
       final tomorrow = today.add(const Duration(days: 1));
       final nextWeek = today.add(const Duration(days: 7));
 
-      when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
-            'data': {
-              'data': [
-                sessionJson(1, scheduledDate: isoDate(nextWeek), program: {'id': 1, 'name': 'Later'}),
-                sessionJson(2, scheduledDate: isoDate(tomorrow), program: {'id': 2, 'name': 'Soonest'}),
-              ],
-            },
-          });
+      when(() => mockApiService.get('/workout-sessions')).thenAnswer(
+        (_) async => {
+          'data': {
+            'data': [
+              sessionJson(
+                1,
+                scheduledDate: isoDate(nextWeek),
+                program: {'id': 1, 'name': 'Later'},
+              ),
+              sessionJson(
+                2,
+                scheduledDate: isoDate(tomorrow),
+                program: {'id': 2, 'name': 'Soonest'},
+              ),
+            ],
+          },
+        },
+      );
 
       await provider.loadSessions();
 
@@ -145,15 +186,30 @@ void main() {
       final yesterday = today.subtract(const Duration(days: 1));
       final tomorrow = today.add(const Duration(days: 1));
 
-      when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
-            'data': {
-              'data': [
-                sessionJson(1, scheduledDate: isoDate(yesterday), status: 'planned'),
-                sessionJson(2, scheduledDate: isoDate(today), status: 'completed'),
-                sessionJson(3, scheduledDate: isoDate(tomorrow), status: 'planned', program: {'id': 3, 'name': 'Upcoming'}),
-              ],
-            },
-          });
+      when(() => mockApiService.get('/workout-sessions')).thenAnswer(
+        (_) async => {
+          'data': {
+            'data': [
+              sessionJson(
+                1,
+                scheduledDate: isoDate(yesterday),
+                status: 'planned',
+              ),
+              sessionJson(
+                2,
+                scheduledDate: isoDate(today),
+                status: 'completed',
+              ),
+              sessionJson(
+                3,
+                scheduledDate: isoDate(tomorrow),
+                status: 'planned',
+                program: {'id': 3, 'name': 'Upcoming'},
+              ),
+            ],
+          },
+        },
+      );
 
       await provider.loadSessions();
 
@@ -161,9 +217,11 @@ void main() {
     });
 
     test('is null when there is no upcoming planned session', () async {
-      when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
-            'data': {'data': []},
-          });
+      when(() => mockApiService.get('/workout-sessions')).thenAnswer(
+        (_) async => {
+          'data': {'data': []},
+        },
+      );
 
       await provider.loadSessions();
 
@@ -174,22 +232,36 @@ void main() {
   group('dateLabel', () {
     test('labels today correctly', () {
       final today = DateTime.now();
-      expect(provider.dateLabel(DateTime(today.year, today.month, today.day)), "Aujourd'hui");
+      expect(
+        provider.dateLabel(DateTime(today.year, today.month, today.day)),
+        "Aujourd'hui",
+      );
     });
 
     test('labels tomorrow correctly', () {
       final tomorrow = DateTime.now().add(const Duration(days: 1));
-      expect(provider.dateLabel(DateTime(tomorrow.year, tomorrow.month, tomorrow.day)), 'Demain');
+      expect(
+        provider.dateLabel(
+          DateTime(tomorrow.year, tomorrow.month, tomorrow.day),
+        ),
+        'Demain',
+      );
     });
 
     test('labels a date several days out with "Dans Nj"', () {
       final future = DateTime.now().add(const Duration(days: 5));
-      expect(provider.dateLabel(DateTime(future.year, future.month, future.day)), 'Dans 5j');
+      expect(
+        provider.dateLabel(DateTime(future.year, future.month, future.day)),
+        'Dans 5j',
+      );
     });
 
     test('labels a past date as "Passé"', () {
       final past = DateTime.now().subtract(const Duration(days: 3));
-      expect(provider.dateLabel(DateTime(past.year, past.month, past.day)), 'Passé');
+      expect(
+        provider.dateLabel(DateTime(past.year, past.month, past.day)),
+        'Passé',
+      );
     });
   });
 }

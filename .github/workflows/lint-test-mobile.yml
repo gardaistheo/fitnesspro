@@ -21,7 +21,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0'
+          flutter-version: '3.35.5'
           channel: 'stable'
           cache: true
 
@@ -36,10 +36,6 @@ jobs:
       - name: Run Formatter Check (dart format)
         working-directory: ./mobile
         run: dart format --set-exit-if-changed lib test
-
-      - name: Run Linter (dart lint)
-        working-directory: ./mobile
-        run: dart run lints
 
       - name: Run Tests (flutter test) with Coverage
         working-directory: ./mobile

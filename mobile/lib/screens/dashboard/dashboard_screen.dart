@@ -18,14 +18,17 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _hydration = 1250; // ml consumed
-  int _caloriesConsumed = 1800;
+  final int _caloriesConsumed = 1800;
   final int _caloriesExpended = 500;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<WorkoutSessionProvider>(context, listen: false).loadSessions();
+      Provider.of<WorkoutSessionProvider>(
+        context,
+        listen: false,
+      ).loadSessions();
     });
   }
 
@@ -75,10 +78,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       _buildThemeToggle(context, colors),
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: colors.accent.withValues(alpha: 0.13),
-                          border: Border.all(color: colors.accent.withValues(alpha: 0.27)),
+                          border: Border.all(
+                            color: colors.accent.withValues(alpha: 0.27),
+                          ),
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Row(
@@ -144,15 +152,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
 
     return IconButton(
-      icon: Icon(iconFor(themeProvider.themeMode), color: colors.muted2, size: 20),
+      icon: Icon(
+        iconFor(themeProvider.themeMode),
+        color: colors.muted2,
+        size: 20,
+      ),
       tooltip: 'Changer de thème',
-      onPressed: () => themeProvider.setThemeMode(next(themeProvider.themeMode)),
+      onPressed: () =>
+          themeProvider.setThemeMode(next(themeProvider.themeMode)),
     );
   }
 
   Widget _buildAccountMenu(BuildContext context, FPColorScheme colors) {
     return PopupMenuButton<_AccountAction>(
-      icon: Icon(Icons.manage_accounts_outlined, color: colors.muted2, size: 20),
+      icon: Icon(
+        Icons.manage_accounts_outlined,
+        color: colors.muted2,
+        size: 20,
+      ),
       tooltip: 'Mon compte',
       color: colors.surface,
       onSelected: (action) async {
@@ -166,7 +183,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       itemBuilder: (context) => [
         PopupMenuItem(
           value: _AccountAction.customerCenter,
-          child: Text('Gérer mon abonnement', style: TextStyle(color: colors.text)),
+          child: Text(
+            'Gérer mon abonnement',
+            style: TextStyle(color: colors.text),
+          ),
         ),
         PopupMenuItem(
           value: _AccountAction.logout,
@@ -178,7 +198,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _logout(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
+    final subscriptionProvider = Provider.of<SubscriptionProvider>(
+      context,
+      listen: false,
+    );
 
     await authProvider.logout();
     await subscriptionProvider.logout();
@@ -193,10 +216,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            colors.accent.withValues(alpha: 0.2),
-            colors.surface,
-          ],
+          colors: [colors.accent.withValues(alpha: 0.2), colors.surface],
         ),
         border: Border.all(color: colors.accent.withValues(alpha: 0.27)),
         borderRadius: BorderRadius.circular(16),
@@ -236,7 +256,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _formatSessionDate(DateTime date) {
     const weekdays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
     const months = [
-      'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc',
+      'Jan',
+      'Fév',
+      'Mar',
+      'Avr',
+      'Mai',
+      'Juin',
+      'Juil',
+      'Août',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Déc',
     ];
     return '${weekdays[date.weekday - 1]} ${date.day} ${months[date.month - 1]}';
   }
@@ -257,7 +288,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           if (session == null) ...[
             Text(
               'Aucune séance planifiée',
-              style: TextStyle(color: colors.text, fontSize: 17, fontWeight: FontWeight.w800),
+              style: TextStyle(
+                color: colors.text,
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+              ),
             ),
             const SizedBox(height: 6),
             Text(
@@ -275,7 +310,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             const SizedBox(height: 8),
             Text(
               session.program?.name ?? 'Séance',
-              style: TextStyle(color: colors.text, fontSize: 17, fontWeight: FontWeight.w800),
+              style: TextStyle(
+                color: colors.text,
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+              ),
             ),
             if (session.program != null) ...[
               const SizedBox(height: 6),
@@ -291,14 +330,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               if (session?.program?.duration != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.blue.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
                     '${session!.program!.duration} min',
-                    style: TextStyle(color: colors.blue, fontSize: 11, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                      color: colors.blue,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 )
               else
@@ -341,7 +387,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               Text(
                 '$_hydration ml / $maxHydration ml',
-                style: TextStyle(color: colors.text, fontSize: 13, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: colors.text,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const Text('💧', style: TextStyle(fontSize: 18)),
             ],
@@ -365,7 +415,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colors.blue.withValues(alpha: 0.2),
                   foregroundColor: colors.blue,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                 ),
                 child: const Text('+250 ml'),
               ),
@@ -374,7 +427,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colors.blue.withValues(alpha: 0.2),
                   foregroundColor: colors.blue,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                 ),
                 child: const Text('+500 ml'),
               ),
@@ -383,7 +439,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colors.blue.withValues(alpha: 0.2),
                   foregroundColor: colors.blue,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                 ),
                 child: const Text('↺'),
               ),
@@ -415,7 +474,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               Text(
                 '$consumed kcal / $calorieTarget kcal',
-                style: TextStyle(color: colors.text, fontSize: 13, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: colors.text,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const Text('🔥', style: TextStyle(fontSize: 18)),
             ],
@@ -447,7 +510,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 8),
                 Divider(color: colors.border, height: 8),
                 const SizedBox(height: 8),
-                _buildCalorieDetail(colors, 'Restant', '$remaining kcal', accent: true),
+                _buildCalorieDetail(
+                  colors,
+                  'Restant',
+                  '$remaining kcal',
+                  accent: true,
+                ),
               ],
             ),
           ),
@@ -471,7 +539,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildCalorieDetail(FPColorScheme colors, String label, String value, {bool accent = false}) {
+  Widget _buildCalorieDetail(
+    FPColorScheme colors,
+    String label,
+    String value, {
+    bool accent = false,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

@@ -11,16 +11,20 @@ class MockApiService extends Mock implements ApiService {}
 void main() {
   late MockApiService mockApiService;
 
-  Map<String, dynamic> exerciseJson(int id, String name, {String category = 'Jambes'}) => {
-        'id': id,
-        'name': name,
-        'category': category,
-        'muscles': ['Quadriceps'],
-        'difficulty': 'Débutant',
-        'description': 'Une description.',
-        'instructions': ['Étape 1', 'Étape 2'],
-        'youtube_url': null,
-      };
+  Map<String, dynamic> exerciseJson(
+    int id,
+    String name, {
+    String category = 'Jambes',
+  }) => {
+    'id': id,
+    'name': name,
+    'category': category,
+    'muscles': ['Quadriceps'],
+    'difficulty': 'Débutant',
+    'description': 'Une description.',
+    'instructions': ['Étape 1', 'Étape 2'],
+    'youtube_url': null,
+  };
 
   setUp(() {
     mockApiService = MockApiService();
@@ -34,11 +38,13 @@ void main() {
   }
 
   testWidgets('loads and displays exercises on init', (tester) async {
-    when(() => mockApiService.get('/exercises')).thenAnswer((_) async => {
-          'data': {
-            'data': [exerciseJson(1, 'Squat'), exerciseJson(2, 'Fentes')],
-          },
-        });
+    when(() => mockApiService.get('/exercises')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [exerciseJson(1, 'Squat'), exerciseJson(2, 'Fentes')],
+        },
+      },
+    );
 
     await tester.pumpWidget(buildTestable());
     await tester.pumpAndSettle();
@@ -47,17 +53,26 @@ void main() {
     expect(find.text('Fentes'), findsOneWidget);
   });
 
-  testWidgets('tapping a category chip reloads with that filter', (tester) async {
-    when(() => mockApiService.get('/exercises')).thenAnswer((_) async => {
-          'data': {
-            'data': [exerciseJson(1, 'Squat'), exerciseJson(2, 'Développé couché', category: 'Poitrine')],
-          },
-        });
-    when(() => mockApiService.get('/exercises?category=Poitrine')).thenAnswer((_) async => {
-          'data': {
-            'data': [exerciseJson(2, 'Développé couché', category: 'Poitrine')],
-          },
-        });
+  testWidgets('tapping a category chip reloads with that filter', (
+    tester,
+  ) async {
+    when(() => mockApiService.get('/exercises')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [
+            exerciseJson(1, 'Squat'),
+            exerciseJson(2, 'Développé couché', category: 'Poitrine'),
+          ],
+        },
+      },
+    );
+    when(() => mockApiService.get('/exercises?category=Poitrine')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [exerciseJson(2, 'Développé couché', category: 'Poitrine')],
+        },
+      },
+    );
 
     await tester.pumpWidget(buildTestable());
     await tester.pumpAndSettle();
@@ -70,12 +85,16 @@ void main() {
     expect(find.text('Squat'), findsNothing);
   });
 
-  testWidgets('tapping an exercise navigates to its detail screen', (tester) async {
-    when(() => mockApiService.get('/exercises')).thenAnswer((_) async => {
-          'data': {
-            'data': [exerciseJson(1, 'Squat')],
-          },
-        });
+  testWidgets('tapping an exercise navigates to its detail screen', (
+    tester,
+  ) async {
+    when(() => mockApiService.get('/exercises')).thenAnswer(
+      (_) async => {
+        'data': {
+          'data': [exerciseJson(1, 'Squat')],
+        },
+      },
+    );
 
     await tester.pumpWidget(buildTestable());
     await tester.pumpAndSettle();

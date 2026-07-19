@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/screens/coach/coach_screen.dart';
 
 void main() {
-  testWidgets('shows a themed coming-soon placeholder with no chat UI', (tester) async {
+  testWidgets('shows a themed coming-soon placeholder with no chat UI', (
+    tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: CoachScreen()));
 
     expect(find.text('Coach IA'), findsOneWidget);

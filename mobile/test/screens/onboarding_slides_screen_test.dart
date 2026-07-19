@@ -4,34 +4,46 @@ import 'package:mobile/models/quiz_data.dart';
 import 'package:mobile/screens/onboarding/onboarding_slides_screen.dart';
 
 void main() {
-  testWidgets('shows the first slide with defaults when no quiz data is provided', (tester) async {
-    var doneCalled = false;
-    await tester.pumpWidget(MaterialApp(
-      home: OnboardingSlidesScreen(onDone: () => doneCalled = true),
-    ));
+  testWidgets(
+    'shows the first slide with defaults when no quiz data is provided',
+    (tester) async {
+      var doneCalled = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: OnboardingSlidesScreen(onDone: () => doneCalled = true),
+        ),
+      );
 
-    expect(find.text('Ton programme est prêt !'), findsOneWidget);
-    expect(
-      find.textContaining('Basé sur ton profil Intermédiaire'),
-      findsOneWidget,
-    );
-    expect(find.textContaining('prendre de la masse'), findsOneWidget);
-    expect(doneCalled, isFalse);
-  });
+      expect(find.text('Ton programme est prêt !'), findsOneWidget);
+      expect(
+        find.textContaining('Basé sur ton profil Intermédiaire'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('prendre de la masse'), findsOneWidget);
+      expect(doneCalled, isFalse);
+    },
+  );
 
-  testWidgets('interpolates the level and goal from quiz data into the first slide', (tester) async {
-    final quizData = QuizData(level: 'Avancé', goal: 'Perdre du poids');
+  testWidgets(
+    'interpolates the level and goal from quiz data into the first slide',
+    (tester) async {
+      final quizData = QuizData(level: 'Avancé', goal: 'Perdre du poids');
 
-    await tester.pumpWidget(MaterialApp(
-      home: OnboardingSlidesScreen(quizData: quizData, onDone: () {}),
-    ));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: OnboardingSlidesScreen(quizData: quizData, onDone: () {}),
+        ),
+      );
 
-    expect(find.textContaining('Basé sur ton profil Avancé'), findsOneWidget);
-    expect(find.textContaining('Perdre du poids'), findsOneWidget);
-  });
+      expect(find.textContaining('Basé sur ton profil Avancé'), findsOneWidget);
+      expect(find.textContaining('Perdre du poids'), findsOneWidget);
+    },
+  );
 
   testWidgets('Suivant advances through all 4 slides in order', (tester) async {
-    await tester.pumpWidget(MaterialApp(home: OnboardingSlidesScreen(onDone: () {})));
+    await tester.pumpWidget(
+      MaterialApp(home: OnboardingSlidesScreen(onDone: () {})),
+    );
 
     expect(find.text('Ton programme est prêt !'), findsOneWidget);
 
@@ -53,11 +65,15 @@ void main() {
     expect(find.text('Accéder à mon espace →'), findsOneWidget);
   });
 
-  testWidgets('Passer skips directly to onDone from any non-final slide', (tester) async {
+  testWidgets('Passer skips directly to onDone from any non-final slide', (
+    tester,
+  ) async {
     var doneCalled = false;
-    await tester.pumpWidget(MaterialApp(
-      home: OnboardingSlidesScreen(onDone: () => doneCalled = true),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: OnboardingSlidesScreen(onDone: () => doneCalled = true),
+      ),
+    );
 
     await tester.tap(find.text('Passer'));
     await tester.pump();
@@ -67,9 +83,11 @@ void main() {
 
   testWidgets('the final CTA calls onDone', (tester) async {
     var doneCalled = false;
-    await tester.pumpWidget(MaterialApp(
-      home: OnboardingSlidesScreen(onDone: () => doneCalled = true),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: OnboardingSlidesScreen(onDone: () => doneCalled = true),
+      ),
+    );
 
     for (var i = 0; i < 3; i++) {
       await tester.tap(find.text('Suivant →'));

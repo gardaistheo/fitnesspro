@@ -32,7 +32,11 @@ class CoachScreen extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
-                  child: Icon(Icons.smart_toy_outlined, color: colors.purple, size: 32),
+                  child: Icon(
+                    Icons.smart_toy_outlined,
+                    color: colors.purple,
+                    size: 32,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Text(

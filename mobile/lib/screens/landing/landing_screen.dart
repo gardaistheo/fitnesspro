@@ -38,19 +38,17 @@ class LandingScreen extends StatelessWidget {
                   Column(
                     children: [
                       const SizedBox(height: 40),
-                      const Text(
-                        '🎯',
-                        style: TextStyle(fontSize: 68),
-                      ),
+                      const Text('🎯', style: TextStyle(fontSize: 68)),
                       const SizedBox(height: 24),
                       Text(
                         'Transforme\nton corps\navec IA',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          color: colors.text,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -1,
-                        ),
+                        style: Theme.of(context).textTheme.displayMedium
+                            ?.copyWith(
+                              color: colors.text,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -1,
+                            ),
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -109,10 +107,7 @@ class LandingScreen extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           '€/mois',
-                          style: TextStyle(
-                            color: colors.muted2,
-                            fontSize: 18,
-                          ),
+                          style: TextStyle(color: colors.muted2, fontSize: 18),
                         ),
                       ],
                     ),
@@ -162,10 +157,7 @@ class LandingScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Text(
               '7 jours gratuits',
-              style: TextStyle(
-                color: colors.muted2,
-                fontSize: 13,
-              ),
+              style: TextStyle(color: colors.muted2, fontSize: 13),
             ),
             const SizedBox(height: 20),
             TextButton(
@@ -177,7 +169,10 @@ class LandingScreen extends StatelessWidget {
                     const TextSpan(text: 'Déjà un compte ? '),
                     TextSpan(
                       text: 'Se connecter',
-                      style: TextStyle(color: colors.accent, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                        color: colors.accent,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ],
                 ),
@@ -205,11 +200,7 @@ class LandingScreen extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(
-              color: colors.muted2,
-              fontSize: 13,
-              height: 1.5,
-            ),
+            style: TextStyle(color: colors.muted2, fontSize: 13, height: 1.5),
           ),
         ),
       ],

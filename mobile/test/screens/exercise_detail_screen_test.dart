@@ -24,52 +24,76 @@ void main() {
   // exercised as a full widget test. The URL -> video ID parsing that
   // decides which path is taken is covered separately below, without
   // mounting the real player widget.
-  testWidgets('shows the static placeholder when youtubeUrl is null', (tester) async {
-    await tester.pumpWidget(MaterialApp(home: ExerciseDetailScreen(exercise: buildExercise())));
+  testWidgets('shows the static placeholder when youtubeUrl is null', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(home: ExerciseDetailScreen(exercise: buildExercise())),
+    );
 
     expect(find.byType(YoutubePlayer), findsNothing);
     expect(find.byIcon(Icons.play_arrow), findsOneWidget);
   });
 
-  testWidgets('shows the static placeholder when youtubeUrl does not match a known format', (tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: ExerciseDetailScreen(exercise: buildExercise(youtubeUrl: 'not a url')),
-    ));
-
-    expect(find.byType(YoutubePlayer), findsNothing);
-    expect(find.byIcon(Icons.play_arrow), findsOneWidget);
-  });
-
-  testWidgets('still renders description, muscles, and instructions without a video', (tester) async {
-    await tester.pumpWidget(MaterialApp(home: ExerciseDetailScreen(exercise: buildExercise())));
-
-    expect(find.text('Un exercice de base.'), findsOneWidget);
-    expect(find.text('MUSCLES TRAVAILLÉS'), findsOneWidget);
-    expect(find.text('Quadriceps'), findsOneWidget);
-    expect(find.text('Étape 1'), findsOneWidget);
-  });
-
-  group('YouTube URL parsing (drives which path ExerciseDetailScreen takes)', () {
-    test('parses a standard watch URL', () {
-      expect(
-        YoutubePlayer.convertUrlToId('https://www.youtube.com/watch?v=dQw4w9WgXcQ'),
-        'dQw4w9WgXcQ',
+  testWidgets(
+    'shows the static placeholder when youtubeUrl does not match a known format',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ExerciseDetailScreen(
+            exercise: buildExercise(youtubeUrl: 'not a url'),
+          ),
+        ),
       );
-    });
 
-    test('parses a youtu.be short URL', () {
-      expect(
-        YoutubePlayer.convertUrlToId('https://youtu.be/dQw4w9WgXcQ'),
-        'dQw4w9WgXcQ',
+      expect(find.byType(YoutubePlayer), findsNothing);
+      expect(find.byIcon(Icons.play_arrow), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'still renders description, muscles, and instructions without a video',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(home: ExerciseDetailScreen(exercise: buildExercise())),
       );
-    });
 
-    test('returns null for a non-YouTube URL', () {
-      expect(YoutubePlayer.convertUrlToId('https://example.com/video'), isNull);
-    });
+      expect(find.text('Un exercice de base.'), findsOneWidget);
+      expect(find.text('MUSCLES TRAVAILLÉS'), findsOneWidget);
+      expect(find.text('Quadriceps'), findsOneWidget);
+      expect(find.text('Étape 1'), findsOneWidget);
+    },
+  );
 
-    test('returns null for arbitrary non-URL text', () {
-      expect(YoutubePlayer.convertUrlToId('not a url'), isNull);
-    });
-  });
+  group(
+    'YouTube URL parsing (drives which path ExerciseDetailScreen takes)',
+    () {
+      test('parses a standard watch URL', () {
+        expect(
+          YoutubePlayer.convertUrlToId(
+            'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          ),
+          'dQw4w9WgXcQ',
+        );
+      });
+
+      test('parses a youtu.be short URL', () {
+        expect(
+          YoutubePlayer.convertUrlToId('https://youtu.be/dQw4w9WgXcQ'),
+          'dQw4w9WgXcQ',
+        );
+      });
+
+      test('returns null for a non-YouTube URL', () {
+        expect(
+          YoutubePlayer.convertUrlToId('https://example.com/video'),
+          isNull,
+        );
+      });
+
+      test('returns null for arbitrary non-URL text', () {
+        expect(YoutubePlayer.convertUrlToId('not a url'), isNull);
+      });
+    },
+  );
 }

@@ -38,9 +38,14 @@ void main() {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthProvider>(
-          create: (_) => AuthProvider(apiService: mockApiService, storageService: storageService),
+          create: (_) => AuthProvider(
+            apiService: mockApiService,
+            storageService: storageService,
+          ),
         ),
-        ChangeNotifierProvider<SubscriptionProvider>(create: (_) => SubscriptionProvider()),
+        ChangeNotifierProvider<SubscriptionProvider>(
+          create: (_) => SubscriptionProvider(),
+        ),
       ],
       child: MaterialApp(
         routes: {
@@ -51,23 +56,39 @@ void main() {
     );
   }
 
-  testWidgets('submit button is disabled until all fields are filled', (tester) async {
+  testWidgets('submit button is disabled until all fields are filled', (
+    tester,
+  ) async {
     await tester.pumpWidget(buildTestable());
 
     final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(button.onPressed, isNull);
 
-    await tester.enterText(find.widgetWithText(TextField, 'Prénom et nom'), 'Jane Doe');
-    await tester.enterText(find.widgetWithText(TextField, 'Adresse e-mail'), 'jane@example.com');
-    await tester.enterText(find.widgetWithText(TextField, 'Mot de passe'), 'password123');
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Prénom et nom'),
+      'Jane Doe',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Adresse e-mail'),
+      'jane@example.com',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Mot de passe'),
+      'password123',
+    );
     await tester.pump();
 
-    final buttonAfter = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    final buttonAfter = tester.widget<ElevatedButton>(
+      find.byType(ElevatedButton),
+    );
     expect(buttonAfter.onPressed, isNotNull);
   });
 
-  testWidgets('successful registration links RevenueCat and navigates to the paywall', (tester) async {
-    when(() => mockApiService.post('/auth/register', any())).thenAnswer((_) async => {
+  testWidgets(
+    'successful registration links RevenueCat and navigates to the paywall',
+    (tester) async {
+      when(() => mockApiService.post('/auth/register', any())).thenAnswer(
+        (_) async => {
           'data': {
             'user': {
               'id': 1,
@@ -77,37 +98,62 @@ void main() {
             },
             'token': 'fake-token',
           },
-        });
+        },
+      );
 
-    await tester.pumpWidget(buildTestable());
+      await tester.pumpWidget(buildTestable());
 
-    await tester.enterText(find.widgetWithText(TextField, 'Prénom et nom'), 'Jane Doe');
-    await tester.enterText(find.widgetWithText(TextField, 'Adresse e-mail'), 'jane@example.com');
-    await tester.enterText(find.widgetWithText(TextField, 'Mot de passe'), 'password123');
-    await tester.pump();
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Prénom et nom'),
+        'Jane Doe',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Adresse e-mail'),
+        'jane@example.com',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Mot de passe'),
+        'password123',
+      );
+      await tester.pump();
 
-    await tester.tap(find.byType(ElevatedButton));
-    await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
 
-    expect(find.text('PAYWALL_SCREEN'), findsOneWidget);
-  });
+      expect(find.text('PAYWALL_SCREEN'), findsOneWidget);
+    },
+  );
 
-  testWidgets('failed registration shows an error snackbar and stays on the form', (tester) async {
-    when(() => mockApiService.post('/auth/register', any())).thenThrow(Exception('email already taken'));
+  testWidgets(
+    'failed registration shows an error snackbar and stays on the form',
+    (tester) async {
+      when(
+        () => mockApiService.post('/auth/register', any()),
+      ).thenThrow(Exception('email already taken'));
 
-    await tester.pumpWidget(buildTestable());
+      await tester.pumpWidget(buildTestable());
 
-    await tester.enterText(find.widgetWithText(TextField, 'Prénom et nom'), 'Jane Doe');
-    await tester.enterText(find.widgetWithText(TextField, 'Adresse e-mail'), 'jane@example.com');
-    await tester.enterText(find.widgetWithText(TextField, 'Mot de passe'), 'password123');
-    await tester.pump();
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Prénom et nom'),
+        'Jane Doe',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Adresse e-mail'),
+        'jane@example.com',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Mot de passe'),
+        'password123',
+      );
+      await tester.pump();
 
-    await tester.tap(find.byType(ElevatedButton));
-    await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
 
-    expect(find.text('PAYWALL_SCREEN'), findsNothing);
-    expect(find.byType(SnackBar), findsOneWidget);
-  });
+      expect(find.text('PAYWALL_SCREEN'), findsNothing);
+      expect(find.byType(SnackBar), findsOneWidget);
+    },
+  );
 
   testWidgets('does not render any manual card/payment fields', (tester) async {
     await tester.pumpWidget(buildTestable());

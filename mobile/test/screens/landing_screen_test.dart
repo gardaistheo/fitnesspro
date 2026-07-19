@@ -27,7 +27,10 @@ void main() {
   testWidgets('"Se connecter" link navigates to login', (tester) async {
     await tester.pumpWidget(buildTestable());
 
-    final loginLinkFinder = find.textContaining('Se connecter', findRichText: true);
+    final loginLinkFinder = find.textContaining(
+      'Se connecter',
+      findRichText: true,
+    );
     await tester.scrollUntilVisible(loginLinkFinder, 200);
     await tester.tap(find.byType(TextButton));
     await tester.pumpAndSettle();

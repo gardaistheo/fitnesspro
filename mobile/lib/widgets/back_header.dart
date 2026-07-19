@@ -6,7 +6,12 @@ class BackHeader extends StatelessWidget {
   final VoidCallback onBack;
   final Widget? trailing;
 
-  const BackHeader({super.key, required this.title, required this.onBack, this.trailing});
+  const BackHeader({
+    super.key,
+    required this.title,
+    required this.onBack,
+    this.trailing,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +42,11 @@ class BackHeader extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: TextStyle(color: colors.text, fontSize: 16, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                color: colors.text,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           if (trailing != null) trailing!,

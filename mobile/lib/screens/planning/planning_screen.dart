@@ -18,7 +18,10 @@ class _PlanningScreenState extends State<PlanningScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<WorkoutSessionProvider>(context, listen: false).loadSessions();
+      Provider.of<WorkoutSessionProvider>(
+        context,
+        listen: false,
+      ).loadSessions();
     });
   }
 
@@ -29,12 +32,18 @@ class _PlanningScreenState extends State<PlanningScreen> {
   }
 
   Future<void> _deleteSession(WorkoutSession session) async {
-    final provider = Provider.of<WorkoutSessionProvider>(context, listen: false);
+    final provider = Provider.of<WorkoutSessionProvider>(
+      context,
+      listen: false,
+    );
     await provider.deleteSession(session.id);
   }
 
   Future<void> _showAddModal() async {
-    final programProvider = Provider.of<ProgramProvider>(context, listen: false);
+    final programProvider = Provider.of<ProgramProvider>(
+      context,
+      listen: false,
+    );
     if (programProvider.programs.isEmpty) {
       await programProvider.loadPrograms();
     }
@@ -56,7 +65,10 @@ class _PlanningScreenState extends State<PlanningScreen> {
               final Program program = programProvider.programs[index];
               return ListTile(
                 title: Text(program.name, style: TextStyle(color: colors.text)),
-                subtitle: Text(program.muscles.join(', '), style: TextStyle(color: colors.muted2)),
+                subtitle: Text(
+                  program.muscles.join(', '),
+                  style: TextStyle(color: colors.muted2),
+                ),
                 onTap: () async {
                   Navigator.of(context).pop();
                   await _pickDateAndSchedule(programProvider, program);
@@ -69,7 +81,10 @@ class _PlanningScreenState extends State<PlanningScreen> {
     );
   }
 
-  Future<void> _pickDateAndSchedule(ProgramProvider programProvider, Program program) async {
+  Future<void> _pickDateAndSchedule(
+    ProgramProvider programProvider,
+    Program program,
+  ) async {
     final colors = FPColorScheme.of(context);
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -82,11 +97,11 @@ class _PlanningScreenState extends State<PlanningScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: colors.accent,
-                  onPrimary: colors.bg,
-                  surface: colors.surface,
-                  onSurface: colors.text,
-                ),
+              primary: colors.accent,
+              onPrimary: colors.bg,
+              surface: colors.surface,
+              onSurface: colors.text,
+            ),
           ),
           child: child!,
         );
@@ -101,11 +116,11 @@ class _PlanningScreenState extends State<PlanningScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: colors.accent,
-                  onPrimary: colors.bg,
-                  surface: colors.surface,
-                  onSurface: colors.text,
-                ),
+              primary: colors.accent,
+              onPrimary: colors.bg,
+              surface: colors.surface,
+              onSurface: colors.text,
+            ),
           ),
           child: child!,
         );
@@ -127,10 +142,18 @@ class _PlanningScreenState extends State<PlanningScreen> {
     if (!mounted) return;
 
     if (success) {
-      Provider.of<WorkoutSessionProvider>(context, listen: false).loadSessions();
+      Provider.of<WorkoutSessionProvider>(
+        context,
+        listen: false,
+      ).loadSessions();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(programProvider.error ?? "Impossible d'ajouter la séance au planning.")),
+        SnackBar(
+          content: Text(
+            programProvider.error ??
+                "Impossible d'ajouter la séance au planning.",
+          ),
+        ),
       );
     }
   }
@@ -160,7 +183,11 @@ class _PlanningScreenState extends State<PlanningScreen> {
                       ),
                       Text(
                         'Planning',
-                        style: TextStyle(color: colors.text, fontSize: 18, fontWeight: FontWeight.w800),
+                        style: TextStyle(
+                          color: colors.text,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ],
                   ),
@@ -168,16 +195,28 @@ class _PlanningScreenState extends State<PlanningScreen> {
                     onPressed: _showAddModal,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: colors.accent,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                     ),
-                    child: Text('+ Ajouter', style: TextStyle(color: colors.bg, fontSize: 13, fontWeight: FontWeight.w700)),
+                    child: Text(
+                      '+ Ajouter',
+                      style: TextStyle(
+                        color: colors.bg,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
             Expanded(
               child: sessionProvider.isLoading
-                  ? Center(child: CircularProgressIndicator(color: colors.accent))
+                  ? Center(
+                      child: CircularProgressIndicator(color: colors.accent),
+                    )
                   : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: sortedDates.length,
@@ -195,7 +234,8 @@ class _PlanningScreenState extends State<PlanningScreen> {
                               child: Row(
                                 children: [
                                   Text(
-                                    '${date.day}/${date.month}/${date.year}'.toUpperCase(),
+                                    '${date.day}/${date.month}/${date.year}'
+                                        .toUpperCase(),
                                     style: TextStyle(
                                       color: colors.muted2,
                                       fontSize: 11,
@@ -203,17 +243,26 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  Expanded(child: Divider(color: colors.border)),
+                                  Expanded(
+                                    child: Divider(color: colors.border),
+                                  ),
                                   const SizedBox(width: 8),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 3,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: chipColor.withValues(alpha: 0.18),
                                       borderRadius: BorderRadius.circular(999),
                                     ),
                                     child: Text(
                                       label,
-                                      style: TextStyle(color: chipColor, fontSize: 11, fontWeight: FontWeight.w700),
+                                      style: TextStyle(
+                                        color: chipColor,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -234,37 +283,60 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                       width: 42,
                                       height: 42,
                                       decoration: BoxDecoration(
-                                        color: colors.accent.withValues(alpha: 0.1),
+                                        color: colors.accent.withValues(
+                                          alpha: 0.1,
+                                        ),
                                         borderRadius: BorderRadius.circular(11),
                                       ),
                                       alignment: Alignment.center,
-                                      child: const Text('💪', style: TextStyle(fontSize: 20)),
+                                      child: const Text(
+                                        '💪',
+                                        style: TextStyle(fontSize: 20),
+                                      ),
                                     ),
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             session.program?.name ?? 'Séance',
-                                            style: TextStyle(color: colors.text, fontWeight: FontWeight.w800),
+                                            style: TextStyle(
+                                              color: colors.text,
+                                              fontWeight: FontWeight.w800,
+                                            ),
                                           ),
                                           Text(
                                             [
-                                              if (session.scheduledTime != null) session.scheduledTime,
-                                              if (session.program != null) session.program!.muscles.join(', '),
-                                              if (session.program?.duration != null) '${session.program!.duration} min',
+                                              if (session.scheduledTime != null)
+                                                session.scheduledTime,
+                                              if (session.program != null)
+                                                session.program!.muscles.join(
+                                                  ', ',
+                                                ),
+                                              if (session.program?.duration !=
+                                                  null)
+                                                '${session.program!.duration} min',
                                             ].whereType<String>().join(' · '),
-                                            style: TextStyle(color: colors.muted2, fontSize: 12),
+                                            style: TextStyle(
+                                              color: colors.muted2,
+                                              fontSize: 12,
+                                            ),
                                           ),
                                         ],
                                       ),
                                     ),
                                     IconButton(
-                                      icon: Icon(Icons.delete_outline, color: colors.red),
+                                      icon: Icon(
+                                        Icons.delete_outline,
+                                        color: colors.red,
+                                      ),
                                       onPressed: () => _deleteSession(session),
                                       style: IconButton.styleFrom(
-                                        backgroundColor: colors.red.withValues(alpha: 0.1),
+                                        backgroundColor: colors.red.withValues(
+                                          alpha: 0.1,
+                                        ),
                                       ),
                                     ),
                                   ],

@@ -5,7 +5,12 @@ import '../../providers/program_provider.dart';
 import '../../widgets/diff_chip.dart';
 import 'workout_detail_screen.dart';
 
-const List<String> kWorkoutDifficulties = ['Tous', 'Débutant', 'Intermédiaire', 'Avancé'];
+const List<String> kWorkoutDifficulties = [
+  'Tous',
+  'Débutant',
+  'Intermédiaire',
+  'Avancé',
+];
 
 class WorkoutsScreen extends StatefulWidget {
   const WorkoutsScreen({super.key});
@@ -39,7 +44,10 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
               height: 48,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 itemCount: kWorkoutDifficulties.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 8),
                 itemBuilder: (context, index) {
@@ -64,13 +72,18 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
             ),
             Expanded(
               child: programProvider.isLoading
-                  ? Center(child: CircularProgressIndicator(color: colors.accent))
+                  ? Center(
+                      child: CircularProgressIndicator(color: colors.accent),
+                    )
                   : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: programProvider.programs.length,
                       itemBuilder: (context, index) {
                         final program = programProvider.programs[index];
-                        final firstThree = program.exercises.take(3).map((e) => e.exerciseName).join(' · ');
+                        final firstThree = program.exercises
+                            .take(3)
+                            .map((e) => e.exerciseName)
+                            .join(' · ');
 
                         return Container(
                           margin: const EdgeInsets.only(bottom: 12),
@@ -84,7 +97,8 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => WorkoutDetailScreen(program: program),
+                                  builder: (_) =>
+                                      WorkoutDetailScreen(program: program),
                                 ),
                               );
                             },
@@ -94,11 +108,13 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               program.name,
@@ -111,7 +127,10 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                                             const SizedBox(height: 4),
                                             Text(
                                               program.muscles.join(', '),
-                                              style: TextStyle(color: colors.muted2, fontSize: 13),
+                                              style: TextStyle(
+                                                color: colors.muted2,
+                                                fontSize: 13,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -124,18 +143,27 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                                     Container(
                                       padding: const EdgeInsets.only(top: 12),
                                       decoration: BoxDecoration(
-                                        border: Border(top: BorderSide(color: colors.border)),
+                                        border: Border(
+                                          top: BorderSide(color: colors.border),
+                                        ),
                                       ),
                                       child: Row(
                                         children: [
                                           Expanded(
                                             child: Text(
                                               firstThree,
-                                              style: TextStyle(color: colors.muted2, fontSize: 12),
+                                              style: TextStyle(
+                                                color: colors.muted2,
+                                                fontSize: 12,
+                                              ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          Icon(Icons.chevron_right, color: colors.muted2, size: 18),
+                                          Icon(
+                                            Icons.chevron_right,
+                                            color: colors.muted2,
+                                            size: 18,
+                                          ),
                                         ],
                                       ),
                                     ),

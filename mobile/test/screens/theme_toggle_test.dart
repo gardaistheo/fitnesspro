@@ -21,9 +21,11 @@ void main() {
     storageService = StorageService();
     await storageService.init();
     mockApiService = MockApiService();
-    when(() => mockApiService.get('/workout-sessions')).thenAnswer((_) async => {
-          'data': {'data': []},
-        });
+    when(() => mockApiService.get('/workout-sessions')).thenAnswer(
+      (_) async => {
+        'data': {'data': []},
+      },
+    );
   });
 
   Widget buildTestable(ThemeProvider themeProvider) {
@@ -31,7 +33,10 @@ void main() {
       providers: [
         ChangeNotifierProvider<ThemeProvider>.value(value: themeProvider),
         ChangeNotifierProvider<WorkoutSessionProvider>(
-          create: (_) => WorkoutSessionProvider(apiService: mockApiService, storageService: storageService),
+          create: (_) => WorkoutSessionProvider(
+            apiService: mockApiService,
+            storageService: storageService,
+          ),
         ),
       ],
       child: Consumer<ThemeProvider>(
@@ -47,47 +52,57 @@ void main() {
     );
   }
 
-  testWidgets('tapping the theme toggle cycles system -> light -> dark -> system and persists it', (tester) async {
-    final themeProvider = ThemeProvider(storageService: storageService);
-    await themeProvider.init();
+  testWidgets(
+    'tapping the theme toggle cycles system -> light -> dark -> system and persists it',
+    (tester) async {
+      final themeProvider = ThemeProvider(storageService: storageService);
+      await themeProvider.init();
 
-    await tester.pumpWidget(buildTestable(themeProvider));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(buildTestable(themeProvider));
+      await tester.pumpAndSettle();
 
-    expect(themeProvider.themeMode, ThemeMode.system);
-    expect(find.byIcon(Icons.brightness_auto), findsOneWidget);
+      expect(themeProvider.themeMode, ThemeMode.system);
+      expect(find.byIcon(Icons.brightness_auto), findsOneWidget);
 
-    await tester.tap(find.byTooltip('Changer de thème'));
-    await tester.pumpAndSettle();
-    expect(themeProvider.themeMode, ThemeMode.light);
-    expect(find.byIcon(Icons.light_mode), findsOneWidget);
-    expect(storageService.getThemeMode(), 'light');
+      await tester.tap(find.byTooltip('Changer de thème'));
+      await tester.pumpAndSettle();
+      expect(themeProvider.themeMode, ThemeMode.light);
+      expect(find.byIcon(Icons.light_mode), findsOneWidget);
+      expect(storageService.getThemeMode(), 'light');
 
-    await tester.tap(find.byTooltip('Changer de thème'));
-    await tester.pumpAndSettle();
-    expect(themeProvider.themeMode, ThemeMode.dark);
-    expect(find.byIcon(Icons.dark_mode), findsOneWidget);
-    expect(storageService.getThemeMode(), 'dark');
+      await tester.tap(find.byTooltip('Changer de thème'));
+      await tester.pumpAndSettle();
+      expect(themeProvider.themeMode, ThemeMode.dark);
+      expect(find.byIcon(Icons.dark_mode), findsOneWidget);
+      expect(storageService.getThemeMode(), 'dark');
 
-    await tester.tap(find.byTooltip('Changer de thème'));
-    await tester.pumpAndSettle();
-    expect(themeProvider.themeMode, ThemeMode.system);
-    expect(find.byIcon(Icons.brightness_auto), findsOneWidget);
-  });
+      await tester.tap(find.byTooltip('Changer de thème'));
+      await tester.pumpAndSettle();
+      expect(themeProvider.themeMode, ThemeMode.system);
+      expect(find.byIcon(Icons.brightness_auto), findsOneWidget);
+    },
+  );
 
-  testWidgets('the Scaffold background actually changes when toggling to dark', (tester) async {
-    final themeProvider = ThemeProvider(storageService: storageService);
-    await themeProvider.init();
-    await themeProvider.setThemeMode(ThemeMode.light);
+  testWidgets(
+    'the Scaffold background actually changes when toggling to dark',
+    (tester) async {
+      final themeProvider = ThemeProvider(storageService: storageService);
+      await themeProvider.init();
+      await themeProvider.setThemeMode(ThemeMode.light);
 
-    await tester.pumpWidget(buildTestable(themeProvider));
-    await tester.pumpAndSettle();
-    final lightColor = tester.widget<Scaffold>(find.byType(Scaffold)).backgroundColor;
+      await tester.pumpWidget(buildTestable(themeProvider));
+      await tester.pumpAndSettle();
+      final lightColor = tester
+          .widget<Scaffold>(find.byType(Scaffold))
+          .backgroundColor;
 
-    await themeProvider.setThemeMode(ThemeMode.dark);
-    await tester.pumpAndSettle();
-    final darkColor = tester.widget<Scaffold>(find.byType(Scaffold)).backgroundColor;
+      await themeProvider.setThemeMode(ThemeMode.dark);
+      await tester.pumpAndSettle();
+      final darkColor = tester
+          .widget<Scaffold>(find.byType(Scaffold))
+          .backgroundColor;
 
-    expect(darkColor, isNot(equals(lightColor)));
-  });
+      expect(darkColor, isNot(equals(lightColor)));
+    },
+  );
 }

@@ -74,7 +74,9 @@ class _QuizScreenState extends State<QuizScreen> {
       case 0:
         return _d.level != null;
       case 1:
-        return _d.goal != null && _d.currentWeight.isNotEmpty && _d.targetWeight.isNotEmpty;
+        return _d.goal != null &&
+            _d.currentWeight.isNotEmpty &&
+            _d.targetWeight.isNotEmpty;
       case 2:
         return _d.availableDays.isNotEmpty;
       case 3:
@@ -114,12 +116,22 @@ class _QuizScreenState extends State<QuizScreen> {
                     children: [
                       Text(
                         'Étape ${_step + 1} sur $_totalSteps',
-                        style: TextStyle(color: colors.muted2, fontSize: 12, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          color: colors.muted2,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       if (_step > 0)
                         TextButton(
                           onPressed: _back,
-                          child: Text('← Retour', style: TextStyle(color: colors.muted2, fontSize: 13)),
+                          child: Text(
+                            '← Retour',
+                            style: TextStyle(
+                              color: colors.muted2,
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
                     ],
                   ),
@@ -146,7 +158,11 @@ class _QuizScreenState extends State<QuizScreen> {
                     const SizedBox(height: 6),
                     Text(
                       _subtitles[_titleIdx],
-                      style: TextStyle(color: colors.muted2, fontSize: 13, height: 1.5),
+                      style: TextStyle(
+                        color: colors.muted2,
+                        fontSize: 13,
+                        height: 1.5,
+                      ),
                     ),
                     const SizedBox(height: 22),
                     _buildBody(colors),
@@ -168,8 +184,13 @@ class _QuizScreenState extends State<QuizScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   child: Text(
-                    _step == _totalSteps - 1 ? 'Créer mon programme →' : 'Continuer →',
-                    style: TextStyle(color: colors.bg, fontWeight: FontWeight.w700),
+                    _step == _totalSteps - 1
+                        ? 'Créer mon programme →'
+                        : 'Continuer →',
+                    style: TextStyle(
+                      color: colors.bg,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
@@ -225,7 +246,11 @@ class _QuizScreenState extends State<QuizScreen> {
           runSpacing: 8,
           children: [
             for (final g in goals)
-              TagChip(label: g, active: _d.goal == g, onTap: () => setState(() => _d.goal = g)),
+              TagChip(
+                label: g,
+                active: _d.goal == g,
+                onTap: () => setState(() => _d.goal = g),
+              ),
           ],
         ),
         const SizedBox(height: 18),
@@ -235,7 +260,14 @@ class _QuizScreenState extends State<QuizScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Poids actuel (kg)', style: TextStyle(color: colors.muted2, fontSize: 12, fontWeight: FontWeight.w600)),
+                  Text(
+                    'Poids actuel (kg)',
+                    style: TextStyle(
+                      color: colors.muted2,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 6),
                   _buildNumberField(
                     colors,
@@ -250,7 +282,14 @@ class _QuizScreenState extends State<QuizScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Poids cible (kg)', style: TextStyle(color: colors.muted2, fontSize: 12, fontWeight: FontWeight.w600)),
+                  Text(
+                    'Poids cible (kg)',
+                    style: TextStyle(
+                      color: colors.muted2,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 6),
                   _buildNumberField(
                     colors,
@@ -266,7 +305,11 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  Widget _buildNumberField(FPColorScheme colors, {required String initialValue, required ValueChanged<String> onChanged}) {
+  Widget _buildNumberField(
+    FPColorScheme colors, {
+    required String initialValue,
+    required ValueChanged<String> onChanged,
+  }) {
     return TextFormField(
       initialValue: initialValue,
       keyboardType: TextInputType.number,
@@ -275,10 +318,22 @@ class _QuizScreenState extends State<QuizScreen> {
       decoration: InputDecoration(
         filled: true,
         fillColor: colors.surface2,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colors.border)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colors.border)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colors.accent)),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 13,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colors.accent),
+        ),
       ),
     );
   }
@@ -308,10 +363,17 @@ class _QuizScreenState extends State<QuizScreen> {
         const SizedBox(height: 20),
         Text.rich(
           TextSpan(
-            style: TextStyle(color: colors.muted2, fontSize: 13, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: colors.muted2,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
             children: [
               const TextSpan(text: 'Durée par séance : '),
-              TextSpan(text: '${_d.hoursPerDay}h', style: TextStyle(color: colors.accent)),
+              TextSpan(
+                text: '${_d.hoursPerDay}h',
+                style: TextStyle(color: colors.accent),
+              ),
             ],
           ),
         ),
@@ -417,9 +479,16 @@ class _QuizScreenState extends State<QuizScreen> {
               children: [
                 TextSpan(
                   text: '${_d.caloriesIn}',
-                  style: TextStyle(color: colors.accent, fontSize: 38, fontWeight: FontWeight.w900),
+                  style: TextStyle(
+                    color: colors.accent,
+                    fontSize: 38,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
-                TextSpan(text: ' kcal', style: TextStyle(color: colors.muted2, fontSize: 16)),
+                TextSpan(
+                  text: ' kcal',
+                  style: TextStyle(color: colors.muted2, fontSize: 16),
+                ),
               ],
             ),
           ),
@@ -436,7 +505,15 @@ class _QuizScreenState extends State<QuizScreen> {
         for (final (cal, label, desc) in presets)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: _buildPresetRow(colors, cal, label, desc, _d.caloriesIn, colors.accent, (v) => setState(() => _d.caloriesIn = v)),
+            child: _buildPresetRow(
+              colors,
+              cal,
+              label,
+              desc,
+              _d.caloriesIn,
+              colors.accent,
+              (v) => setState(() => _d.caloriesIn = v),
+            ),
           ),
       ],
     );
@@ -460,7 +537,10 @@ class _QuizScreenState extends State<QuizScreen> {
               const TextSpan(text: 'Dépenses '),
               TextSpan(
                 text: 'hors activité sportive',
-                style: TextStyle(color: colors.text, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  color: colors.text,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const TextSpan(text: '. Moyenne : 300–600 kcal/jour.'),
             ],
@@ -473,9 +553,16 @@ class _QuizScreenState extends State<QuizScreen> {
               children: [
                 TextSpan(
                   text: '${_d.caloriesOut}',
-                  style: TextStyle(color: colors.orange, fontSize: 38, fontWeight: FontWeight.w900),
+                  style: TextStyle(
+                    color: colors.orange,
+                    fontSize: 38,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
-                TextSpan(text: ' kcal', style: TextStyle(color: colors.muted2, fontSize: 16)),
+                TextSpan(
+                  text: ' kcal',
+                  style: TextStyle(color: colors.muted2, fontSize: 16),
+                ),
               ],
             ),
           ),
@@ -492,7 +579,15 @@ class _QuizScreenState extends State<QuizScreen> {
         for (final (cal, label, desc) in presets)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: _buildPresetRow(colors, cal, label, desc, _d.caloriesOut, colors.orange, (v) => setState(() => _d.caloriesOut = v)),
+            child: _buildPresetRow(
+              colors,
+              cal,
+              label,
+              desc,
+              _d.caloriesOut,
+              colors.orange,
+              (v) => setState(() => _d.caloriesOut = v),
+            ),
           ),
       ],
     );
@@ -518,7 +613,9 @@ class _QuizScreenState extends State<QuizScreen> {
         decoration: BoxDecoration(
           border: Border.all(color: isActive ? activeColor : colors.border),
           borderRadius: BorderRadius.circular(10),
-          color: isActive ? activeColor.withValues(alpha: 0.07) : Colors.transparent,
+          color: isActive
+              ? activeColor.withValues(alpha: 0.07)
+              : Colors.transparent,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -526,11 +623,24 @@ class _QuizScreenState extends State<QuizScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: TextStyle(color: isActive ? activeColor : colors.text, fontSize: 14, fontWeight: FontWeight.w700)),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: isActive ? activeColor : colors.text,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 Text(desc, style: TextStyle(color: colors.muted, fontSize: 12)),
               ],
             ),
-            Text('$cal kcal', style: TextStyle(color: colors.muted2, fontWeight: FontWeight.w700)),
+            Text(
+              '$cal kcal',
+              style: TextStyle(
+                color: colors.muted2,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ],
         ),
       ),

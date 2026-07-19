@@ -33,11 +33,16 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   bool get _canSubmit =>
-      _nameController.text.isNotEmpty && _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+      _nameController.text.isNotEmpty &&
+      _emailController.text.isNotEmpty &&
+      _passwordController.text.isNotEmpty;
 
   Future<void> _submit() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
+    final subscriptionProvider = Provider.of<SubscriptionProvider>(
+      context,
+      listen: false,
+    );
 
     final success = await authProvider.register(
       _nameController.text,
@@ -119,7 +124,9 @@ class _SignupScreenState extends State<SignupScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: (_canSubmit && !authProvider.isLoading) ? _submit : null,
+                      onPressed: (_canSubmit && !authProvider.isLoading)
+                          ? _submit
+                          : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colors.accent,
                         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -128,11 +135,17 @@ class _SignupScreenState extends State<SignupScreen> {
                           ? SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: colors.bg),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: colors.bg,
+                              ),
                             )
                           : Text(
                               'Continuer →',
-                              style: TextStyle(color: colors.bg, fontWeight: FontWeight.w700),
+                              style: TextStyle(
+                                color: colors.bg,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                     ),
                   ),
