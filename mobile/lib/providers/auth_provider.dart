@@ -111,7 +111,7 @@ class AuthProvider extends ChangeNotifier {
       await apiService.post('/auth/logout', {});
     } catch (e) {
       // Logout even if API call fails
-      print('Logout API error: $e');
+      debugPrint('Logout API error: $e');
     }
 
     _user = null;
@@ -137,7 +137,7 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      print('Session restore error: $e');
+      debugPrint('Session restore error: $e');
       return false;
     }
   }

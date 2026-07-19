@@ -18,7 +18,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _hydration = 1250; // ml consumed
-  int _caloriesConsumed = 1800;
+  final int _caloriesConsumed = 1800;
   final int _caloriesExpended = 500;
 
   @override
