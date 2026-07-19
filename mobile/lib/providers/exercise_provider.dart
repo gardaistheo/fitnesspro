@@ -35,9 +35,12 @@ class ExerciseProvider extends ChangeNotifier {
 
     try {
       final query = <String>[];
-      if (category != null && category != 'Tous')
+      if (category != null && category != 'Tous') {
         query.add('category=$category');
-      if (difficulty != null) query.add('difficulty=$difficulty');
+      }
+      if (difficulty != null) {
+        query.add('difficulty=$difficulty');
+      }
       final endpoint = query.isEmpty
           ? '/exercises'
           : '/exercises?${query.join('&')}';
