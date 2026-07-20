@@ -48,30 +48,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Bonjour 👋',
-                        style: TextStyle(
-                          color: colors.muted2,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Bonjour 👋',
+                          style: TextStyle(
+                            color: colors.muted2,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Mon tableau de bord',
-                        style: TextStyle(
-                          color: colors.text,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -0.5,
+                        const SizedBox(height: 4),
+                        Text(
+                          'Mon tableau de bord',
+                          style: TextStyle(
+                            color: colors.text,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       _buildAccountMenu(context, colors),
                       const SizedBox(width: 4),
@@ -90,6 +95,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             const Text('🔥', style: TextStyle(fontSize: 16)),
                             const SizedBox(width: 6),
