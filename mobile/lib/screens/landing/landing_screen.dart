@@ -38,7 +38,10 @@ class LandingScreen extends StatelessWidget {
                   Column(
                     children: [
                       const SizedBox(height: 40),
-                      const Text('🎯', style: TextStyle(fontSize: 68)),
+                      Semantics(
+                        excludeSemantics: true,
+                        child: const Text('🎯', style: TextStyle(fontSize: 68)),
+                      ),
                       const SizedBox(height: 24),
                       Text(
                         'Transforme\nton corps\navec IA',

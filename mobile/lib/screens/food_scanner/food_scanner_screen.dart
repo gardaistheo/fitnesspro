@@ -159,16 +159,20 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
           bottom: 60,
           child: Column(
             children: [
-              GestureDetector(
-                onTap: _startScan,
-                child: Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    color: colors.accent,
-                    shape: BoxShape.circle,
+              Semantics(
+                button: true,
+                label: 'Prendre une photo du repas',
+                child: GestureDetector(
+                  onTap: _startScan,
+                  child: Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: colors.accent,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.camera_alt, color: colors.bg, size: 28),
                   ),
-                  child: Icon(Icons.camera_alt, color: colors.bg, size: 28),
                 ),
               ),
               const SizedBox(height: 16),
@@ -184,6 +188,7 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
           left: 8,
           child: IconButton(
             icon: Icon(Icons.close, color: colors.text),
+            tooltip: 'Fermer',
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -411,15 +416,18 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
   Widget _buildNumpadKey(FPColorScheme colors, String digit) {
     return Padding(
       padding: const EdgeInsets.all(4),
-      child: ElevatedButton(
-        onPressed: () => _numpadTap(digit),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: colors.surface2,
-          foregroundColor: colors.text,
-        ),
-        child: Text(
-          digit,
-          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+        child: ElevatedButton(
+          onPressed: () => _numpadTap(digit),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: colors.surface2,
+            foregroundColor: colors.text,
+          ),
+          child: Text(
+            digit,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+          ),
         ),
       ),
     );

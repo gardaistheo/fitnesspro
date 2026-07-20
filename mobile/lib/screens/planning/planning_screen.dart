@@ -179,6 +179,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                     children: [
                       IconButton(
                         icon: Icon(Icons.chevron_left, color: colors.text),
+                        tooltip: 'Retour',
                         onPressed: () => Navigator.of(context).maybePop(),
                       ),
                       Text(
@@ -289,9 +290,12 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                         borderRadius: BorderRadius.circular(11),
                                       ),
                                       alignment: Alignment.center,
-                                      child: const Text(
-                                        '💪',
-                                        style: TextStyle(fontSize: 20),
+                                      child: Semantics(
+                                        excludeSemantics: true,
+                                        child: const Text(
+                                          '💪',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(width: 12),
@@ -332,6 +336,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                         Icons.delete_outline,
                                         color: colors.red,
                                       ),
+                                      tooltip: 'Supprimer la séance',
                                       onPressed: () => _deleteSession(session),
                                       style: IconButton.styleFrom(
                                         backgroundColor: colors.red.withValues(
