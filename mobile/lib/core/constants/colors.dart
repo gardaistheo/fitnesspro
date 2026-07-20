@@ -16,7 +16,8 @@ class FPColors {
   static const Color accent = Color(0xFFC1FF4D);
   static const Color orange = Color(0xFFFF6B35);
   static const Color text = Color(0xFFF0F0F8);
-  static const Color muted = Color(0xFF5A5A78);
+  // WCAG AA: 4.85:1 on `bg`, 4.55:1 on `surface` (was #5A5A78 at 2.94:1/2.75:1).
+  static const Color muted = Color(0xFF7C7C9D);
   static const Color muted2 = Color(0xFF8A8AAA);
 
   // Status colors
@@ -41,7 +42,8 @@ class FPColors {
   static const Color lightSurface2 = Color(0xFFF0F0F5);
   static const Color lightBorder = Color(0xFFE2E2EA);
   static const Color lightText = Color(0xFF0C0C14);
-  static const Color lightMuted = Color(0xFFA0A0B8);
+  // WCAG AA: 5.04:1 on `lightBg`, 4.62:1 on `lightSurface2` (was #A0A0B8 at 2.45:1/2.25:1).
+  static const Color lightMuted = Color(0xFF69698C);
   static const Color lightMuted2 = Color(0xFF6A6A82);
 }
 
