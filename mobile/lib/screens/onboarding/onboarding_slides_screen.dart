@@ -110,21 +110,28 @@ class _OnboardingSlidesScreenState extends State<OnboardingSlidesScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 28),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (var i = 0; i < slides.length; i++)
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        width: i == _step ? 22 : 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: i == _step ? colors.accent : colors.surface2,
-                          borderRadius: BorderRadius.circular(999),
+                child: Semantics(
+                  label: 'Étape ${_step + 1} sur ${slides.length}',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for (var i = 0; i < slides.length; i++)
+                        ExcludeSemantics(
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: i == _step ? 22 : 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: i == _step
+                                  ? colors.accent
+                                  : colors.surface2,
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                          ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               ConstrainedBox(

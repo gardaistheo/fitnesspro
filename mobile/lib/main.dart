@@ -123,6 +123,18 @@ class FitnessProApp extends StatelessWidget {
             themeMode: theme.themeMode,
             theme: AppTheme.light,
             darkTheme: AppTheme.dark,
+            // Honors the system "larger text" accessibility setting (WCAG
+            // 1.4.4 Resize Text) while clamping at 1.3x so fixed-size
+            // layouts (result circles, stat rows) don't overflow.
+            builder: (context, child) {
+              final mediaQuery = MediaQuery.of(context);
+              return MediaQuery(
+                data: mediaQuery.copyWith(
+                  textScaler: mediaQuery.textScaler.clamp(maxScaleFactor: 1.3),
+                ),
+                child: child!,
+              );
+            },
             initialRoute: initialRoute,
             routes: {
               '/': (context) => const LandingScreen(),
