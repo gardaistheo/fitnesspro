@@ -20,13 +20,17 @@ class ProgressBarPill extends StatelessWidget {
     final colors = FPColorScheme.of(context);
     final pct = (value / max).clamp(0.0, 1.0);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(999),
-      child: LinearProgressIndicator(
-        value: pct,
-        minHeight: height,
-        backgroundColor: colors.surface2,
-        valueColor: AlwaysStoppedAnimation(color ?? colors.accent),
+    return Semantics(
+      label: 'Progression',
+      value: '${(pct * 100).round()}%',
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(999),
+        child: LinearProgressIndicator(
+          value: pct,
+          minHeight: height,
+          backgroundColor: colors.surface2,
+          valueColor: AlwaysStoppedAnimation(color ?? colors.accent),
+        ),
       ),
     );
   }
