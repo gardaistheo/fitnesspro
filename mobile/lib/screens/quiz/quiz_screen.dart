@@ -620,20 +620,26 @@ class _QuizScreenState extends State<QuizScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: isActive ? activeColor : colors.text,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: isActive ? activeColor : colors.text,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-                Text(desc, style: TextStyle(color: colors.muted, fontSize: 12)),
-              ],
+                  Text(
+                    desc,
+                    style: TextStyle(color: colors.muted, fontSize: 12),
+                  ),
+                ],
+              ),
             ),
+            const SizedBox(width: 8),
             Text(
               '$cal kcal',
               style: TextStyle(

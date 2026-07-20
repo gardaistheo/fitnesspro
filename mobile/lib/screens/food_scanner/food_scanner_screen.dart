@@ -277,21 +277,31 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
                 ),
                 const SizedBox(height: 16),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildMacro(
-                      colors,
-                      'Protéines',
-                      result.proteins,
-                      colors.blue,
+                    Expanded(
+                      child: _buildMacro(
+                        colors,
+                        'Protéines',
+                        result.proteins,
+                        colors.blue,
+                      ),
                     ),
-                    _buildMacro(
-                      colors,
-                      'Glucides',
-                      result.carbs,
-                      colors.orange,
+                    Expanded(
+                      child: _buildMacro(
+                        colors,
+                        'Glucides',
+                        result.carbs,
+                        colors.orange,
+                      ),
                     ),
-                    _buildMacro(colors, 'Lipides', result.fats, colors.purple),
+                    Expanded(
+                      child: _buildMacro(
+                        colors,
+                        'Lipides',
+                        result.fats,
+                        colors.purple,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -328,6 +338,8 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
       children: [
         Text(
           '${grams}g',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: color,
             fontSize: 16,
@@ -335,7 +347,12 @@ class _FoodScannerScreenState extends State<FoodScannerScreen> {
           ),
         ),
         const SizedBox(height: 4),
-        Text(label, style: TextStyle(color: colors.muted2, fontSize: 11)),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: colors.muted2, fontSize: 11),
+        ),
       ],
     );
   }
