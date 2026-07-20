@@ -139,10 +139,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  InputDecoration _inputDecoration(FPColorScheme colors, String hint) {
+  InputDecoration _inputDecoration(FPColorScheme colors, String label) {
     return InputDecoration(
-      hintText: hint,
-      hintStyle: TextStyle(color: colors.muted2),
+      labelText: label,
+      labelStyle: TextStyle(color: colors.muted2),
+      floatingLabelStyle: TextStyle(color: colors.accent),
       filled: true,
       fillColor: colors.surface2,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),

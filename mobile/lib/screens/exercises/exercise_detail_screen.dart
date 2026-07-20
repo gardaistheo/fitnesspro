@@ -154,40 +154,51 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
 
   Widget _buildVideo(FPColorScheme colors) {
     final controller = _controller;
+    final exercise = widget.exercise;
 
     if (controller == null) {
       // No video URL, or it didn't match a recognizable YouTube format —
       // fall back to a static placeholder rather than a broken player.
-      return Container(
-        height: 190,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: colors.surface2,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Center(
-          child: Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: colors.accent.withValues(alpha: 0.13),
-              shape: BoxShape.circle,
+      return Semantics(
+        label: 'Vidéo de démonstration indisponible pour ${exercise.name}',
+        child: Container(
+          height: 190,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: colors.surface2,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: colors.accent.withValues(alpha: 0.13),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.play_arrow, color: colors.accent, size: 32),
             ),
-            child: Icon(Icons.play_arrow, color: colors.accent, size: 32),
           ),
         ),
       );
     }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: YoutubePlayer(
-        controller: controller,
-        showVideoProgressIndicator: true,
-        progressIndicatorColor: colors.accent,
-        progressColors: ProgressBarColors(
-          playedColor: colors.accent,
-          handleColor: colors.accent,
+    final videoLabel = exercise.description != null
+        ? 'Vidéo de démonstration : ${exercise.name}. ${exercise.description}'
+        : 'Vidéo de démonstration : ${exercise.name}';
+
+    return Semantics(
+      label: videoLabel,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: YoutubePlayer(
+          controller: controller,
+          showVideoProgressIndicator: true,
+          progressIndicatorColor: colors.accent,
+          progressColors: ProgressBarColors(
+            playedColor: colors.accent,
+            handleColor: colors.accent,
+          ),
         ),
       ),
     );
