@@ -131,7 +131,6 @@ class FitnessProApp extends StatelessWidget {
               return MediaQuery(
                 data: mediaQuery.copyWith(
                   textScaler: mediaQuery.textScaler.clamp(
-                    minScaleFactor: 1.0,
                     maxScaleFactor: 1.3,
                   ),
                 ),
