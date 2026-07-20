@@ -151,6 +151,9 @@ void main() {
     await tester.tap(find.text('Kettlebell'));
     await tester.pump();
 
+    await tester.ensureVisible(
+      find.text('Aucun matériel (poids du corps uniquement)'),
+    );
     await tester.tap(find.text('Aucun matériel (poids du corps uniquement)'));
     await tester.pump();
 
