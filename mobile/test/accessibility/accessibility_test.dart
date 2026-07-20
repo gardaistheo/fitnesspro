@@ -54,8 +54,7 @@ void main() {
         MaterialApp(
           routes: {
             '/': (context) => const LandingScreen(),
-            '/signup': (context) =>
-                const Scaffold(body: Text('SIGNUP_SCREEN')),
+            '/signup': (context) => const Scaffold(body: Text('SIGNUP_SCREEN')),
             '/login': (context) => const Scaffold(body: Text('LOGIN_SCREEN')),
           },
         ),
@@ -229,9 +228,7 @@ void main() {
     ) async {
       final handle = tester.ensureSemantics();
 
-      await tester.pumpWidget(
-        const MaterialApp(home: FoodScannerScreen()),
-      );
+      await tester.pumpWidget(const MaterialApp(home: FoodScannerScreen()));
       await tester.pumpAndSettle();
 
       final semantics = tester.getSemantics(
