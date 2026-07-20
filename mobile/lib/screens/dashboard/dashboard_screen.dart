@@ -237,7 +237,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Text(
                 'Streak',
                 style: TextStyle(
-                  color: colors.muted2,
+                  // colors.muted2 fails WCAG AA (1.4.3) against this card's
+                  // accent-tinted gradient background; colors.text clears
+                  // 4.5:1 comfortably at every point of the gradient.
+                  color: colors.text,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -451,6 +454,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Semantics(
                 button: true,
                 label: 'Réinitialiser l\'hydratation',
+                excludeSemantics: true,
                 child: ElevatedButton(
                   onPressed: () => setState(() => _hydration = 0),
                   style: ElevatedButton.styleFrom(
