@@ -97,7 +97,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('🔥', style: TextStyle(fontSize: 16)),
+                            Semantics(
+                              excludeSemantics: true,
+                              child: const Text(
+                                '🔥',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               '12 jours',
@@ -253,7 +259,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
-          const Text('🔥', style: TextStyle(fontSize: 48)),
+          Semantics(
+            excludeSemantics: true,
+            child: const Text('🔥', style: TextStyle(fontSize: 48)),
+          ),
         ],
       ),
     );
@@ -365,7 +374,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   backgroundColor: Colors.transparent,
                   foregroundColor: colors.accent,
                   elevation: 0,
-                  padding: EdgeInsets.zero,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  minimumSize: const Size(48, 48),
+                  tapTargetSize: MaterialTapTargetSize.padded,
                 ),
               ),
             ],
@@ -399,7 +410,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const Text('💧', style: TextStyle(fontSize: 18)),
+              Semantics(
+                excludeSemantics: true,
+                child: const Text('💧', style: TextStyle(fontSize: 18)),
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -440,17 +454,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 child: const Text('+500 ml'),
               ),
-              ElevatedButton(
-                onPressed: () => setState(() => _hydration = 0),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.blue.withValues(alpha: 0.2),
-                  foregroundColor: colors.blue,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
+              Semantics(
+                button: true,
+                label: 'Réinitialiser l\'hydratation',
+                child: ElevatedButton(
+                  onPressed: () => setState(() => _hydration = 0),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colors.blue.withValues(alpha: 0.2),
+                    foregroundColor: colors.blue,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                   ),
+                  child: const Text('↺'),
                 ),
-                child: const Text('↺'),
               ),
             ],
           ),
@@ -486,7 +504,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const Text('🔥', style: TextStyle(fontSize: 18)),
+              Semantics(
+                excludeSemantics: true,
+                child: const Text('🔥', style: TextStyle(fontSize: 18)),
+              ),
             ],
           ),
           const SizedBox(height: 12),
