@@ -8,12 +8,13 @@ use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\WorkoutSessionController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Throwable;
 
 Route::get('health', function () {
     try {
         DB::connection()->getPdo();
         $dbStatus = 'ok';
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
         $dbStatus = 'down';
     }
 
