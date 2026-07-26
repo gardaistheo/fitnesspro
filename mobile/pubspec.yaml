@@ -55,6 +55,9 @@ dependencies:
   purchases_flutter: ^10.4.0
   purchases_ui_flutter: ^10.4.0
 
+  # Monitoring & alerting (C4.1.2) - crash/error reporting
+  sentry_flutter: ^8.10.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

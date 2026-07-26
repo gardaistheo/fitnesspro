@@ -123,6 +123,12 @@ return [
             'handler' => NullHandler::class,
         ],
 
+        'sentry_logs' => [
+            'driver' => 'sentry_logs',
+            // The minimum logging level at which this handler will be triggered
+            'level' => env('LOG_LEVEL', 'info'),
+        ],
+
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],

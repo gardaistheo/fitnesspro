@@ -6,7 +6,23 @@ use App\Http\Controllers\MealController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\WorkoutSessionController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+
+Route::get('health', function () {
+    try {
+        DB::connection()->getPdo();
+        $dbStatus = 'ok';
+    } catch (\Throwable $e) {
+        $dbStatus = 'down';
+    }
+
+    return response()->json([
+        'status' => $dbStatus === 'ok' ? 'ok' : 'degraded',
+        'db' => $dbStatus,
+        'timestamp' => now()->toIso8601String(),
+    ], $dbStatus === 'ok' ? 200 : 503);
+});
 
 Route::post('subscriptions/webhook', [WebhookController::class, 'revenuecat']);
 
