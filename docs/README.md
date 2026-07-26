@@ -6,6 +6,7 @@
 - [Monitoring & alerting](monitoring.md) — supervision (Sentry backend/mobile), sonde de disponibilité, alertes
 - [Gestion des incidents](gestion-incidents.md) — process de consignation des anomalies (GitHub Issues), cas réels traités
 - [Déploiement](deployment.md) — process Render (backend) et stores (mobile)
+- [Changelog](../CHANGELOG.md) — journal des versions déployées
 
 Pour le détail des endpoints API, voir [backend/README.md](../backend/README.md) ou la documentation Swagger interactive (`/api/documentation` une fois le backend lancé).
 
