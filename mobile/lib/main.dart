@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/exercise_provider.dart';
@@ -22,9 +23,33 @@ import 'screens/workouts/workouts_screen.dart';
 import 'services/api_service.dart';
 import 'services/storage_service.dart';
 
+/// DSN Sentry injecté au build (jamais commité en dur) :
+/// flutter build ... --dart-define=SENTRY_DSN=https://...@sentry.io/...
+/// Vide en dev par défaut => SDK reste inactif, aucune erreur.
+const _sentryDsn = String.fromEnvironment('SENTRY_DSN');
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await _runWithSentry(_bootstrap);
+}
 
+Future<void> _runWithSentry(Future<void> Function() body) async {
+  if (_sentryDsn.isEmpty) {
+    await body();
+    return;
+  }
+
+  await SentryFlutter.init((options) {
+    options.dsn = _sentryDsn;
+    options.tracesSampleRate = 0.2;
+    options.environment = const String.fromEnvironment(
+      'SENTRY_ENVIRONMENT',
+      defaultValue: 'production',
+    );
+  }, appRunner: body);
+}
+
+Future<void> _bootstrap() async {
   final storageService = StorageService();
   await storageService.init();
 
